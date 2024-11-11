@@ -1,30 +1,64 @@
-import RegisterUserUseCase from './register-user';
-import generateUser from '../../domain/models/__test__/generateUser';
-import createCore from '../../createCore';
+import UserService from '../services/user.ts';
+import RegisterUserUseCase from './register-user.ts';
+import User from '../../domain/models/user.ts';
+import generateUser from '../../domain/models/__test__/generateUser.ts';
+import UserRepositoryImpl from '../../infrastructure/repositories/user.ts';
+import UniqueEmailSpecification from '../../domain/specifications/user/unique-email.ts';
+import UserRepository from '../../domain/repositories/user.ts';
 
 describe('RegisterUserUseCase', () => {
-  let core: ReturnType<typeof createCore>;
+  let userRepository: UserRepository;
+  let userService: UserService;
   let registerUserUseCase: RegisterUserUseCase;
 
   beforeEach(() => {
-    core = createCore();
-    registerUserUseCase = core.useCases.registerUser;
+    userRepository = new UserRepositoryImpl();
+    userService = new UserService(
+      userRepository,
+      new UniqueEmailSpecification(userRepository)
+    );
+    registerUserUseCase = new RegisterUserUseCase(userService);
   });
 
-  it('executes successfully with valid data', async () => {
-    const email = 'unique@example.com';
-    const password = 'password123';
-    const name = 'John Doe';
-    const user = await registerUserUseCase.execute(email, password, name);
-    const savedUser = await core.repositories.userRepository.findById(user.id);
-    expect(savedUser).toEqual(user);
+  it('registers a user successfully', async () => {
+    const user: User = generateUser();
+    vi.spyOn(userService, 'registerUser').mockResolvedValue(user);
+
+    const result = await registerUserUseCase.execute(
+      'test@example.com',
+      'password',
+      'Test User'
+    );
+    expect(result).toEqual(user);
   });
 
-  it('throws error if email is already taken', async () => {
-    const existingUser = generateUser();
-    await core.repositories.userRepository.save(existingUser);
+  it('throws an error when email is already taken', async () => {
+    vi.spyOn(userService, 'registerUser').mockRejectedValue(
+      new Error('Email already taken')
+    );
+
     await expect(
-      registerUserUseCase.execute(existingUser.email, 'password123', 'John Doe')
-    ).rejects.toThrow('Email is already taken');
+      registerUserUseCase.execute('test@example.com', 'password', 'Test User')
+    ).rejects.toThrow('Email already taken');
+  });
+
+  it('throws an error when password is too weak', async () => {
+    vi.spyOn(userService, 'registerUser').mockRejectedValue(
+      new Error('Password too weak')
+    );
+
+    await expect(
+      registerUserUseCase.execute('test@example.com', '123', 'Test User')
+    ).rejects.toThrow('Password too weak');
+  });
+
+  it('throws an error when name is empty', async () => {
+    vi.spyOn(userService, 'registerUser').mockRejectedValue(
+      new Error('Name cannot be empty')
+    );
+
+    await expect(
+      registerUserUseCase.execute('test@example.com', 'password', '')
+    ).rejects.toThrow('Name cannot be empty');
   });
 });

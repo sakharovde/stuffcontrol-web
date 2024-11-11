@@ -1,8 +1,13 @@
 import UserRepository from '../../domain/repositories/user.ts';
 import User from '../../domain/models/user.ts';
+import LocalForageFactory from '../factories/localforage.ts';
 
 export default class UserRepositoryImpl implements UserRepository {
-  constructor(private readonly storage: LocalForage) {}
+  private readonly client = LocalForageFactory.createInstance({
+    name: 'users',
+    storeName: 'users',
+    description: 'Database for users',
+  });
 
   async findById(id: User['id']): Promise<User | null> {
     const users: User[] = await this.getAllUsers();
@@ -15,12 +20,12 @@ export default class UserRepositoryImpl implements UserRepository {
   }
 
   save(user: User): Promise<User> {
-    return this.storage.setItem(user.id, user);
+    return this.client.setItem(user.id, user);
   }
 
   private async getAllUsers(): Promise<User[]> {
     const users: User[] = [];
-    await this.storage.iterate((value) => {
+    await this.client.iterate((value) => {
       users.push(value as User);
     });
     return users;

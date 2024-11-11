@@ -1,41 +1,38 @@
 import UniqueEmailSpecification from './unique-email';
-import UserRepository from '../../repositories/user';
-import UserRepositoryImpl from '../../../infrastructure/repositories/user.ts';
+import User from '../../models/user';
+import UserRepositoryImpl from '../../../infrastructure/repositories/user';
 import generateUser from '../../models/__test__/generateUser.ts';
-import createCore from '../../../createCore.ts';
+import UserRepository from '../../repositories/user.ts';
 
 describe('UniqueEmailSpecification', () => {
-  let core: ReturnType<typeof createCore>;
   let userRepository: UserRepository;
-  let uniqueEmailSpecification: UniqueEmailSpecification;
+  let uniqueEmailSpec: UniqueEmailSpecification;
 
-  beforeEach(async () => {
-    core = createCore();
-    userRepository = core.repositories.userRepository;
-    uniqueEmailSpecification = core.specifications.user.uniqueEmail;
+  beforeEach(() => {
+    userRepository = new UserRepositoryImpl();
+    uniqueEmailSpec = new UniqueEmailSpecification(userRepository);
   });
 
-  it('returns true if email is unique', async () => {
-    const result =
-      await uniqueEmailSpecification.isSatisfiedBy('unique@example.com');
+  it('returns true when email is unique', async () => {
+    const result = await uniqueEmailSpec.isSatisfiedBy('unique@example.com');
     expect(result).toBe(true);
   });
 
-  it('returns false if email is not unique', async () => {
-    const user = generateUser();
+  it('returns false when email is not unique', async () => {
+    const user: User = generateUser();
     await userRepository.save(user);
-    const result = await uniqueEmailSpecification.isSatisfiedBy(user.email);
+
+    const result = await uniqueEmailSpec.isSatisfiedBy(user.email);
     expect(result).toBe(false);
   });
 
   it('handles repository errors gracefully', async () => {
-    // Simulate an error by using an invalid storage instance
-    const invalidUserRepository = new UserRepositoryImpl(null as never);
-    const invalidUniqueEmailSpecification = new UniqueEmailSpecification(
-      invalidUserRepository
+    vi.spyOn(userRepository, 'findByEmail').mockRejectedValue(
+      new Error('Repository error')
     );
+
     await expect(
-      invalidUniqueEmailSpecification.isSatisfiedBy('error@example.com')
-    ).rejects.toThrow();
+      uniqueEmailSpec.isSatisfiedBy('error@example.com')
+    ).rejects.toThrow('Repository error');
   });
 });

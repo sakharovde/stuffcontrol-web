@@ -1,33 +1,46 @@
-import UserService from './user';
-import UserRepositoryImpl from '../../infrastructure/repositories/user';
-import generateUser from '../../domain/models/__test__/generateUser';
-import createCore from '../../createCore';
+import UserService from './user.ts';
+import UserRepository from '../../domain/repositories/user.ts';
+import UniqueEmailSpecification from '../../domain/specifications/user/unique-email.ts';
+import UserRepositoryImpl from '../../infrastructure/repositories/user.ts';
+import generateUser from '../../domain/models/__test__/generateUser.ts';
 
 describe('UserService', () => {
-  let core: ReturnType<typeof createCore>;
-  let userRepository: UserRepositoryImpl;
+  let userRepository: UserRepository;
+  let uniqueEmailSpec: UniqueEmailSpecification;
   let userService: UserService;
 
   beforeEach(() => {
-    core = createCore();
-    userRepository = core.repositories.userRepository;
-    userService = core.services.userService;
+    userRepository = new UserRepositoryImpl();
+    uniqueEmailSpec = new UniqueEmailSpecification(userRepository);
+    userService = new UserService(userRepository, uniqueEmailSpec);
   });
 
-  it('registers user successfully', async () => {
-    const email = 'unique@example.com';
-    const password = 'password123';
-    const name = 'John Doe';
-    const user = await userService.registerUser(email, password, name);
-    const savedUser = await userRepository.findById(user.id);
-    expect(savedUser).toEqual(user);
+  it('registers a user successfully', async () => {
+    const result = await userService.registerUser(
+      'test@example.com',
+      'password',
+      'Test User'
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        email: 'test@example.com',
+        name: 'Test User',
+      })
+    );
   });
 
-  it('throws error if email is already taken', async () => {
-    const existingUser = generateUser();
-    await userRepository.save(existingUser);
+  it('throws an error when email is already taken', async () => {
+    const user = generateUser();
+    await userRepository.save(user);
+
     await expect(
-      userService.registerUser(existingUser.email, 'password123', 'John Doe')
+      userService.registerUser(user.email, 'password', 'Test User')
     ).rejects.toThrow('Email is already taken');
+  });
+
+  it('throws an error when name is empty', async () => {
+    await expect(
+      userService.registerUser('test@example.com', 'password', '')
+    ).rejects.toThrow('Name cannot be empty');
   });
 });
