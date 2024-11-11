@@ -18,13 +18,11 @@ describe('UserService', () => {
   it('registers a user successfully', async () => {
     const result = await userService.registerUser(
       'test@example.com',
-      'password',
-      'Test User'
+      'password'
     );
     expect(result).toEqual(
       expect.objectContaining({
         email: 'test@example.com',
-        name: 'Test User',
       })
     );
   });
@@ -34,13 +32,13 @@ describe('UserService', () => {
     await userRepository.save(user);
 
     await expect(
-      userService.registerUser(user.email, 'password', 'Test User')
+      userService.registerUser(user.email, 'password')
     ).rejects.toThrow('Email is already taken');
   });
 
   it('throws an error when name is empty', async () => {
     await expect(
-      userService.registerUser('test@example.com', 'password', '')
+      userService.registerUser('test@example.com', 'password')
     ).rejects.toThrow('Name cannot be empty');
   });
 });
