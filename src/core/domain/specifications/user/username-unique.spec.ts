@@ -1,16 +1,16 @@
-import UniqueEmailSpecification from './unique-email';
+import UniqueUsernameSpecification from './username-unique.ts';
 import User from '../../models/user';
 import UserRepositoryImpl from '../../../infrastructure/repositories/user';
 import generateUser from '../../models/__test__/generateUser.ts';
 import UserRepository from '../../repositories/user.ts';
 
-describe('UniqueEmailSpecification', () => {
+describe('UniqueUsernameSpecification', () => {
   let userRepository: UserRepository;
-  let uniqueEmailSpec: UniqueEmailSpecification;
+  let uniqueEmailSpec: UniqueUsernameSpecification;
 
   beforeEach(() => {
     userRepository = new UserRepositoryImpl();
-    uniqueEmailSpec = new UniqueEmailSpecification(userRepository);
+    uniqueEmailSpec = new UniqueUsernameSpecification(userRepository);
   });
 
   it('returns true when email is unique', async () => {
@@ -22,12 +22,12 @@ describe('UniqueEmailSpecification', () => {
     const user: User = generateUser();
     await userRepository.save(user);
 
-    const result = await uniqueEmailSpec.isSatisfiedBy(user.email);
+    const result = await uniqueEmailSpec.isSatisfiedBy(user.username);
     expect(result).toBe(false);
   });
 
   it('handles repository errors gracefully', async () => {
-    vi.spyOn(userRepository, 'findByEmail').mockRejectedValue(
+    vi.spyOn(userRepository, 'findByUsername').mockRejectedValue(
       new Error('Repository error')
     );
 

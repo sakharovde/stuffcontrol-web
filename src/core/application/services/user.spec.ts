@@ -1,18 +1,25 @@
 import UserService from './user.ts';
 import UserRepository from '../../domain/repositories/user.ts';
-import UniqueEmailSpecification from '../../domain/specifications/user/unique-email.ts';
+import UniqueUsernameSpecification from '../../domain/specifications/user/username-unique.ts';
 import UserRepositoryImpl from '../../infrastructure/repositories/user.ts';
 import generateUser from '../../domain/models/__test__/generateUser.ts';
+import UsernameEmptySpecification from '../../domain/specifications/user/username-empty.ts';
 
 describe('UserService', () => {
   let userRepository: UserRepository;
-  let uniqueEmailSpec: UniqueEmailSpecification;
+  let uniqueUsernameSpec: UniqueUsernameSpecification;
+  let usernameEmptySpec: UsernameEmptySpecification;
   let userService: UserService;
 
   beforeEach(() => {
     userRepository = new UserRepositoryImpl();
-    uniqueEmailSpec = new UniqueEmailSpecification(userRepository);
-    userService = new UserService(userRepository, uniqueEmailSpec);
+    uniqueUsernameSpec = new UniqueUsernameSpecification(userRepository);
+    usernameEmptySpec = new UsernameEmptySpecification();
+    userService = new UserService(
+      userRepository,
+      uniqueUsernameSpec,
+      usernameEmptySpec
+    );
   });
 
   it('registers a user successfully', async () => {
@@ -22,7 +29,7 @@ describe('UserService', () => {
     );
     expect(result).toEqual(
       expect.objectContaining({
-        email: 'test@example.com',
+        username: 'test@example.com',
       })
     );
   });
@@ -32,13 +39,13 @@ describe('UserService', () => {
     await userRepository.save(user);
 
     await expect(
-      userService.registerUser(user.email, 'password')
-    ).rejects.toThrow('Email is already taken');
+      userService.registerUser(user.username, 'password')
+    ).rejects.toThrow('Username is already taken');
   });
 
   it('throws an error when name is empty', async () => {
-    await expect(
-      userService.registerUser('test@example.com', 'password')
-    ).rejects.toThrow('Name cannot be empty');
+    await expect(userService.registerUser('', 'password')).rejects.toThrow(
+      'Username cannot be empty'
+    );
   });
 });

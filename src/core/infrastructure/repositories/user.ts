@@ -14,9 +14,9 @@ export default class UserRepositoryImpl implements UserRepository {
     return users.find((user) => user.id === id) || null;
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByUsername(username: string): Promise<User | null> {
     const users: User[] = await this.getAllUsers();
-    return users.find((user) => user.email === email) || null;
+    return users.find((user) => user.username === username) || null;
   }
 
   save(user: User): Promise<User> {

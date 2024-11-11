@@ -1,55 +1,48 @@
-import UserRepositoryImpl from './user';
-import User from '../../domain/models/user';
+import UserRepositoryImpl from './user.ts';
+import User from '../../domain/models/user.ts';
 import generateUser from '../../domain/models/__test__/generateUser.ts';
 
 describe('UserRepositoryImpl', () => {
   let userRepository: UserRepositoryImpl;
+  let user: User;
 
   beforeEach(() => {
     userRepository = new UserRepositoryImpl();
+    user = generateUser();
   });
 
-  it('findById returns user when user exists', async () => {
-    const user: User = generateUser();
-    await userRepository.save(user);
+  it('saves a user successfully', async () => {
+    const result = await userRepository.save(user);
+    expect(result).toEqual(user);
+  });
 
+  it('finds a user by id', async () => {
+    await userRepository.save(user);
     const result = await userRepository.findById(user.id);
     expect(result).toEqual(user);
   });
 
-  it('findById returns null when user does not exist', async () => {
+  it('returns null when user id is not found', async () => {
     const result = await userRepository.findById('2');
     expect(result).toBeNull();
   });
 
-  it('findByEmail returns user when user exists', async () => {
-    const user: User = generateUser();
+  it('finds a user by username', async () => {
     await userRepository.save(user);
-
-    const result = await userRepository.findByEmail(user.email);
+    const result = await userRepository.findByUsername(user.username);
     expect(result).toEqual(user);
   });
 
-  it('findByEmail returns null when user does not exist', async () => {
-    const result = await userRepository.findByEmail('nonexistent@example.com');
+  it('returns null when username is not found', async () => {
+    const result = await userRepository.findByUsername('nonexistentuser');
     expect(result).toBeNull();
   });
 
-  it('save stores the user', async () => {
-    const user: User = generateUser();
+  it('returns all users', async () => {
+    const user2 = generateUser();
     await userRepository.save(user);
-
-    const result = await userRepository.findById(user.id);
-    expect(result).toEqual(user);
-  });
-
-  it('getAllUsers returns all users', async () => {
-    const user1: User = generateUser();
-    const user2: User = generateUser();
-    await userRepository.save(user1);
     await userRepository.save(user2);
-
     const result = await userRepository['getAllUsers']();
-    expect(result).toEqual([user1, user2]);
+    expect(result).toEqual([user, user2]);
   });
 });

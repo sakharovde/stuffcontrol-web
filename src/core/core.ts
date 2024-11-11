@@ -1,7 +1,8 @@
 import UserService from './application/services/user.ts';
 import UserRepositoryImpl from './infrastructure/repositories/user.ts';
-import UniqueEmailSpecification from './domain/specifications/user/unique-email.ts';
+import UniqueUsernameSpecification from './domain/specifications/user/username-unique.ts';
 import RegisterUserUseCase from './application/use-cases/register-user.ts';
+import UsernameEmptySpecification from './domain/specifications/user/username-empty.ts';
 
 export default class Core {
   private readonly repositories = {
@@ -10,14 +11,16 @@ export default class Core {
 
   private readonly specifications = {
     user: {
-      uniqueEmail: new UniqueEmailSpecification(this.repositories.user),
+      usernameUnique: new UniqueUsernameSpecification(this.repositories.user),
+      usernameEmpty: new UsernameEmptySpecification(),
     },
   };
 
   private readonly services = {
     user: new UserService(
       this.repositories.user,
-      this.specifications.user.uniqueEmail
+      this.specifications.user.usernameUnique,
+      this.specifications.user.usernameEmpty
     ),
   };
 

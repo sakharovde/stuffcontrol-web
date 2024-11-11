@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 
 const generateUser = (): User => ({
   id: faker.string.uuid(),
-  email: faker.internet.email(),
+  username: faker.internet.username(),
   passwordHash: faker.internet.password(),
 });
 
