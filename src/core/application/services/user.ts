@@ -4,12 +4,14 @@ import UserRepository from '../../domain/repositories/user.ts';
 import UniqueUsernameSpecification from '../../domain/specifications/user/username-unique.ts';
 import User from '../../domain/models/user.ts';
 import UsernameEmptySpecification from '../../domain/specifications/user/username-empty.ts';
+import PasswordEmptySpecification from '../../domain/specifications/user/password-empty.ts';
 
 export default class UserService {
   constructor(
     private userRepository: UserRepository,
     private uniqueUsernameSpec: UniqueUsernameSpecification,
-    private usernameEmptySpec: UsernameEmptySpecification
+    private usernameEmptySpec: UsernameEmptySpecification,
+    private passwordEmptySpec: PasswordEmptySpecification
   ) {}
 
   async registerUser(username: string, password: string): Promise<User> {
@@ -17,6 +19,12 @@ export default class UserService {
       await this.usernameEmptySpec.isSatisfiedBy(username);
     if (isUsernameEmpty) {
       throw new Error('Username cannot be empty');
+    }
+
+    const isPasswordEmpty =
+      await this.passwordEmptySpec.isSatisfiedBy(password);
+    if (isPasswordEmpty) {
+      throw new Error('Password cannot be empty');
     }
 
     const isUnique = await this.uniqueUsernameSpec.isSatisfiedBy(username);
