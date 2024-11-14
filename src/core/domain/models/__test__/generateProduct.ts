@@ -1,7 +1,7 @@
-import Storage from '../storage.ts';
+import Product from '../product.ts';
 import { faker } from '@faker-js/faker';
 
-export default (): Storage => ({
+export default (): Product => ({
   id: faker.string.uuid(),
   name: faker.commerce.department(),
 });

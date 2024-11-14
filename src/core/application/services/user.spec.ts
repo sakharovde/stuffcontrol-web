@@ -4,21 +4,25 @@ import UniqueUsernameSpecification from '../../domain/specifications/user/userna
 import UserRepositoryImpl from '../../infrastructure/repositories/user.ts';
 import generateUser from '../../domain/models/__test__/generateUser.ts';
 import UsernameEmptySpecification from '../../domain/specifications/user/username-empty.ts';
+import PasswordEmptySpecification from '../../domain/specifications/user/password-empty.ts';
 
 describe('UserService', () => {
   let userRepository: UserRepository;
   let uniqueUsernameSpec: UniqueUsernameSpecification;
   let usernameEmptySpec: UsernameEmptySpecification;
+  let passwordEmptySpec: PasswordEmptySpecification;
   let userService: UserService;
 
   beforeEach(() => {
     userRepository = new UserRepositoryImpl();
     uniqueUsernameSpec = new UniqueUsernameSpecification(userRepository);
     usernameEmptySpec = new UsernameEmptySpecification();
+    passwordEmptySpec = new PasswordEmptySpecification();
     userService = new UserService(
       userRepository,
       uniqueUsernameSpec,
-      usernameEmptySpec
+      usernameEmptySpec,
+      passwordEmptySpec
     );
   });
 
