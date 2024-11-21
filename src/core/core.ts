@@ -8,10 +8,19 @@ import StorageRepositoryImpl from './infrastructure/repositories/storage.ts';
 import StorageService from './application/services/storage.ts';
 import CreateStorageUseCase from './application/use-cases/storage/create.ts';
 import StorageNameEmptySpecification from './domain/specifications/storage/name-empty.ts';
+import AddNewProductToStorageUseCase from './application/use-cases/storage/add-new-product.ts';
+import ProductRepositoryImpl from './infrastructure/repositories/product.ts';
+import ProductService from './application/services/product.ts';
+import StorageItemService from './application/services/storage-item.ts';
+import StorageItemRepositoryImpl from './infrastructure/repositories/storage-item.ts';
+import { StorageTransactionRepositoryImpl } from './infrastructure/repositories/storage-transaction.ts';
 
 export default class Core {
   private readonly repositories = {
+    product: new ProductRepositoryImpl(),
     storage: new StorageRepositoryImpl(),
+    storageItem: new StorageItemRepositoryImpl(),
+    storageTransaction: new StorageTransactionRepositoryImpl(),
     user: new UserRepositoryImpl(),
   };
 
@@ -20,19 +29,16 @@ export default class Core {
       nameEmpty: new StorageNameEmptySpecification(),
     },
     user: {
-      usernameUnique: new UserUniqueUsernameSpecification(
-        this.repositories.user
-      ),
+      usernameUnique: new UserUniqueUsernameSpecification(this.repositories.user),
       usernameEmpty: new UserUsernameEmptySpecification(),
       passwordEmpty: new UserPasswordEmptySpecification(),
     },
   };
 
   private readonly services = {
-    storage: new StorageService(
-      this.repositories.storage,
-      this.specifications.storage.nameEmpty
-    ),
+    product: new ProductService(this.repositories.product),
+    storage: new StorageService(this.repositories.storage, this.specifications.storage.nameEmpty),
+    storageItem: new StorageItemService(this.repositories.storageItem, this.repositories.storageTransaction),
     user: new UserService(
       this.repositories.user,
       this.specifications.user.usernameUnique,
@@ -44,6 +50,7 @@ export default class Core {
   public readonly useCases = {
     storage: {
       create: new CreateStorageUseCase(this.services.storage),
+      addNewProduct: new AddNewProductToStorageUseCase(this.services.product, this.services.storageItem),
     },
     user: {
       register: new RegisterUserUseCase(this.services.user),
