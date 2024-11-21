@@ -1,17 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import UserRepository from '../../domain/repositories/user.ts';
-import UniqueUsernameSpecification from '../../domain/specifications/user/username-unique.ts';
+import UserUniqueUsernameSpecification from '../../domain/specifications/user/username-unique.ts';
 import User from '../../domain/models/user.ts';
-import UsernameEmptySpecification from '../../domain/specifications/user/username-empty.ts';
-import PasswordEmptySpecification from '../../domain/specifications/user/password-empty.ts';
+import UserUsernameEmptySpecification from '../../domain/specifications/user/username-empty.ts';
+import UserPasswordEmptySpecification from '../../domain/specifications/user/password-empty.ts';
 
 export default class UserService {
   constructor(
     private userRepository: UserRepository,
-    private uniqueUsernameSpec: UniqueUsernameSpecification,
-    private usernameEmptySpec: UsernameEmptySpecification,
-    private passwordEmptySpec: PasswordEmptySpecification
+    private uniqueUsernameSpec: UserUniqueUsernameSpecification,
+    private usernameEmptySpec: UserUsernameEmptySpecification,
+    private passwordEmptySpec: UserPasswordEmptySpecification
   ) {}
 
   async registerUser(username: string, password: string): Promise<User> {

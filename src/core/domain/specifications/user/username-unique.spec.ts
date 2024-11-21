@@ -1,4 +1,4 @@
-import UniqueUsernameSpecification from './username-unique.ts';
+import UserUniqueUsernameSpecification from './username-unique.ts';
 import User from '../../models/user';
 import UserRepositoryImpl from '../../../infrastructure/repositories/user';
 import generateUser from '../../models/__test__/generateUser.ts';
@@ -6,11 +6,11 @@ import UserRepository from '../../repositories/user.ts';
 
 describe('UniqueUsernameSpecification', () => {
   let userRepository: UserRepository;
-  let uniqueEmailSpec: UniqueUsernameSpecification;
+  let uniqueEmailSpec: UserUniqueUsernameSpecification;
 
   beforeEach(() => {
     userRepository = new UserRepositoryImpl();
-    uniqueEmailSpec = new UniqueUsernameSpecification(userRepository);
+    uniqueEmailSpec = new UserUniqueUsernameSpecification(userRepository);
   });
 
   it('returns true when email is unique', async () => {

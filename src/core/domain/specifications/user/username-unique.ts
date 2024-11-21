@@ -1,6 +1,6 @@
 import UserRepository from '../../repositories/user.ts';
 
-export default class UniqueUsernameSpecification {
+export default class UserUniqueUsernameSpecification {
   constructor(private userRepository: UserRepository) {}
 
   async isSatisfiedBy(username: string): Promise<boolean> {

@@ -4,7 +4,7 @@ import StorageService from '../../services/storage.ts';
 export default class CreateStorageUseCase {
   constructor(private readonly storageService: StorageService) {}
 
-  async execute(name: Storage['name']): Promise<Storage> {
+  execute(name: Storage['name']): Promise<Storage> {
     return this.storageService.create(name);
   }
 }

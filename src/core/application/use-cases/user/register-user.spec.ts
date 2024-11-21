@@ -1,25 +1,25 @@
 import RegisterUserUseCase from './register-user.ts';
 import UserService from '../../services/user.ts';
 import UserRepository from '../../../domain/repositories/user.ts';
-import UniqueUsernameSpecification from '../../../domain/specifications/user/username-unique.ts';
+import UserUniqueUsernameSpecification from '../../../domain/specifications/user/username-unique.ts';
 import UserRepositoryImpl from '../../../infrastructure/repositories/user.ts';
 import generateUser from '../../../domain/models/__test__/generateUser.ts';
-import UsernameEmptySpecification from '../../../domain/specifications/user/username-empty.ts';
-import PasswordEmptySpecification from '../../../domain/specifications/user/password-empty.ts';
+import UserUsernameEmptySpecification from '../../../domain/specifications/user/username-empty.ts';
+import UserPasswordEmptySpecification from '../../../domain/specifications/user/password-empty.ts';
 
 describe('RegisterUserUseCase', () => {
   let userRepository: UserRepository;
-  let uniqueUsernameSpec: UniqueUsernameSpecification;
-  let usernameEmptySpec: UsernameEmptySpecification;
-  let passwordEmptySpec: PasswordEmptySpecification;
+  let uniqueUsernameSpec: UserUniqueUsernameSpecification;
+  let usernameEmptySpec: UserUsernameEmptySpecification;
+  let passwordEmptySpec: UserPasswordEmptySpecification;
   let userService: UserService;
   let registerUserUseCase: RegisterUserUseCase;
 
   beforeEach(() => {
     userRepository = new UserRepositoryImpl();
-    uniqueUsernameSpec = new UniqueUsernameSpecification(userRepository);
-    usernameEmptySpec = new UsernameEmptySpecification();
-    passwordEmptySpec = new PasswordEmptySpecification();
+    uniqueUsernameSpec = new UserUniqueUsernameSpecification(userRepository);
+    usernameEmptySpec = new UserUsernameEmptySpecification();
+    passwordEmptySpec = new UserPasswordEmptySpecification();
     userService = new UserService(
       userRepository,
       uniqueUsernameSpec,
