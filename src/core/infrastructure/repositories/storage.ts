@@ -16,4 +16,12 @@ export default class StorageRepositoryImpl implements StorageRepository {
   save(storage: Storage): Promise<Storage> {
     return this.client.setItem(storage.id, storage);
   }
+
+  async getAll(): Promise<Storage[]> {
+    const storageItems: Storage[] = [];
+    await this.client.iterate((value) => {
+      storageItems.push(value as Storage);
+    });
+    return storageItems;
+  }
 }

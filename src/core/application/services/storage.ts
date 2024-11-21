@@ -19,4 +19,8 @@ export default class StorageService {
 
     return this.storageRepository.save(storage);
   }
+
+  async getAll(): Promise<Storage[]> {
+    return this.storageRepository.getAll();
+  }
 }
