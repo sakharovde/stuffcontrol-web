@@ -4,7 +4,7 @@ import Storage from '../../../domain/models/storage.ts';
 export default class GetAllStoragesUseCase {
   constructor(private readonly storageService: StorageService) {}
 
-  execute(): Promise<Storage[]> {
+  execute = (): Promise<Storage[]> => {
     return this.storageService.getAll();
-  }
+  };
 }

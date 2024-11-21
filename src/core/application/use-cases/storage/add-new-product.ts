@@ -10,13 +10,13 @@ export default class AddNewProductToStorageUseCase {
     private readonly storageItemService: StorageItemService
   ) {}
 
-  async execute(
+  execute = async (
     storageId: Storage['id'],
     productName: Product['name'],
     quantityChange: StorageItem['quantity']
-  ): Promise<StorageItem> {
+  ): Promise<StorageItem> => {
     const product = await this.productService.create(productName);
 
     return this.storageItemService.changeQuantity(storageId, product.id, quantityChange);
-  }
+  };
 }

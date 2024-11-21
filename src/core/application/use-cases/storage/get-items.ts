@@ -4,7 +4,7 @@ import StorageItem from '../../../domain/models/storage-item.ts';
 export default class GetStorageItemsUseCase {
   constructor(private readonly storageItemService: StorageItemService) {}
 
-  async execute(storageId: Storage['id']): Promise<StorageItem[]> {
+  execute = async (storageId: Storage['id']): Promise<StorageItem[]> => {
     return this.storageItemService.getAll(storageId);
-  }
+  };
 }

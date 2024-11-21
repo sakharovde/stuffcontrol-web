@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import * as bcrypt from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
 import UserRepository from '../../domain/repositories/user.ts';
 import UserUniqueUsernameSpecification from '../../domain/specifications/user/username-unique.ts';
 import User from '../../domain/models/user.ts';
@@ -15,14 +15,12 @@ export default class UserService {
   ) {}
 
   async registerUser(username: string, password: string): Promise<User> {
-    const isUsernameEmpty =
-      await this.usernameEmptySpec.isSatisfiedBy(username);
+    const isUsernameEmpty = await this.usernameEmptySpec.isSatisfiedBy(username);
     if (isUsernameEmpty) {
       throw new Error('Username cannot be empty');
     }
 
-    const isPasswordEmpty =
-      await this.passwordEmptySpec.isSatisfiedBy(password);
+    const isPasswordEmpty = await this.passwordEmptySpec.isSatisfiedBy(password);
     if (isPasswordEmpty) {
       throw new Error('Password cannot be empty');
     }
@@ -32,7 +30,7 @@ export default class UserService {
       throw new Error('Username is already taken');
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await Buffer.from(password).toString('base64');
     const user = new User(uuidv4(), username, passwordHash);
 
     await this.userRepository.save(user);

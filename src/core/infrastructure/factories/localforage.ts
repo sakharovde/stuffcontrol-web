@@ -67,7 +67,8 @@ LocalForage.defineDriver(mapDriver);
 export default class LocalForageFactory {
   static createInstance(config: LocalForageConfig): LocalForage {
     return LocalForage.createInstance({
-      driver: process.env.NODE_ENV === 'test' ? 'mapDriver' : undefined,
+      driver: 'mapDriver',
+      // driver: process.env.NODE_ENV === 'test' ? 'mapDriver' : undefined,
       name: config.name,
       storeName: config.storeName,
       description: config.description,
