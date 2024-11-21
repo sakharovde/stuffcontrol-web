@@ -14,6 +14,8 @@ import ProductService from './application/services/product.ts';
 import StorageItemService from './application/services/storage-item.ts';
 import StorageItemRepositoryImpl from './infrastructure/repositories/storage-item.ts';
 import { StorageTransactionRepositoryImpl } from './infrastructure/repositories/storage-transaction.ts';
+import ProductNameEmptySpecification from './domain/specifications/product/name-empty.ts';
+import ChangeStorageProductQuantityUseCase from './application/use-cases/storage/change-product-quantity.ts';
 
 export default class Core {
   private readonly repositories = {
@@ -25,6 +27,9 @@ export default class Core {
   };
 
   private readonly specifications = {
+    product: {
+      nameEmpty: new ProductNameEmptySpecification(),
+    },
     storage: {
       nameEmpty: new StorageNameEmptySpecification(),
     },
@@ -36,7 +41,7 @@ export default class Core {
   };
 
   private readonly services = {
-    product: new ProductService(this.repositories.product),
+    product: new ProductService(this.repositories.product, this.specifications.product.nameEmpty),
     storage: new StorageService(this.repositories.storage, this.specifications.storage.nameEmpty),
     storageItem: new StorageItemService(this.repositories.storageItem, this.repositories.storageTransaction),
     user: new UserService(
@@ -51,6 +56,7 @@ export default class Core {
     storage: {
       create: new CreateStorageUseCase(this.services.storage),
       addNewProduct: new AddNewProductToStorageUseCase(this.services.product, this.services.storageItem),
+      changeProductQuantity: new ChangeStorageProductQuantityUseCase(this.services.storageItem),
     },
     user: {
       register: new RegisterUserUseCase(this.services.user),
