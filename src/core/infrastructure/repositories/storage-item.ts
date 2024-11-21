@@ -37,7 +37,7 @@ export default class StorageItemRepositoryImpl implements StorageItemRepository 
     return this.client.removeItem(storageItem.id);
   }
 
-  private async getAll(): Promise<StorageItem[]> {
+  async getAll(): Promise<StorageItem[]> {
     const storageItems: StorageItem[] = [];
     await this.client.iterate((value) => {
       storageItems.push(value as StorageItem);

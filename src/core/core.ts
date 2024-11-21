@@ -17,6 +17,7 @@ import { StorageTransactionRepositoryImpl } from './infrastructure/repositories/
 import ProductNameEmptySpecification from './domain/specifications/product/name-empty.ts';
 import ChangeStorageProductQuantityUseCase from './application/use-cases/storage/change-product-quantity.ts';
 import GetAllStoragesUseCase from './application/use-cases/storage/get-all.ts';
+import GetStorageItemsUseCase from './application/use-cases/storage/get-items.ts';
 
 export default class Core {
   private readonly repositories = {
@@ -58,7 +59,8 @@ export default class Core {
       create: new CreateStorageUseCase(this.services.storage),
       addNewProduct: new AddNewProductToStorageUseCase(this.services.product, this.services.storageItem),
       changeProductQuantity: new ChangeStorageProductQuantityUseCase(this.services.storageItem),
-      getAllStorages: new GetAllStoragesUseCase(this.services.storage),
+      getAll: new GetAllStoragesUseCase(this.services.storage),
+      getItems: new GetStorageItemsUseCase(this.services.storageItem),
     },
     user: {
       register: new RegisterUserUseCase(this.services.user),

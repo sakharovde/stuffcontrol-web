@@ -21,6 +21,10 @@ export default class StorageItemService {
     return this.storageItemRepository.save(storageItem);
   }
 
+  async getAll(storageId: Storage['id']): Promise<StorageItem[]> {
+    return this.storageItemRepository.findAllByStorageId(storageId);
+  }
+
   async changeQuantity(
     storageId: Storage['id'],
     productId: Product['id'],
