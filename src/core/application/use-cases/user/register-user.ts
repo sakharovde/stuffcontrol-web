@@ -1,5 +1,5 @@
-import UserService from '../services/user.ts';
-import User from '../../domain/models/user.ts';
+import UserService from '../../services/user.ts';
+import User from '../../../domain/models/user.ts';
 
 export default class RegisterUserUseCase {
   constructor(private userService: UserService) {}

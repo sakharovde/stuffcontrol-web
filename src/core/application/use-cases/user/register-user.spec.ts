@@ -1,11 +1,11 @@
 import RegisterUserUseCase from './register-user.ts';
-import UserService from '../services/user.ts';
-import UserRepository from '../../domain/repositories/user.ts';
-import UniqueUsernameSpecification from '../../domain/specifications/user/username-unique.ts';
-import UserRepositoryImpl from '../../infrastructure/repositories/user.ts';
-import generateUser from '../../domain/models/__test__/generateUser.ts';
-import UsernameEmptySpecification from '../../domain/specifications/user/username-empty.ts';
-import PasswordEmptySpecification from '../../domain/specifications/user/password-empty.ts';
+import UserService from '../../services/user.ts';
+import UserRepository from '../../../domain/repositories/user.ts';
+import UniqueUsernameSpecification from '../../../domain/specifications/user/username-unique.ts';
+import UserRepositoryImpl from '../../../infrastructure/repositories/user.ts';
+import generateUser from '../../../domain/models/__test__/generateUser.ts';
+import UsernameEmptySpecification from '../../../domain/specifications/user/username-empty.ts';
+import PasswordEmptySpecification from '../../../domain/specifications/user/password-empty.ts';
 
 describe('RegisterUserUseCase', () => {
   let userRepository: UserRepository;
