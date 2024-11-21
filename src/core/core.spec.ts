@@ -7,21 +7,6 @@ describe('Core', () => {
     core = new Core();
   });
 
-  describe('storage.create', () => {
-    it('creates storage successfully', async () => {
-      const result = await core.useCases.storage.create.execute('storageName');
-      expect(result).toEqual(
-        expect.objectContaining({
-          name: 'storageName',
-        })
-      );
-    });
-
-    it('throws an error when storage name is empty', async () => {
-      await expect(core.useCases.storage.create.execute('')).rejects.toThrow('Storage name cannot be empty');
-    });
-  });
-
   describe('storage.addNewProduct', () => {
     it('adds a new product to storage successfully', async () => {
       const result = await core.useCases.storage.addNewProduct.execute('storageId', 'productName', 10);
@@ -42,6 +27,38 @@ describe('Core', () => {
       await expect(core.useCases.storage.addNewProduct.execute('storageId', 'productName', -1)).rejects.toThrow(
         'Quantity cannot be negative'
       );
+    });
+  });
+
+  describe('storage.changeProductQuantity', () => {
+    it('changes product quantity successfully', async () => {
+      const result = await core.useCases.storage.changeProductQuantity.execute('storageId', 'productId', 10);
+      expect(result).toEqual(
+        expect.objectContaining({
+          quantity: 10,
+        })
+      );
+    });
+
+    it('throws an error when quantity is negative', async () => {
+      await expect(core.useCases.storage.changeProductQuantity.execute('storageId', 'productId', -1)).rejects.toThrow(
+        'Quantity cannot be negative'
+      );
+    });
+  });
+
+  describe('storage.create', () => {
+    it('creates storage successfully', async () => {
+      const result = await core.useCases.storage.create.execute('storageName');
+      expect(result).toEqual(
+        expect.objectContaining({
+          name: 'storageName',
+        })
+      );
+    });
+
+    it('throws an error when storage name is empty', async () => {
+      await expect(core.useCases.storage.create.execute('')).rejects.toThrow('Storage name cannot be empty');
     });
   });
 
