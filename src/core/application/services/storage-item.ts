@@ -30,7 +30,7 @@ export default class StorageItemService {
     const newQuantity = storageItem ? storageItem.quantity + quantityChange : quantityChange;
 
     if (newQuantity < 0) {
-      throw new Error('Cannot decrease quantity below 0');
+      throw new Error('Quantity cannot be negative');
     }
 
     if (quantityChange !== 0) {
