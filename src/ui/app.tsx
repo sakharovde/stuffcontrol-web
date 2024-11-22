@@ -6,11 +6,13 @@ import ChangeStorageWidget from './widgets/change-storage-widget.tsx';
 import StorageWidget from './widgets/storage-widget.tsx';
 import CoreContext from './core-context.ts';
 import { useQuery } from '@tanstack/react-query';
+import ChangeStorageItemWidget from './widgets/change-storage-item-widget.tsx';
 
 const App: FC = () => {
   let navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const storageId = searchParams.get('storageId');
+  const productId = searchParams.get('productId');
   const mode = searchParams.get('mode');
 
   const core = useContext(CoreContext);
@@ -36,6 +38,26 @@ const App: FC = () => {
   }
 
   const activeStorage = storagesQuery.data?.find((storage) => storage.id === storageId);
+
+  if (activeStorage && productId === 'new') {
+    return (
+      <LayoutWidget
+        backText={activeStorage.name}
+        onBack={() => {
+          searchParams.delete('productId');
+          navigate({ search: searchParams.toString() });
+        }}
+      >
+        <ChangeStorageItemWidget
+          storage={activeStorage}
+          onSuccess={() => {
+            searchParams.delete('productId');
+            navigate({ search: searchParams.toString() });
+          }}
+        />
+      </LayoutWidget>
+    );
+  }
 
   if (activeStorage && mode === 'edit') {
     return (
@@ -68,7 +90,10 @@ const App: FC = () => {
       >
         <StorageWidget
           data={activeStorage}
-          onClickAddProduct={() => console.log('Add product')}
+          onClickAddProduct={() => {
+            searchParams.set('productId', 'new');
+            navigate({ search: searchParams.toString() });
+          }}
           onClickEditStorage={() => {
             searchParams.set('mode', 'edit');
             navigate({ search: searchParams.toString() });
