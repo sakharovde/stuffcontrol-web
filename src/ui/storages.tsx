@@ -21,7 +21,7 @@ const Storages: FC = () => {
 
   return (
     <div>
-      <h3>Add new storage</h3>
+      <h3 className='text-xl font-semibold'>Add new storage</h3>
       <div>
         <Formik initialValues={{ name: '' }} onSubmit={handleSubmitStorage}>
           {({ values, handleChange, handleSubmit }) => (
@@ -32,8 +32,14 @@ const Storages: FC = () => {
           )}
         </Formik>
       </div>
-      <h3>Storages</h3>
-      <div>{storagesQuery.data?.map((storage) => <div key={storage.id}>{storage.name}</div>)}</div>
+      <h3 className='text-xl font-semibold'>Storages</h3>
+      <div className='flex gap-5 flex-col'>
+        {storagesQuery.data?.map((storage) => (
+          <div key={storage.id} className='border'>
+            {storage.name}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
