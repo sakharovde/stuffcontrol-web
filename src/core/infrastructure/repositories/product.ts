@@ -4,9 +4,9 @@ import Product from '../../domain/models/product.ts';
 
 export default class ProductRepositoryImpl implements ProductRepository {
   private readonly client = LocalForageFactory.createInstance({
-    name: 'storages',
-    storeName: 'storages',
-    description: 'Database for storages',
+    name: 'products',
+    storeName: 'v1',
+    description: 'Database for products',
   });
 
   async findById(id: string): Promise<Product | null> {

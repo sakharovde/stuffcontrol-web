@@ -5,7 +5,7 @@ import LocalForageFactory from '../factories/localforage.ts';
 export default class UserRepositoryImpl implements UserRepository {
   private readonly client = LocalForageFactory.createInstance({
     name: 'users',
-    storeName: 'users',
+    storeName: 'v1',
     description: 'Database for users',
   });
 

@@ -5,7 +5,7 @@ import Storage from '../../domain/models/storage.ts';
 export default class StorageRepositoryImpl implements StorageRepository {
   private readonly client = LocalForageFactory.createInstance({
     name: 'storages',
-    storeName: 'storages',
+    storeName: 'v1',
     description: 'Database for storages',
   });
 

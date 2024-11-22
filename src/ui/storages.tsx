@@ -1,11 +1,12 @@
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Formik } from 'formik';
-import Core from '../core/core.ts';
-
-const core = new Core();
+import CoreContext from './core-context.ts';
+import { Storage } from './storage.tsx';
 
 const Storages: FC = () => {
+  const core = useContext(CoreContext);
+
   const queryClient = useQueryClient();
   const storagesQuery = useQuery({ queryKey: ['storages'], queryFn: core.useCases.storage.getAll.execute });
   const createStorageMutation = useMutation({
@@ -45,14 +46,7 @@ const Storages: FC = () => {
       <h3 className='text-xl font-semibold'>Storages</h3>
       <div className='flex gap-5 flex-col'>
         {storagesQuery.data?.map((storage) => (
-          <div key={storage.id} className='border'>
-            <div className='flex justify-between'>
-              <div>{storage.name}</div>
-              <div className='cursor-pointer text-red-400' onClick={handleRemoveStorage(storage.id)}>
-                remove
-              </div>
-            </div>
-          </div>
+          <Storage key={storage.id} data={storage} onRemove={handleRemoveStorage(storage.id)} />
         ))}
       </div>
     </div>

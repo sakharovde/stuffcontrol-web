@@ -5,7 +5,7 @@ import LocalForageFactory from '../factories/localforage.ts';
 export class StorageTransactionRepositoryImpl implements StorageTransactionRepository {
   private readonly client = LocalForageFactory.createInstance({
     name: 'storage-transactions',
-    storeName: 'storage-transactions',
+    storeName: 'v1',
     description: 'Database for storage items',
   });
 

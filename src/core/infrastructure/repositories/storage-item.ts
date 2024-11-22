@@ -5,7 +5,7 @@ import StorageItemRepository from '../../domain/repositories/storage-item.ts';
 export default class StorageItemRepositoryImpl implements StorageItemRepository {
   private readonly client = LocalForageFactory.createInstance({
     name: 'storage-items',
-    storeName: 'storage-items',
+    storeName: 'v1',
     description: 'Database for storage items',
   });
 
