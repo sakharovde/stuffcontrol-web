@@ -20,8 +20,19 @@ const ChangeStorageWidget: FC<Props> = (props) => {
       props.onSuccess();
     },
   });
+  const updateStorageMutation = useMutation({
+    mutationFn: core.useCases.storage.update.execute,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['storages'] });
+      props.onSuccess();
+    },
+  });
 
   const handleSubmitStorage = (values: { name: string }) => {
+    if (props.data) {
+      updateStorageMutation.mutate({ id: props.data.id, name: values.name });
+      return;
+    }
     createStorageMutation.mutate(values.name);
   };
 

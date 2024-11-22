@@ -20,6 +20,7 @@ import GetAllStoragesUseCase from './application/use-cases/storage/get-all.ts';
 import GetStorageItemsUseCase from './application/use-cases/storage/get-items.ts';
 import RemoveStorageUseCase from './application/use-cases/storage/remove.ts';
 import GetProductUseCase from './application/use-cases/product/get.ts';
+import UpdateStorageUseCase from './application/use-cases/storage/update.ts';
 
 export default class Core {
   private readonly repositories = {
@@ -67,6 +68,7 @@ export default class Core {
       getAll: new GetAllStoragesUseCase(this.services.storage),
       getItems: new GetStorageItemsUseCase(this.services.storageItem),
       remove: new RemoveStorageUseCase(this.services.storage),
+      update: new UpdateStorageUseCase(this.services.storage),
     },
     user: {
       register: new RegisterUserUseCase(this.services.user),

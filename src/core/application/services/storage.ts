@@ -24,6 +24,10 @@ export default class StorageService {
     return this.storageRepository.getAll();
   }
 
+  update(storage: Storage): Promise<Storage> {
+    return this.storageRepository.save(storage);
+  }
+
   remove(id: Storage['id']): Promise<void> {
     return this.storageRepository.remove(id);
   }
