@@ -1,18 +1,53 @@
 import { FC, useContext } from 'react';
-import StorageModel from '../core/domain/models/storage.ts';
+import Storage from '../../core/domain/models/storage.ts';
+import CoreContext from '../core-context.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import CoreContext from './core-context.ts';
-import StorageItem from './storage-item.tsx';
 import { Formik } from 'formik';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import StorageItem from '../../core/domain/models/storage-item.ts';
 
-type Props = {
-  data: StorageModel;
-  onRemove: () => void;
+type StorageItemWidgetProps = {
+  data: StorageItem;
+  onChangeQuantity: (quantityChange: number) => void;
 };
 
-export const Storage: FC<Props> = (props) => {
+const StorageItemWidget: FC<StorageItemWidgetProps> = (props) => {
+  const core = useContext(CoreContext);
+  const productQuery = useQuery({
+    queryKey: ['products', props.data.productId],
+    queryFn: () => core.useCases.product.get.execute(props.data.productId),
+  });
+
+  if (!productQuery.data) {
+    return null;
+  }
+
+  const increment = () => {
+    props.onChangeQuantity(1);
+  };
+
+  const decrement = () => {
+    props.onChangeQuantity(-1);
+  };
+
+  return (
+    <div className='flex justify-between'>
+      <div>{productQuery.data.name}</div>
+      <div className='flex gap-3'>
+        <button onClick={decrement}>-</button>
+        <div>{props.data.quantity}</div>
+        <button onClick={increment}>+</button>
+      </div>
+    </div>
+  );
+};
+
+type Props = {
+  data: Storage;
+  onClickEditStorage: () => void;
+  onClickAddProduct: () => void;
+};
+
+const StorageWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
 
   const queryKey = ['storage-items', props.data.id];
@@ -33,17 +68,13 @@ export const Storage: FC<Props> = (props) => {
   });
 
   return (
-    <div className='border'>
-      <div className='flex justify-between'>
-        <div>{props.data.name}</div>
-        <div className='cursor-pointer text-red-400' onClick={props.onRemove}>
-          <FontAwesomeIcon icon={faTrashCan} className='text-red-400' />
-        </div>
-      </div>
+    <div>
+      <h3 className='text-xl font-semibold px-3'>{props.data.name}</h3>
+
       <div className='text-gray-400'>Items</div>
       <div>
         {itemsQuery.data?.map((item) => (
-          <StorageItem
+          <StorageItemWidget
             key={item.id}
             data={item}
             onChangeQuantity={(quantityChange) => {
@@ -63,7 +94,7 @@ export const Storage: FC<Props> = (props) => {
             addNewItemMutation.mutate({
               storageId: props.data.id,
               productName: values.name,
-              quantityChange: values.quantity,
+              quantity: values.quantity,
             });
           }}
         >
@@ -82,6 +113,17 @@ export const Storage: FC<Props> = (props) => {
           )}
         </Formik>
       </div>
+
+      <div className='absolute bottom-0 left-0 h-10 bg-gray-100 w-full flex justify-between items-center px-3'>
+        <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickEditStorage}>
+          <span>Edit storage</span>
+        </button>
+        <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickAddProduct}>
+          <span>Add product</span>
+        </button>
+      </div>
     </div>
   );
 };
+
+export default StorageWidget;

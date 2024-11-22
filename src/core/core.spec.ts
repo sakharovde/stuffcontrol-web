@@ -9,7 +9,11 @@ describe('Core', () => {
 
   describe('storage.addNewProduct', () => {
     it('adds a new product to storage successfully', async () => {
-      const result = await core.useCases.storage.addNewProduct.execute('storageId', 'productName', 10);
+      const result = await core.useCases.storage.addNewProduct.execute({
+        storageId: 'storageId',
+        productName: 'productName',
+        quantity: 10,
+      });
       expect(result).toEqual(
         expect.objectContaining({
           quantity: 10,
@@ -18,21 +22,29 @@ describe('Core', () => {
     });
 
     it('throws an error when product name is empty', async () => {
-      await expect(core.useCases.storage.addNewProduct.execute('storageId', '', 10)).rejects.toThrow(
-        'Product name cannot be empty'
-      );
+      await expect(
+        core.useCases.storage.addNewProduct.execute({ storageId: 'storageId', productName: '', quantity: 10 })
+      ).rejects.toThrow('Product name cannot be empty');
     });
 
     it('throws an error when quantity is negative', async () => {
-      await expect(core.useCases.storage.addNewProduct.execute('storageId', 'productName', -1)).rejects.toThrow(
-        'Quantity cannot be negative'
-      );
+      await expect(
+        core.useCases.storage.addNewProduct.execute({
+          storageId: 'storageId',
+          productName: 'productName',
+          quantity: -1,
+        })
+      ).rejects.toThrow('Quantity cannot be negative');
     });
   });
 
   describe('storage.changeProductQuantity', () => {
     it('changes product quantity successfully', async () => {
-      const result = await core.useCases.storage.changeProductQuantity.execute('storageId', 'productId', 10);
+      const result = await core.useCases.storage.changeProductQuantity.execute({
+        storageId: 'storageId',
+        productId: 'productId',
+        quantityChange: 10,
+      });
       expect(result).toEqual(
         expect.objectContaining({
           quantity: 10,
@@ -41,9 +53,13 @@ describe('Core', () => {
     });
 
     it('throws an error when quantity is negative', async () => {
-      await expect(core.useCases.storage.changeProductQuantity.execute('storageId', 'productId', -1)).rejects.toThrow(
-        'Quantity cannot be negative'
-      );
+      await expect(
+        core.useCases.storage.changeProductQuantity.execute({
+          storageId: 'storageId',
+          productId: 'productId',
+          quantityChange: -1,
+        })
+      ).rejects.toThrow('Quantity cannot be negative');
     });
   });
 

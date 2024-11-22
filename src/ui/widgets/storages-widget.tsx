@@ -1,55 +1,82 @@
 import { FC, useContext } from 'react';
 import CoreContext from '../core-context.ts';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Formik } from 'formik';
-import { Storage } from '../storage.tsx';
+import { useQuery } from '@tanstack/react-query';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import Storage from '../../core/domain/models/storage.ts';
+import StorageItem from '../../core/domain/models/storage-item.ts';
 
-const StoragesWidget: FC = () => {
+type StorageItemProps = {
+  data: StorageItem;
+};
+const StorageItemWidget: FC<StorageItemProps> = (props) => {
   const core = useContext(CoreContext);
-
-  const queryClient = useQueryClient();
-  const storagesQuery = useQuery({ queryKey: ['storages'], queryFn: core.useCases.storage.getAll.execute });
-  const createStorageMutation = useMutation({
-    mutationFn: core.useCases.storage.create.execute,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['storages'] });
-    },
-  });
-  const removeStorageMutation = useMutation({
-    mutationFn: core.useCases.storage.remove.execute,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['storages'] });
-    },
+  const productQuery = useQuery({
+    queryKey: ['products', props.data.productId],
+    queryFn: () => core.useCases.product.get.execute(props.data.productId),
   });
 
-  const handleSubmitStorage = (values: { name: string }) => {
-    createStorageMutation.mutate(values.name);
-  };
-
-  const handleRemoveStorage = (id: string) => () => {
-    removeStorageMutation.mutate(id);
-  };
+  if (!productQuery.data) {
+    return null;
+  }
 
   return (
-    <div>
-      <h3 className='text-xl font-semibold'>Add new storage</h3>
-      <div>
-        <Formik initialValues={{ name: '' }} onSubmit={handleSubmitStorage}>
-          {({ values, handleChange, handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
-              <input type='text' name='name' value={values.name} onChange={handleChange} placeholder='Name' />
-              <button type='submit'>Add</button>
-            </form>
-          )}
-        </Formik>
-      </div>
-      <h3 className='text-xl font-semibold'>Storages</h3>
-      <div className='flex gap-5 flex-col'>
-        {storagesQuery.data?.map((storage) => (
-          <Storage key={storage.id} data={storage} onRemove={handleRemoveStorage(storage.id)} />
-        ))}
-      </div>
+    <div className='flex text-xs justify-between text-gray-400'>
+      <div>{productQuery.data.name}</div>
+      <div>{props.data.quantity}</div>
     </div>
+  );
+};
+
+type StorageCardWidgetProps = {
+  data: Storage;
+  onClick: () => void;
+};
+
+const StorageCardWidget: FC<StorageCardWidgetProps> = (props) => {
+  const core = useContext(CoreContext);
+
+  const queryKey = ['storage-items', props.data.id];
+  const itemsQuery = useQuery({ queryKey, queryFn: () => core.useCases.storage.getItems.execute(props.data.id) });
+
+  return (
+    <div className='border rounded-md p-3 cursor-pointer' onClick={props.onClick}>
+      <div className='font-semibold'>{props.data.name}</div>
+      {!itemsQuery.data && <div className='text-gray-400'>Empty</div>}
+      {itemsQuery.data && (
+        <div>
+          {itemsQuery.data.map((item) => (
+            <StorageItemWidget key={item.id} data={item} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+type StoragesWidgetProps = {
+  data?: Storage[];
+  onClickAddStorage: () => void;
+  onClickStorageCard: (storageId: Storage['id']) => void;
+};
+
+const StoragesWidget: FC<StoragesWidgetProps> = (props) => {
+  return (
+    <>
+      <div className='p-3'>
+        <div className='flex gap-5 flex-col'>
+          {props.data?.map((storage) => (
+            <StorageCardWidget key={storage.id} data={storage} onClick={() => props.onClickStorageCard(storage.id)} />
+          ))}
+        </div>
+      </div>
+      <div className='absolute bottom-0 left-0 h-10 bg-gray-100 w-full flex items-center px-3'>
+        <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickAddStorage}>
+          <FontAwesomeIcon icon={faCirclePlus} />
+          <span>Add storage</span>
+        </button>
+      </div>
+    </>
   );
 };
 
