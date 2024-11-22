@@ -1,10 +1,10 @@
 import { FC, useContext } from 'react';
+import CoreContext from '../core-context.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Formik } from 'formik';
-import CoreContext from './core-context.ts';
-import { Storage } from './storage.tsx';
+import { Storage } from '../storage.tsx';
 
-const Storages: FC = () => {
+const StoragesWidget: FC = () => {
   const core = useContext(CoreContext);
 
   const queryClient = useQueryClient();
@@ -53,4 +53,4 @@ const Storages: FC = () => {
   );
 };
 
-export default Storages;
+export default StoragesWidget;
