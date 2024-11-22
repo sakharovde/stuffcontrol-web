@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import CoreContext from './core-context.ts';
 import StorageItem from './storage-item.tsx';
 import { Formik } from 'formik';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   data: StorageModel;
@@ -35,7 +37,7 @@ export const Storage: FC<Props> = (props) => {
       <div className='flex justify-between'>
         <div>{props.data.name}</div>
         <div className='cursor-pointer text-red-400' onClick={props.onRemove}>
-          remove
+          <FontAwesomeIcon icon={faTrashCan} className='text-red-400' />
         </div>
       </div>
       <div className='text-gray-400'>Items</div>
