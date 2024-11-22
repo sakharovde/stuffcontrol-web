@@ -8,8 +8,8 @@ export default class ChangeStorageProductQuantityUseCase {
   execute = (args: {
     storageId: Storage['id'];
     productId: Product['id'];
-    quantityChange: StorageItem['quantity'];
+    quantity: StorageItem['quantity'];
   }): Promise<StorageItem> => {
-    return this.storageItemService.changeQuantity(args.storageId, args.productId, args.quantityChange);
+    return this.storageItemService.changeQuantity(args.storageId, args.productId, args.quantity);
   };
 }

@@ -28,27 +28,27 @@ export default class StorageItemService {
   async changeQuantity(
     storageId: Storage['id'],
     productId: Product['id'],
-    quantityChange: StorageItem['quantity']
+    quantity: StorageItem['quantity']
   ): Promise<StorageItem> {
     let storageItem = await this.storageItemRepository.findByStorageIdAndProductId(storageId, productId);
-    const newQuantity = storageItem ? storageItem.quantity + quantityChange : quantityChange;
 
-    if (newQuantity < 0) {
+    if (quantity < 0) {
       throw new Error('Quantity cannot be negative');
     }
 
-    if (quantityChange !== 0) {
-      const transactionType: StorageTransaction['transactionType'] = quantityChange > 0 ? 'ADD' : 'REMOVE';
+    if (quantity !== 0) {
+      const quantityDelta = quantity - (storageItem?.quantity || 0);
+      const transactionType: StorageTransaction['transactionType'] = quantityDelta > 0 ? 'ADD' : 'REMOVE';
       await this.storageTransactionRepository.save(
-        new StorageTransaction(uuidv4(), storageId, productId, quantityChange, transactionType)
+        new StorageTransaction(uuidv4(), storageId, productId, quantityDelta, transactionType)
       );
     }
 
     if (!storageItem) {
-      storageItem = await this.create(storageId, productId, newQuantity);
+      storageItem = await this.create(storageId, productId, quantity);
     }
 
-    storageItem.quantity = newQuantity;
+    storageItem.quantity = quantity;
 
     return this.storageItemRepository.save(storageItem);
   }

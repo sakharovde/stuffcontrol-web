@@ -65,7 +65,7 @@ const ChangeStorageWidget: FC<Props> = (props) => {
             />
 
             <div className='absolute bottom-0 left-0 h-10 bg-gray-100 w-full flex items-center justify-between px-3'>
-              {!!props.data ? (
+              {props.data ? (
                 <button
                   className='flex items-center gap-1 text-red-600 font-normal'
                   onClick={handleRemoveStorage(props.data.id)}

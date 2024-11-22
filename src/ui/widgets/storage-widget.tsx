@@ -32,6 +32,7 @@ type Props = {
   data: Storage;
   onClickEditStorage: () => void;
   onClickAddProduct: () => void;
+  onClickEditProduct: (storageItemId: StorageItem['id']) => void;
 };
 
 const StorageWidget: FC<Props> = (props) => {
@@ -46,7 +47,7 @@ const StorageWidget: FC<Props> = (props) => {
 
       <div>
         {itemsQuery.data?.map((item, index) => (
-          <div key={item.id} className={cn('px-3', 'cursor-pointer')}>
+          <div key={item.id} className={cn('px-3', 'cursor-pointer')} onClick={() => props.onClickEditProduct(item.id)}>
             <div className={cn('py-5', { 'border-t': !!index })}>
               <StorageItemWidget data={item} />
             </div>

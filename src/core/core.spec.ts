@@ -43,7 +43,7 @@ describe('Core', () => {
       const result = await core.useCases.storage.changeProductQuantity.execute({
         storageId: 'storageId',
         productId: 'productId',
-        quantityChange: 10,
+        quantity: 10,
       });
       expect(result).toEqual(
         expect.objectContaining({
@@ -57,7 +57,7 @@ describe('Core', () => {
         core.useCases.storage.changeProductQuantity.execute({
           storageId: 'storageId',
           productId: 'productId',
-          quantityChange: -1,
+          quantity: -1,
         })
       ).rejects.toThrow('Quantity cannot be negative');
     });

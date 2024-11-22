@@ -4,6 +4,7 @@ import CoreContext from '../core-context.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Formik } from 'formik';
 import Storage from '../../core/domain/models/storage.ts';
+import cn from 'classnames';
 
 type Props = {
   data?: StorageItem;
@@ -57,7 +58,7 @@ const ChangeStorageItemWidget: FC<Props> = (props) => {
           changeProductQuantityMutation.mutate({
             storageId: props.data.storageId,
             productId: props.data.productId,
-            quantityChange: values.quantity,
+            quantity: values.quantity,
           });
         }}
       >
@@ -69,7 +70,8 @@ const ChangeStorageItemWidget: FC<Props> = (props) => {
               value={values.name}
               onChange={handleChange}
               placeholder='Name'
-              className='mt-5 p-4 text-center bg-gray-100 rounded-md'
+              className={cn('mt-5 p-4 text-center rounded-md', { 'bg-gray-100': !props.data })}
+              disabled={!!props.data}
             />
             <input
               type='number'
