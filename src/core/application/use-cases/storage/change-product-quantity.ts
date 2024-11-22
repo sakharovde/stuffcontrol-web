@@ -5,11 +5,11 @@ import StorageItemService from '../../services/storage-item.ts';
 export default class ChangeStorageProductQuantityUseCase {
   constructor(private readonly storageItemService: StorageItemService) {}
 
-  execute = (
-    storageId: Storage['id'],
-    productId: Product['id'],
-    quantityChange: StorageItem['quantity']
-  ): Promise<StorageItem> => {
-    return this.storageItemService.changeQuantity(storageId, productId, quantityChange);
+  execute = (args: {
+    storageId: Storage['id'];
+    productId: Product['id'];
+    quantityChange: StorageItem['quantity'];
+  }): Promise<StorageItem> => {
+    return this.storageItemService.changeQuantity(args.storageId, args.productId, args.quantityChange);
   };
 }

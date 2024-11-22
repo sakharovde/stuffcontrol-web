@@ -23,6 +23,12 @@ export const Storage: FC<Props> = (props) => {
       queryClient.invalidateQueries({ queryKey });
     },
   });
+  const changeQuantityMutation = useMutation({
+    mutationFn: core.useCases.storage.changeProductQuantity.execute,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
 
   return (
     <div className='border'>
@@ -33,7 +39,21 @@ export const Storage: FC<Props> = (props) => {
         </div>
       </div>
       <div className='text-gray-400'>Items</div>
-      <div>{itemsQuery.data?.map((item) => <StorageItem key={item.id} data={item} />)}</div>
+      <div>
+        {itemsQuery.data?.map((item) => (
+          <StorageItem
+            key={item.id}
+            data={item}
+            onChangeQuantity={(quantityChange) => {
+              changeQuantityMutation.mutate({
+                storageId: props.data.id,
+                productId: item.productId,
+                quantityChange,
+              });
+            }}
+          />
+        ))}
+      </div>
       <div>
         <Formik
           initialValues={{ name: '', quantity: 0 }}

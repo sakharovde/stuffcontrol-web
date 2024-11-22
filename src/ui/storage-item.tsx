@@ -5,6 +5,7 @@ import CoreContext from './core-context.ts';
 
 type Props = {
   data: StorageItemModel;
+  onChangeQuantity: (quantityChange: number) => void;
 };
 
 const StorageItem: FC<Props> = (props) => {
@@ -18,10 +19,22 @@ const StorageItem: FC<Props> = (props) => {
     return null;
   }
 
+  const increment = () => {
+    props.onChangeQuantity(1);
+  };
+
+  const decrement = () => {
+    props.onChangeQuantity(-1);
+  };
+
   return (
     <div className='flex justify-between'>
       <div>{productQuery.data.name}</div>
-      <div>{props.data.quantity}</div>
+      <div className='flex gap-3'>
+        <button onClick={decrement}>-</button>
+        <div>{props.data.quantity}</div>
+        <button onClick={increment}>+</button>
+      </div>
     </div>
   );
 };
