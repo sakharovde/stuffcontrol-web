@@ -18,6 +18,7 @@ import ProductNameEmptySpecification from './domain/specifications/product/name-
 import ChangeStorageProductQuantityUseCase from './application/use-cases/storage/change-product-quantity.ts';
 import GetAllStoragesUseCase from './application/use-cases/storage/get-all.ts';
 import GetStorageItemsUseCase from './application/use-cases/storage/get-items.ts';
+import RemoveStorageUseCase from './application/use-cases/storage/remove.ts';
 
 export default class Core {
   private readonly repositories = {
@@ -61,6 +62,7 @@ export default class Core {
       changeProductQuantity: new ChangeStorageProductQuantityUseCase(this.services.storageItem),
       getAll: new GetAllStoragesUseCase(this.services.storage),
       getItems: new GetStorageItemsUseCase(this.services.storageItem),
+      remove: new RemoveStorageUseCase(this.services.storage),
     },
     user: {
       register: new RegisterUserUseCase(this.services.user),

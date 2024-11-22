@@ -14,9 +14,19 @@ const Storages: FC = () => {
       queryClient.invalidateQueries({ queryKey: ['storages'] });
     },
   });
+  const removeStorageMutation = useMutation({
+    mutationFn: core.useCases.storage.remove.execute,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['storages'] });
+    },
+  });
 
-  const handleSubmitStorage = async (values: { name: string }) => {
+  const handleSubmitStorage = (values: { name: string }) => {
     createStorageMutation.mutate(values.name);
+  };
+
+  const handleRemoveStorage = (id: string) => () => {
+    removeStorageMutation.mutate(id);
   };
 
   return (
@@ -36,7 +46,12 @@ const Storages: FC = () => {
       <div className='flex gap-5 flex-col'>
         {storagesQuery.data?.map((storage) => (
           <div key={storage.id} className='border'>
-            {storage.name}
+            <div className='flex justify-between'>
+              <div>{storage.name}</div>
+              <div className='cursor-pointer text-red-400' onClick={handleRemoveStorage(storage.id)}>
+                remove
+              </div>
+            </div>
           </div>
         ))}
       </div>

@@ -24,4 +24,8 @@ export default class StorageRepositoryImpl implements StorageRepository {
     });
     return storageItems;
   }
+
+  remove(id: Storage['id']): Promise<void> {
+    return this.client.removeItem(id);
+  }
 }
