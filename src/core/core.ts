@@ -19,6 +19,7 @@ import ChangeStorageProductQuantityUseCase from './application/use-cases/storage
 import GetAllStoragesUseCase from './application/use-cases/storage/get-all.ts';
 import GetStorageItemsUseCase from './application/use-cases/storage/get-items.ts';
 import RemoveStorageUseCase from './application/use-cases/storage/remove.ts';
+import GetProductUseCase from './application/use-cases/product/get.ts';
 
 export default class Core {
   private readonly repositories = {
@@ -56,6 +57,9 @@ export default class Core {
   };
 
   public readonly useCases = {
+    product: {
+      get: new GetProductUseCase(this.services.product),
+    },
     storage: {
       create: new CreateStorageUseCase(this.services.storage),
       addNewProduct: new AddNewProductToStorageUseCase(this.services.product, this.services.storageItem),

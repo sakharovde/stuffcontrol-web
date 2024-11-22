@@ -18,4 +18,8 @@ export default class ProductService {
     const product = new Product(uuidv4(), name);
     return this.productRepository.save(product);
   }
+
+  getById = async (id: Product['id']): Promise<Product | null> => {
+    return this.productRepository.findById(id);
+  };
 }
