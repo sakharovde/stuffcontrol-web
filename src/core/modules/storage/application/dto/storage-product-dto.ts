@@ -1,5 +1,5 @@
 import StorageItem from '../../domain/models/storage-item.ts';
-import Product from '../../../product/domain/models/product.ts';
+import Product from '../../domain/models/product.ts';
 
 export default interface StorageProductDto {
   id: Product['id'];

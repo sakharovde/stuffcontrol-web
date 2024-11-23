@@ -1,4 +1,4 @@
-import Product from '../../../product/domain/models/product.ts';
+import Product from '../../domain/models/product.ts';
 import StorageItem from '../../domain/models/storage-item.ts';
 import StorageItemService from '../services/storage-item-service.ts';
 

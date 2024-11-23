@@ -1,7 +1,7 @@
 import StorageItemRepository from '../../domain/repositories/storage-item-repository.ts';
 import StorageItem from '../../domain/models/storage-item.ts';
 import Storage from '../../domain/models/storage.ts';
-import Product from '../../../product/domain/models/product.ts';
+import Product from '../../domain/models/product.ts';
 import { v4 as uuidv4 } from 'uuid';
 import StorageTransactionRepository from '../../domain/repositories/storage-transaction-repository.ts';
 import StorageTransaction from '../../domain/models/storage-transaction.ts';

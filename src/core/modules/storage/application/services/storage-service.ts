@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import StorageNameEmptySpecification from '../../domain/specifications/storage-name-empty-specification.ts';
 import StorageWithProductsDto, { StorageWithProductsDtoFactory } from '../dto/storage-with-products-dto.ts';
 import StorageItemRepository from '../../domain/repositories/storage-item-repository.ts';
-import ProductRepository from '../../../product/domain/repositories/product-repository.ts';
+import ProductRepository from '../../domain/repositories/product-repository.ts';
 
 export default class StorageService {
   constructor(

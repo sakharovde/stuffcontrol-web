@@ -9,17 +9,17 @@ import StorageService from './modules/storage/application/services/storage-servi
 import CreateStorageUseCase from './modules/storage/application/use-cases/create-storage-use-case.ts';
 import StorageNameEmptySpecification from './modules/storage/domain/specifications/storage-name-empty-specification.ts';
 import AddNewProductToStorageUseCase from './modules/storage/application/use-cases/add-new-product-to-storage-use-case.ts';
-import ProductRepositoryImpl from './modules/product/infrastructure/repositories/product-repository.ts';
-import ProductService from './modules/product/application/services/product-service.ts';
+import ProductRepositoryImpl from './modules/storage/infrastructure/repositories/product-repository.ts';
+import ProductService from './modules/storage/application/services/product-service.ts';
 import StorageItemService from './modules/storage/application/services/storage-item-service.ts';
 import StorageItemRepositoryImpl from './modules/storage/infrastructure/repositories/storage-item-repository.ts';
 import { StorageTransactionRepositoryImpl } from './modules/storage/infrastructure/repositories/storage-transaction-repository.ts';
-import ProductNameEmptySpecification from './modules/product/domain/specifications/product-name-empty-specification.ts';
+import ProductNameEmptySpecification from './modules/storage/domain/specifications/product-name-empty-specification.ts';
 import ChangeStorageProductQuantityUseCase from './modules/storage/application/use-cases/change-storage-product-quantity-use-case.ts';
 import GetAllStoragesUseCase from './modules/storage/application/use-cases/get-all-storages-use-case.ts';
 import GetStorageItemsUseCase from './modules/storage/application/use-cases/get-storage-items-use-case.ts';
 import RemoveStorageUseCase from './modules/storage/application/use-cases/remove-storage-use-case.ts';
-import GetProductUseCase from './modules/product/application/use-cases/get-product-use-case.ts';
+import GetProductUseCase from './modules/storage/application/use-cases/get-product-use-case.ts';
 import UpdateStorageUseCase from './modules/storage/application/use-cases/update-storage-use-case.ts';
 import GetStoragesWithProductsUseCase from './modules/storage/application/use-cases/get-storages-with-products-use-case.ts';
 

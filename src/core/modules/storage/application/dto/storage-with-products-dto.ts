@@ -1,6 +1,6 @@
 import Storage from '../../domain/models/storage.ts';
 import StorageItem from '../../domain/models/storage-item.ts';
-import Product from '../../../product/domain/models/product.ts';
+import Product from '../../domain/models/product.ts';
 import StorageProductDto, { StorageProductDtoFactory } from './storage-product-dto.ts';
 
 export default interface StorageWithProductsDto {

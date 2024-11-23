@@ -1,5 +1,5 @@
-import ProductService from '../../../product/application/services/product-service.ts';
-import Product from '../../../product/domain/models/product.ts';
+import ProductService from '../services/product-service.ts';
+import Product from '../../domain/models/product.ts';
 import StorageItem from '../../domain/models/storage-item.ts';
 import Storage from '../../domain/models/storage.ts';
 import StorageItemService from '../services/storage-item-service.ts';

@@ -1,5 +1,5 @@
 import StorageItem from '../models/storage-item.ts';
-import Product from '../../../product/domain/models/product.ts';
+import Product from '../models/product.ts';
 import Storage from '../models/storage.ts';
 
 export default interface StorageItemRepository {
