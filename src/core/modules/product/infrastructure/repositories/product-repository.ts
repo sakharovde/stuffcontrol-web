@@ -26,7 +26,7 @@ export default class ProductRepositoryImpl implements ProductRepository {
     return this.client.removeItem(product.id);
   }
 
-  private async getAll(): Promise<Product[]> {
+  async getAll(): Promise<Product[]> {
     const users: Product[] = [];
     await this.client.iterate((value) => {
       users.push(value as Product);

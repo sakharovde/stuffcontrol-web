@@ -1,52 +1,36 @@
-import { FC, useContext } from 'react';
-import CoreContext from '../core-context.ts';
-import { useQuery } from '@tanstack/react-query';
+import { FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import Storage from '../../core/modules/storage/domain/models/storage.ts';
-import StorageItem from '../../core/modules/storage/domain/models/storage-item.ts';
+import StorageWithProductsDto from '../../core/modules/storage/application/dto/storage-with-products-dto.ts';
+import StorageProductDto from '../../core/modules/storage/application/dto/storage-product-dto.ts';
 
 type StorageItemProps = {
-  data: StorageItem;
+  data: StorageProductDto;
 };
-const StorageItemWidget: FC<StorageItemProps> = (props) => {
-  const core = useContext(CoreContext);
-  const productQuery = useQuery({
-    queryKey: ['products', props.data.productId],
-    queryFn: () => core.useCases.product.get.execute(props.data.productId),
-  });
-
-  if (!productQuery.data) {
-    return null;
-  }
-
+const StorageProductWidget: FC<StorageItemProps> = (props) => {
   return (
     <div className='flex text-xs justify-between text-gray-400'>
-      <div>{productQuery.data.name}</div>
+      <div>{props.data.name}</div>
       <div>{props.data.quantity}</div>
     </div>
   );
 };
 
 type StorageCardWidgetProps = {
-  data: Storage;
+  data: StorageWithProductsDto;
   onClick: () => void;
 };
 
 const StorageCardWidget: FC<StorageCardWidgetProps> = (props) => {
-  const core = useContext(CoreContext);
-
-  const queryKey = ['storage-items', props.data.id];
-  const itemsQuery = useQuery({ queryKey, queryFn: () => core.useCases.storage.getItems.execute(props.data.id) });
-
   return (
     <div className='border rounded-md p-3 cursor-pointer' onClick={props.onClick}>
       <div className='font-semibold'>{props.data.name}</div>
-      {!itemsQuery.data && <div className='text-gray-400'>Empty</div>}
-      {itemsQuery.data && (
+      {!props.data.products.length && <div className='text-gray-400'>Empty</div>}
+      {props.data.products.length && (
         <div>
-          {itemsQuery.data.map((item) => (
-            <StorageItemWidget key={item.id} data={item} />
+          {props.data.products.map((product) => (
+            <StorageProductWidget key={product.id} data={product} />
           ))}
         </div>
       )}
@@ -55,7 +39,7 @@ const StorageCardWidget: FC<StorageCardWidgetProps> = (props) => {
 };
 
 type StoragesWidgetProps = {
-  data?: Storage[];
+  data?: StorageWithProductsDto[];
   onClickAddStorage: () => void;
   onClickStorageCard: (storageId: Storage['id']) => void;
 };

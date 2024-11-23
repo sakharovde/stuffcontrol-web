@@ -16,7 +16,7 @@ const App: FC = () => {
   const mode = searchParams.get('mode');
 
   const core = useContext(CoreContext);
-  const storagesQuery = useQuery({ queryKey: ['storages'], queryFn: core.useCases.storage.getAll.execute });
+  const storagesQuery = useQuery({ queryKey: ['storages'], queryFn: core.useCases.storage.getAllWithProducts.execute });
   const activeStorage = storagesQuery.data?.find((storage) => storage.id === storageId);
 
   const storageItemsQuery = useQuery({

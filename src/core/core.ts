@@ -21,6 +21,7 @@ import GetStorageItemsUseCase from './modules/storage/application/use-cases/get-
 import RemoveStorageUseCase from './modules/storage/application/use-cases/remove-storage-use-case.ts';
 import GetProductUseCase from './modules/product/application/use-cases/get-product-use-case.ts';
 import UpdateStorageUseCase from './modules/storage/application/use-cases/update-storage-use-case.ts';
+import GetStoragesWithProductsUseCase from './modules/storage/application/use-cases/get-storages-with-products-use-case.ts';
 
 export default class Core {
   private readonly repositories = {
@@ -47,7 +48,12 @@ export default class Core {
 
   private readonly services = {
     product: new ProductService(this.repositories.product, this.specifications.product.nameEmpty),
-    storage: new StorageService(this.repositories.storage, this.specifications.storage.nameEmpty),
+    storage: new StorageService(
+      this.repositories.storage,
+      this.repositories.storageItem,
+      this.repositories.product,
+      this.specifications.storage.nameEmpty
+    ),
     storageItem: new StorageItemService(this.repositories.storageItem, this.repositories.storageTransaction),
     user: new UserService(
       this.repositories.user,
@@ -66,6 +72,7 @@ export default class Core {
       addNewProduct: new AddNewProductToStorageUseCase(this.services.product, this.services.storageItem),
       changeProductQuantity: new ChangeStorageProductQuantityUseCase(this.services.storageItem),
       getAll: new GetAllStoragesUseCase(this.services.storage),
+      getAllWithProducts: new GetStoragesWithProductsUseCase(this.services.storage),
       getItems: new GetStorageItemsUseCase(this.services.storageItem),
       remove: new RemoveStorageUseCase(this.services.storage),
       update: new UpdateStorageUseCase(this.services.storage),

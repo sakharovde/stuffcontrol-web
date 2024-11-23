@@ -1,55 +1,43 @@
-import { FC, useContext } from 'react';
-import Storage from '../../core/modules/storage/domain/models/storage.ts';
-import CoreContext from '../core-context.ts';
-import { useQuery } from '@tanstack/react-query';
+import { FC } from 'react';
 import StorageItem from '../../core/modules/storage/domain/models/storage-item.ts';
 import cn from 'classnames';
+import StorageWithProductsDto from '../../core/modules/storage/application/dto/storage-with-products-dto.ts';
+import StorageProductDto from '../../core/modules/storage/application/dto/storage-product-dto.ts';
 
 type StorageItemWidgetProps = {
-  data: StorageItem;
+  data: StorageProductDto;
 };
 
-const StorageItemWidget: FC<StorageItemWidgetProps> = (props) => {
-  const core = useContext(CoreContext);
-  const productQuery = useQuery({
-    queryKey: ['products', props.data.productId],
-    queryFn: () => core.useCases.product.get.execute(props.data.productId),
-  });
-
-  if (!productQuery.data) {
-    return null;
-  }
-
+const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
   return (
     <div className='flex justify-between'>
-      <div>{productQuery.data.name}</div>
+      <div>{props.data.name}</div>
       <div>{props.data.quantity}</div>
     </div>
   );
 };
 
 type Props = {
-  data: Storage;
+  data: StorageWithProductsDto;
   onClickEditStorage: () => void;
   onClickAddProduct: () => void;
   onClickEditProduct: (storageItemId: StorageItem['id']) => void;
 };
 
 const StorageWidget: FC<Props> = (props) => {
-  const core = useContext(CoreContext);
-
-  const queryKey = ['storage-items', props.data.id];
-  const itemsQuery = useQuery({ queryKey, queryFn: () => core.useCases.storage.getItems.execute(props.data.id) });
-
   return (
     <div>
       <h3 className='text-xl font-semibold px-3'>{props.data.name}</h3>
 
       <div>
-        {itemsQuery.data?.map((item, index) => (
-          <div key={item.id} className={cn('px-3', 'cursor-pointer')} onClick={() => props.onClickEditProduct(item.id)}>
+        {props.data.products.map((product, index) => (
+          <div
+            key={product.id}
+            className={cn('px-3', 'cursor-pointer')}
+            onClick={() => props.onClickEditProduct(product.id)}
+          >
             <div className={cn('py-5', { 'border-t': !!index })}>
-              <StorageItemWidget data={item} />
+              <StorageProductWidget data={product} />
             </div>
           </div>
         ))}
