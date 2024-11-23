@@ -3,8 +3,8 @@ import CoreContext from '../core-context.ts';
 import { useQuery } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import Storage from '../../core/domain/models/storage.ts';
-import StorageItem from '../../core/domain/models/storage-item.ts';
+import Storage from '../../core/modules/storage/domain/models/storage.ts';
+import StorageItem from '../../core/modules/storage/domain/models/storage-item.ts';
 
 type StorageItemProps = {
   data: StorageItem;

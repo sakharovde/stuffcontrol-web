@@ -1,8 +1,8 @@
 import { FC, useContext } from 'react';
-import Storage from '../../core/domain/models/storage.ts';
+import Storage from '../../core/modules/storage/domain/models/storage.ts';
 import CoreContext from '../core-context.ts';
 import { useQuery } from '@tanstack/react-query';
-import StorageItem from '../../core/domain/models/storage-item.ts';
+import StorageItem from '../../core/modules/storage/domain/models/storage-item.ts';
 import cn from 'classnames';
 
 type StorageItemWidgetProps = {

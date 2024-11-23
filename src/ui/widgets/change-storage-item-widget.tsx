@@ -1,9 +1,9 @@
 import { FC, useContext } from 'react';
-import StorageItem from '../../core/domain/models/storage-item.ts';
+import StorageItem from '../../core/modules/storage/domain/models/storage-item.ts';
 import CoreContext from '../core-context.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Formik } from 'formik';
-import Storage from '../../core/domain/models/storage.ts';
+import Storage from '../../core/modules/storage/domain/models/storage.ts';
 import cn from 'classnames';
 
 type Props = {
