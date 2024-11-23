@@ -9,7 +9,7 @@ type Props = {
 
 const LayoutWidget: FC<PropsWithChildren<Props>> = (props) => {
   return (
-    <div className='max-w-lg mx-auto h-full relative'>
+    <div className='max-w-lg mx-auto h-full relative bg-white'>
       {!!props.backText && !!props.onBack && (
         <div className='p-3'>
           <button className='flex text-blue-600 gap-2 items-center' onClick={props.onBack}>
