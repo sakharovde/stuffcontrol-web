@@ -28,14 +28,14 @@ const StorageWidget: FC<Props> = (props) => {
     <div>
       <h3 className='text-xl font-semibold px-3'>{props.data.name}</h3>
 
-      <div>
-        {props.data.products.map((product, index) => (
+      <div className='flex flex-col gap-3 mt-5'>
+        {props.data.products.map((product) => (
           <div
             key={product.id}
             className={cn('px-3', 'cursor-pointer')}
             onClick={() => props.onClickEditProduct(product.id)}
           >
-            <div className={cn('py-5', { 'border-t': !!index })}>
+            <div className={cn('py-5', 'px-3', 'rounded-md', 'border')}>
               <StorageProductWidget data={product} />
             </div>
           </div>
