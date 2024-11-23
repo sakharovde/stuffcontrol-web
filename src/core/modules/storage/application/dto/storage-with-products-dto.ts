@@ -18,16 +18,18 @@ export class StorageWithProductsDtoFactory {
     return {
       id: storage.id,
       name: storage.name,
-      products: storageItems.reduce(
-        (acc, storageItem) => {
-          const product = products.find((product) => product.id === storageItem.productId);
+      products: storageItems
+        .filter((storageItem) => storageItem.storageId === storage.id)
+        .reduce(
+          (acc, storageItem) => {
+            const product = products.find((product) => product.id === storageItem.productId);
 
-          if (!product) return acc;
+            if (!product) return acc;
 
-          return [...acc, StorageProductDtoFactory.create(storageItem, product)];
-        },
-        [] as StorageWithProductsDto['products']
-      ),
+            return [...acc, StorageProductDtoFactory.create(storageItem, product)];
+          },
+          [] as StorageWithProductsDto['products']
+        ),
     };
   };
 }

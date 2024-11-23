@@ -6,24 +6,21 @@ import ChangeStorageWidget from './widgets/change-storage-widget.tsx';
 import StorageWidget from './widgets/storage-widget.tsx';
 import CoreContext from './core-context.ts';
 import { useQuery } from '@tanstack/react-query';
-import ChangeStorageItemWidget from './widgets/change-storage-item-widget.tsx';
+import ChangeStorageProductWidget from './widgets/change-storage-product-widget.tsx';
 
 const App: FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const storageId = searchParams.get('storageId');
-  const storageItemId = searchParams.get('storageItemId');
+  const productId = searchParams.get('productId');
   const mode = searchParams.get('mode');
 
   const core = useContext(CoreContext);
   const storagesQuery = useQuery({ queryKey: ['storages'], queryFn: core.useCases.storage.getAllWithProducts.execute });
   const activeStorage = storagesQuery.data?.find((storage) => storage.id === storageId);
+  const activeStorageProduct = activeStorage?.products.find((product) => product.id === productId);
 
-  const storageItemsQuery = useQuery({
-    queryKey: ['storage-items', activeStorage?.id],
-    queryFn: core.useCases.storage.getItems.execute,
-  });
-  const activeStorageItem = storageItemsQuery.data?.find((item) => item.id === storageItemId);
+  console.log(storagesQuery.data);
 
   if (storageId === 'new') {
     return (
@@ -44,19 +41,19 @@ const App: FC = () => {
     );
   }
 
-  if (activeStorage && storageItemId === 'new') {
+  if (activeStorage && productId === 'new') {
     return (
       <LayoutWidget
         backText={activeStorage.name}
         onBack={() => {
-          searchParams.delete('storageItemId');
+          searchParams.delete('productId');
           navigate({ search: searchParams.toString() });
         }}
       >
-        <ChangeStorageItemWidget
+        <ChangeStorageProductWidget
           storage={activeStorage}
           onSuccess={() => {
-            searchParams.delete('storageItemId');
+            searchParams.delete('productId');
             navigate({ search: searchParams.toString() });
           }}
         />
@@ -64,20 +61,20 @@ const App: FC = () => {
     );
   }
 
-  if (activeStorage && activeStorageItem) {
+  if (activeStorage && activeStorageProduct) {
     return (
       <LayoutWidget
         backText={activeStorage.name}
         onBack={() => {
-          searchParams.delete('storageItemId');
+          searchParams.delete('productId');
           navigate({ search: searchParams.toString() });
         }}
       >
-        <ChangeStorageItemWidget
-          data={activeStorageItem}
+        <ChangeStorageProductWidget
+          data={activeStorageProduct}
           storage={activeStorage}
           onSuccess={() => {
-            searchParams.delete('storageItemId');
+            searchParams.delete('productId');
             navigate({ search: searchParams.toString() });
           }}
         />
@@ -117,11 +114,11 @@ const App: FC = () => {
         <StorageWidget
           data={activeStorage}
           onClickAddProduct={() => {
-            searchParams.set('storageItemId', 'new');
+            searchParams.set('productId', 'new');
             navigate({ search: searchParams.toString() });
           }}
-          onClickEditProduct={(storageItemId) => {
-            searchParams.set('storageItemId', storageItemId);
+          onClickEditProduct={(productId) => {
+            searchParams.set('productId', productId);
             navigate({ search: searchParams.toString() });
           }}
           onClickEditStorage={() => {

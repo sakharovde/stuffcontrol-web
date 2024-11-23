@@ -16,7 +16,6 @@ import StorageItemRepositoryImpl from './modules/storage/infrastructure/reposito
 import { StorageTransactionRepositoryImpl } from './modules/storage/infrastructure/repositories/storage-transaction-repository.ts';
 import ProductNameEmptySpecification from './modules/storage/domain/specifications/product-name-empty-specification.ts';
 import ChangeStorageProductQuantityUseCase from './modules/storage/application/use-cases/change-storage-product-quantity-use-case.ts';
-import GetAllStoragesUseCase from './modules/storage/application/use-cases/get-all-storages-use-case.ts';
 import GetStorageItemsUseCase from './modules/storage/application/use-cases/get-storage-items-use-case.ts';
 import RemoveStorageUseCase from './modules/storage/application/use-cases/remove-storage-use-case.ts';
 import GetProductUseCase from './modules/storage/application/use-cases/get-product-use-case.ts';
@@ -71,7 +70,6 @@ export default class Core {
       create: new CreateStorageUseCase(this.services.storage),
       addNewProduct: new AddNewProductToStorageUseCase(this.services.product, this.services.storageItem),
       changeProductQuantity: new ChangeStorageProductQuantityUseCase(this.services.storageItem),
-      getAll: new GetAllStoragesUseCase(this.services.storage),
       getAllWithProducts: new GetStoragesWithProductsUseCase(this.services.storage),
       getItems: new GetStorageItemsUseCase(this.services.storageItem),
       remove: new RemoveStorageUseCase(this.services.storage),

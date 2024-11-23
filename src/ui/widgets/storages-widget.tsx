@@ -27,7 +27,7 @@ const StorageCardWidget: FC<StorageCardWidgetProps> = (props) => {
     <div className='border rounded-md p-3 cursor-pointer' onClick={props.onClick}>
       <div className='font-semibold'>{props.data.name}</div>
       {!props.data.products.length && <div className='text-gray-400'>Empty</div>}
-      {props.data.products.length && (
+      {!!props.data.products.length && (
         <div>
           {props.data.products.map((product) => (
             <StorageProductWidget key={product.id} data={product} />

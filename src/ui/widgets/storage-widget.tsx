@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import StorageItem from '../../core/modules/storage/domain/models/storage-item.ts';
 import cn from 'classnames';
 import StorageWithProductsDto from '../../core/modules/storage/application/dto/storage-with-products-dto.ts';
 import StorageProductDto from '../../core/modules/storage/application/dto/storage-product-dto.ts';
@@ -21,7 +20,7 @@ type Props = {
   data: StorageWithProductsDto;
   onClickEditStorage: () => void;
   onClickAddProduct: () => void;
-  onClickEditProduct: (storageItemId: StorageItem['id']) => void;
+  onClickEditProduct: (storageProductId: StorageProductDto['id']) => void;
 };
 
 const StorageWidget: FC<Props> = (props) => {
