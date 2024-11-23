@@ -20,8 +20,6 @@ const App: FC = () => {
   const activeStorage = storagesQuery.data?.find((storage) => storage.id === storageId);
   const activeStorageProduct = activeStorage?.products.find((product) => product.id === productId);
 
-  console.log(storagesQuery.data);
-
   if (storageId === 'new') {
     return (
       <LayoutWidget

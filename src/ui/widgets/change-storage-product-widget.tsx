@@ -32,6 +32,18 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
     },
   });
 
+  const removeStorageProductMutation = useMutation({
+    mutationFn: core.useCases.storage.removeProduct.execute,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['storages'] });
+      props.onSuccess();
+    },
+  });
+
+  const handleRemoveStorage = (id: string) => () => {
+    removeStorageProductMutation.mutate({ storageId: props.storage.id, productId: id });
+  };
+
   return (
     <div>
       <h3 className='text-xl font-semibold px-3'>{props.data ? 'Edit product' : 'New product'}</h3>
@@ -77,8 +89,9 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
             <div className='absolute bottom-0 left-0 h-10 bg-gray-100 w-full flex items-center justify-between px-3'>
               {props.data ? (
                 <button
+                  type='button'
                   className='flex items-center gap-1 text-red-600 font-normal'
-                  onClick={() => console.log(props.data?.id)}
+                  onClick={handleRemoveStorage(props.data.id)}
                 >
                   <span>Remove</span>
                 </button>

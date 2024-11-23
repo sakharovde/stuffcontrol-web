@@ -52,4 +52,11 @@ export default class StorageItemService {
 
     return this.storageItemRepository.save(storageItem);
   }
+
+  async remove(storageId: Storage['id'], productId: Product['id']): Promise<void> {
+    const storageItem = await this.storageItemRepository.findByStorageIdAndProductId(storageId, productId);
+    if (storageItem) {
+      return this.storageItemRepository.delete(storageItem);
+    }
+  }
 }
