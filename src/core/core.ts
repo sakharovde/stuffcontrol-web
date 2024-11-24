@@ -50,7 +50,8 @@ export default class Core {
       this.repositories.storage,
       this.repositories.storageItem,
       this.repositories.product,
-      this.specifications.storage.nameEmpty
+      this.specifications.storage.nameEmpty,
+      this.repositories.storageTransaction
     ),
     storageItem: new StorageItemService(this.repositories.storageItem, this.repositories.storageTransaction),
     user: new UserService(
@@ -67,6 +68,7 @@ export default class Core {
       addNewProduct: new AddNewProductToStorageUseCase(this.services.product, this.services.storageItem),
       changeProductQuantity: new ChangeStorageProductQuantityUseCase(this.services.storageItem),
       getAllWithProducts: new GetStoragesWithProductsUseCase(this.services.storage),
+      getChangedProducts: new GetStoragesWithProductsUseCase(this.services.storage),
       remove: new RemoveStorageUseCase(this.services.storage),
       removeProduct: new RemoveProductUseCase(this.services.storageItem),
       update: new UpdateStorageUseCase(this.services.storage),

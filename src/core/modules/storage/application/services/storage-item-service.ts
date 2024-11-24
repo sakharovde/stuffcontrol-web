@@ -4,11 +4,10 @@ import Storage from '../../domain/models/storage.ts';
 import Product from '../../domain/models/product.ts';
 import { v4 as uuidv4 } from 'uuid';
 import StorageTransactionRepository from '../../domain/repositories/storage-transaction-repository.ts';
-import StorageTransaction from '../../domain/models/storage-transaction.ts';
 
 export default class StorageItemService {
   constructor(
-    private storageItemRepository: StorageItemRepository,
+    private readonly storageItemRepository: StorageItemRepository,
     private readonly storageTransactionRepository: StorageTransactionRepository
   ) {}
 
@@ -17,8 +16,15 @@ export default class StorageItemService {
     productId: Product['id'],
     quantity: StorageItem['quantity']
   ): Promise<StorageItem> {
-    const storageItem = new StorageItem(uuidv4(), storageId, productId, quantity);
-    return this.storageItemRepository.save(storageItem);
+    if (quantity < 0) {
+      throw new Error('Quantity cannot be negative');
+    }
+
+    const storageItem = await this.storageItemRepository.save(new StorageItem(uuidv4(), storageId, productId, 0));
+
+    await this.changeQuantity(storageId, productId, quantity);
+
+    return storageItem;
   }
 
   async getAll(storageId: Storage['id']): Promise<StorageItem[]> {
@@ -30,26 +36,25 @@ export default class StorageItemService {
     productId: Product['id'],
     quantity: StorageItem['quantity']
   ): Promise<StorageItem> {
-    let storageItem = await this.storageItemRepository.findByStorageIdAndProductId(storageId, productId);
-
     if (quantity < 0) {
       throw new Error('Quantity cannot be negative');
     }
 
-    if (quantity !== 0) {
-      const quantityDelta = quantity - (storageItem?.quantity || 0);
-      await this.storageTransactionRepository.save(
-        new StorageTransaction(uuidv4(), storageId, productId, quantityDelta)
-      );
+    const storageItem =
+      (await this.storageItemRepository.findByStorageIdAndProductId(storageId, productId)) ||
+      (await this.create(storageId, productId, 0));
+    const quantityDelta = quantity - storageItem.quantity;
+
+    const storageTransaction = await this.storageTransactionRepository.findUnappliedByStorageIdAndProductId(
+      storageId,
+      productId
+    );
+
+    if (!quantityDelta && storageTransaction) {
+      await this.storageTransactionRepository.remove(storageTransaction);
     }
 
-    if (!storageItem) {
-      storageItem = await this.create(storageId, productId, quantity);
-    }
-
-    storageItem.quantity = quantity;
-
-    return this.storageItemRepository.save(storageItem);
+    return storageItem;
   }
 
   async remove(storageId: Storage['id'], productId: Product['id']): Promise<void> {
