@@ -108,6 +108,11 @@ const App: FC = () => {
           searchParams.delete('storageId');
           navigate({ search: searchParams.toString() });
         }}
+        actionText='Save'
+        onAction={() => {
+          searchParams.set('mode', 'transactions');
+          navigate({ search: searchParams.toString() });
+        }}
       >
         <StorageWidget
           data={activeStorage}
