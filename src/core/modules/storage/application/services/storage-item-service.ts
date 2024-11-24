@@ -38,9 +38,8 @@ export default class StorageItemService {
 
     if (quantity !== 0) {
       const quantityDelta = quantity - (storageItem?.quantity || 0);
-      const transactionType: StorageTransaction['transactionType'] = quantityDelta > 0 ? 'ADD' : 'REMOVE';
       await this.storageTransactionRepository.save(
-        new StorageTransaction(uuidv4(), storageId, productId, quantityDelta, transactionType)
+        new StorageTransaction(uuidv4(), storageId, productId, quantityDelta)
       );
     }
 
