@@ -72,6 +72,26 @@ export default class StorageService {
     return this.storageRepository.save(storage);
   }
 
+  saveProductsChanges = async (storageId: Storage['id']): Promise<void> => {
+    const unappliedTransactions = await this.storageTransactionRepository.findAllUnappliedByStorageId(storageId);
+    const storageItems = await this.storageItemRepository.findAllByStorageId(storageId);
+
+    await Promise.all(
+      unappliedTransactions.map(async (transaction) => {
+        const storageItem = storageItems.find((item) => item.productId === transaction.productId);
+        if (!storageItem) {
+          throw new Error('Storage item not found');
+        }
+
+        storageItem.quantity += transaction.quantityChange;
+        await this.storageItemRepository.save(storageItem);
+
+        transaction.state = 'applied';
+        await this.storageTransactionRepository.save(transaction);
+      })
+    );
+  };
+
   remove(id: Storage['id']): Promise<void> {
     return this.storageRepository.remove(id);
   }

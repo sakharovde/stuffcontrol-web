@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import ChangeStorageWidget from './widgets/change-storage-widget.tsx';
 import StorageWidget from './widgets/storage-widget.tsx';
 import CoreContext from './core-context.ts';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ChangeStorageProductWidget from './widgets/change-storage-product-widget.tsx';
 
 const App: FC = () => {
@@ -16,9 +16,21 @@ const App: FC = () => {
   const mode = searchParams.get('mode');
 
   const core = useContext(CoreContext);
+  const queryClient = useQueryClient();
+
   const storagesQuery = useQuery({ queryKey: ['storages'], queryFn: core.useCases.storage.getAllWithProducts.execute });
   const activeStorage = storagesQuery.data?.find((storage) => storage.id === storageId);
   const activeStorageProduct = activeStorage?.products.find((product) => product.id === productId);
+
+  const saveStorageProductsMutation = useMutation({
+    mutationFn: core.useCases.storage.saveProductsChanges.execute,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['storages'] });
+      queryClient.invalidateQueries({ queryKey: ['changedProducts', variables] });
+      searchParams.delete('storageId');
+      navigate({ search: searchParams.toString() });
+    },
+  });
 
   if (storageId === 'new') {
     return (
@@ -110,8 +122,7 @@ const App: FC = () => {
         }}
         actionText='Save'
         onAction={() => {
-          searchParams.set('mode', 'transactions');
-          navigate({ search: searchParams.toString() });
+          saveStorageProductsMutation.mutate(activeStorage.id);
         }}
       >
         <StorageWidget

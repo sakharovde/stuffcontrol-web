@@ -21,6 +21,7 @@ import UpdateStorageUseCase from './modules/storage/application/use-cases/update
 import GetStoragesWithProductsUseCase from './modules/storage/application/use-cases/get-storages-with-products-use-case.ts';
 import RemoveProductUseCase from './modules/storage/application/use-cases/remove-product-use-case.ts';
 import GetChangedStorageProductsUseCase from './modules/storage/application/use-cases/get-changed-storage-products-use-case.ts';
+import SaveStorageProductsChangesUseCase from './modules/storage/application/use-cases/save-storage-products-changes-use-case.ts';
 
 export default class Core {
   private readonly repositories = {
@@ -73,6 +74,7 @@ export default class Core {
       remove: new RemoveStorageUseCase(this.services.storage),
       removeProduct: new RemoveProductUseCase(this.services.storageItem),
       update: new UpdateStorageUseCase(this.services.storage),
+      saveProductsChanges: new SaveStorageProductsChangesUseCase(this.services.storage),
     },
     user: {
       register: new RegisterUserUseCase(this.services.user),
