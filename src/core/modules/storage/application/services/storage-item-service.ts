@@ -4,6 +4,7 @@ import Storage from '../../domain/models/storage.ts';
 import Product from '../../domain/models/product.ts';
 import { v4 as uuidv4 } from 'uuid';
 import StorageTransactionRepository from '../../domain/repositories/storage-transaction-repository.ts';
+import StorageTransaction from '../../domain/models/storage-transaction.ts';
 
 export default class StorageItemService {
   constructor(
@@ -52,6 +53,13 @@ export default class StorageItemService {
 
     if (!quantityDelta && storageTransaction) {
       await this.storageTransactionRepository.remove(storageTransaction);
+    } else if (storageTransaction) {
+      storageTransaction.quantityChange = quantityDelta;
+      await this.storageTransactionRepository.save(storageTransaction);
+    } else {
+      await this.storageTransactionRepository.save(
+        new StorageTransaction(uuidv4(), storageId, productId, quantityDelta, 'pending')
+      );
     }
 
     return storageItem;
