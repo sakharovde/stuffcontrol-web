@@ -86,21 +86,26 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
               className='mt-5 p-4 text-center bg-gray-100 rounded-md'
             />
 
-            <div className='absolute bottom-0 left-0 h-10 bg-gray-100 w-full flex items-center justify-between px-3'>
-              {props.data ? (
-                <button
-                  type='button'
-                  className='flex items-center gap-1 text-red-600 font-normal'
-                  onClick={handleRemoveStorage(props.data.id)}
-                >
-                  <span>Remove</span>
+            <div
+              className='absolute bottom-0 left-0 bg-gray-100 w-full'
+              style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+            >
+              <div className='h-10 flex items-center justify-between px-3'>
+                {props.data ? (
+                  <button
+                    type='button'
+                    className='flex items-center gap-1 text-red-600 font-normal'
+                    onClick={handleRemoveStorage(props.data.id)}
+                  >
+                    <span>Remove</span>
+                  </button>
+                ) : (
+                  <div />
+                )}
+                <button type='submit' className='flex items-center gap-1 text-blue-600 font-medium'>
+                  <span>Submit</span>
                 </button>
-              ) : (
-                <div />
-              )}
-              <button type='submit' className='flex items-center gap-1 text-blue-600 font-medium'>
-                <span>Submit</span>
-              </button>
+              </div>
             </div>
           </form>
         )}

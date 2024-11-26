@@ -58,7 +58,7 @@ const StoragesWidget: FC<StoragesWidgetProps> = (props) => {
         className='absolute bottom-0 left-0  bg-gray-100 w-full'
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
-        <div className='h-10 flex items-center px-3 pt-1'>
+        <div className='h-10 flex items-center px-3'>
           <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickAddStorage}>
             <FontAwesomeIcon icon={faCirclePlus} />
             <span>Add storage</span>

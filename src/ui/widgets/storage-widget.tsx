@@ -138,13 +138,18 @@ const StorageWidget: FC<Props> = (props) => {
         })}
       </div>
 
-      <div className='absolute bottom-0 left-0 h-10 bg-gray-100 w-full flex justify-between items-center px-3'>
-        <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickEditStorage}>
-          <span>Edit storage</span>
-        </button>
-        <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickAddProduct}>
-          <span>Add product</span>
-        </button>
+      <div
+        className='absolute bottom-0 left-0 bg-gray-100 w-full'
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <div className='h-10 flex justify-between items-center px-3'>
+          <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickEditStorage}>
+            <span>Edit storage</span>
+          </button>
+          <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickAddProduct}>
+            <span>Add product</span>
+          </button>
+        </div>
       </div>
     </div>
   );
