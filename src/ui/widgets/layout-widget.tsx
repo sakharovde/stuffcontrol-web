@@ -15,7 +15,7 @@ const LayoutWidget: FC<PropsWithChildren<Props>> = (props) => {
   const needShowHeader = needShowAction || needShowBack;
 
   return (
-    <div className='max-w-lg mx-auto h-screen relative bg-white'>
+    <div className='max-w-lg mx-auto h-screen relative bg-white' style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {needShowHeader && (
         <div className='p-3 flex justify-between'>
           {needShowBack && (
