@@ -1,5 +1,5 @@
 import StorageRepository from '../../domain/repositories/storage-repository.ts';
-import LocalForageFactory from '../../../shared/infrastructure/factories/localforage-factory.ts';
+import LocalForageFactory from '../factories/localforage-factory.ts';
 import Storage from '../../domain/models/storage.ts';
 
 export default class StorageRepositoryImpl implements StorageRepository {

@@ -2,7 +2,7 @@ import { FC, useContext } from 'react';
 import { Formik } from 'formik';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import CoreContext from '../core-context.ts';
-import Storage from '../../core/modules/storage/domain/models/storage.ts';
+import Storage from '../../core/domain/models/storage.ts';
 
 type Props = {
   data?: Storage;

@@ -1,4 +1,4 @@
-import LocalForageFactory from '../../../shared/infrastructure/factories/localforage-factory.ts';
+import LocalForageFactory from '../factories/localforage-factory.ts';
 import ProductRepository from '../../domain/repositories/product-repository.ts';
 import Product from '../../domain/models/product.ts';
 

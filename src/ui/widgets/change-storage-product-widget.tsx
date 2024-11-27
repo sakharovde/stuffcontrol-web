@@ -2,9 +2,9 @@ import { FC, useContext } from 'react';
 import CoreContext from '../core-context.ts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Formik } from 'formik';
-import Storage from '../../core/modules/storage/domain/models/storage.ts';
+import Storage from '../../core/domain/models/storage.ts';
 import cn from 'classnames';
-import StorageProductDto from '../../core/modules/storage/application/dto/storage-product-dto.ts';
+import StorageProductDto from '../../core/application/dto/storage-product-dto.ts';
 
 type Props = {
   data?: StorageProductDto;

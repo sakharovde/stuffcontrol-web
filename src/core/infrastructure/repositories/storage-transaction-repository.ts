@@ -1,6 +1,6 @@
 import StorageTransactionRepository from '../../domain/repositories/storage-transaction-repository.ts';
 import StorageTransaction from '../../domain/models/storage-transaction.ts';
-import LocalForageFactory from '../../../shared/infrastructure/factories/localforage-factory.ts';
+import LocalForageFactory from '../factories/localforage-factory.ts';
 import Storage from '../../domain/models/storage.ts';
 import Product from '../../domain/models/product.ts';
 

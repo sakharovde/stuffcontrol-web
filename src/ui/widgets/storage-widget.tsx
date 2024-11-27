@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react';
 import cn from 'classnames';
-import StorageWithProductsDto from '../../core/modules/storage/application/dto/storage-with-products-dto.ts';
-import StorageProductDto from '../../core/modules/storage/application/dto/storage-product-dto.ts';
+import StorageWithProductsDto from '../../core/application/dto/storage-with-products-dto.ts';
+import StorageProductDto from '../../core/application/dto/storage-product-dto.ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightLong, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
