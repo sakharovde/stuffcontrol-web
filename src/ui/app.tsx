@@ -1,12 +1,12 @@
-import { FC, useContext } from 'react';
+import { FC, useContext, useLayoutEffect, useState } from 'react';
 import StoragesWidget from './widgets/storages-widget.tsx';
 import LayoutWidget from './widgets/layout-widget.tsx';
 import { useNavigate, useSearchParams } from 'react-router';
 import ChangeStorageWidget from './widgets/change-storage-widget.tsx';
 import StorageWidget from './widgets/storage-widget.tsx';
 import CoreContext from './core-context.ts';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ChangeStorageProductWidget from './widgets/change-storage-product-widget.tsx';
+import StorageWithProductsDto from '../core/application/dto/storage-with-products-dto.ts';
 
 const App: FC = () => {
   const navigate = useNavigate();
@@ -16,21 +16,30 @@ const App: FC = () => {
   const mode = searchParams.get('mode');
 
   const core = useContext(CoreContext);
-  const queryClient = useQueryClient();
+  const [storages, setStorages] = useState<StorageWithProductsDto[]>([]);
 
-  const storagesQuery = useQuery({ queryKey: ['storages'], queryFn: core.queries.storage.getAllWithProducts.execute });
-  const activeStorage = storagesQuery.data?.find((storage) => storage.id === storageId);
+  useLayoutEffect(() => {
+    const updateStoragesState = () => {
+      core.queries.storage.getAllWithProducts.execute().then((data) => {
+        setStorages(data);
+      });
+    };
+
+    core.eventBus.storage.on('storageCreated', updateStoragesState);
+    core.eventBus.storage.on('storageUpdated', updateStoragesState);
+    core.eventBus.storage.on('storageDeleted', updateStoragesState);
+
+    updateStoragesState();
+
+    return () => {
+      core.eventBus.storage.off('storageCreated', updateStoragesState);
+      core.eventBus.storage.off('storageUpdated', updateStoragesState);
+      core.eventBus.storage.off('storageDeleted', updateStoragesState);
+    };
+  }, [core]);
+
+  const activeStorage = storages.find((storage) => storage.id === storageId);
   const activeStorageProduct = activeStorage?.products.find((product) => product.id === productId);
-
-  const saveStorageProductsMutation = useMutation({
-    mutationFn: core.commands.storage.saveProductsChanges.execute,
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['storages'] });
-      queryClient.invalidateQueries({ queryKey: ['changedProducts', variables] });
-      searchParams.delete('storageId');
-      navigate({ search: searchParams.toString() });
-    },
-  });
 
   if (storageId === 'new') {
     return (
@@ -122,7 +131,10 @@ const App: FC = () => {
         }}
         actionText='Save'
         onAction={() => {
-          saveStorageProductsMutation.mutate(activeStorage.id);
+          core.commands.storage.saveProductsChanges.execute(activeStorage.id).then(() => {
+            searchParams.delete('storageId');
+            navigate({ search: searchParams.toString() });
+          });
         }}
       >
         <StorageWidget
@@ -147,7 +159,7 @@ const App: FC = () => {
   return (
     <LayoutWidget>
       <StoragesWidget
-        data={storagesQuery.data}
+        data={storages}
         onClickAddStorage={() => {
           searchParams.set('storageId', 'new');
           navigate({ search: searchParams.toString() });

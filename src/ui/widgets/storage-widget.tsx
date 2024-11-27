@@ -1,10 +1,9 @@
-import { FC, useContext } from 'react';
+import { FC, useContext, useLayoutEffect, useState } from 'react';
 import cn from 'classnames';
 import StorageWithProductsDto from '../../core/application/dto/storage-with-products-dto.ts';
 import StorageProductDto from '../../core/application/dto/storage-product-dto.ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightLong, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import CoreContext from '../core-context.ts';
 
 type StorageItemWidgetProps = {
@@ -88,21 +87,27 @@ type Props = {
 };
 
 const StorageWidget: FC<Props> = (props) => {
+  const [changedProducts, setChangedProducts] = useState<StorageProductDto[]>([]);
+
   const core = useContext(CoreContext);
-  const queryClient = useQueryClient();
-  const queryKey = ['changedProducts', props.data.id];
 
-  const changedProducts = useQuery({
-    queryKey,
-    queryFn: () => core.queries.storage.getChangedProducts.execute(props.data.id),
-  });
+  useLayoutEffect(() => {
+    const updateChangedProductsState = () => {
+      core.queries.storage.getChangedProducts.execute(props.data.id).then(setChangedProducts);
+    };
 
-  const changeProductQuantityMutation = useMutation({
-    mutationFn: core.commands.storage.changeProductQuantity.execute,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
-    },
-  });
+    core.eventBus.storage.on('storageCreated', updateChangedProductsState);
+    core.eventBus.storage.on('storageUpdated', updateChangedProductsState);
+    core.eventBus.storage.on('storageDeleted', updateChangedProductsState);
+
+    updateChangedProductsState();
+
+    return () => {
+      core.eventBus.storage.off('storageCreated', updateChangedProductsState);
+      core.eventBus.storage.off('storageUpdated', updateChangedProductsState);
+      core.eventBus.storage.off('storageDeleted', updateChangedProductsState);
+    };
+  }, [core]);
 
   return (
     <div>
@@ -110,7 +115,7 @@ const StorageWidget: FC<Props> = (props) => {
 
       <div className='flex flex-col gap-3 mt-5 px-3'>
         {props.data.products.map((product) => {
-          const changedData = changedProducts.data?.find((changedProduct) => changedProduct.id === product.id) || null;
+          const changedData = changedProducts.find((changedProduct) => changedProduct.id === product.id) || null;
           const quantity = changedData ? changedData.quantity : product.quantity;
 
           return (
@@ -120,14 +125,14 @@ const StorageWidget: FC<Props> = (props) => {
               changedData={changedData}
               onClick={() => props.onClickEditProduct(product.id)}
               onClickPlus={() =>
-                changeProductQuantityMutation.mutate({
+                core.commands.storage.changeProductQuantity.execute({
                   storageId: product.storageId,
                   productId: product.id,
                   quantity: quantity + 1,
                 })
               }
               onClickMinus={() =>
-                changeProductQuantityMutation.mutate({
+                core.commands.storage.changeProductQuantity.execute({
                   storageId: product.storageId,
                   productId: product.id,
                   quantity: quantity - 1,

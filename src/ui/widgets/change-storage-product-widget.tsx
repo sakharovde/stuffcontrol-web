@@ -1,6 +1,5 @@
 import { FC, useContext } from 'react';
 import CoreContext from '../core-context.ts';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Formik } from 'formik';
 import Storage from '../../core/domain/models/storage.ts';
 import cn from 'classnames';
@@ -14,34 +13,9 @@ type Props = {
 
 const ChangeStorageProductWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
-  const queryClient = useQueryClient();
-
-  const addNewItemMutation = useMutation({
-    mutationFn: core.commands.storage.addNewProduct.execute,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['storages'] });
-      props.onSuccess();
-    },
-  });
-
-  const changeProductQuantityMutation = useMutation({
-    mutationFn: core.commands.storage.changeProductQuantity.execute,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['storages'] });
-      props.onSuccess();
-    },
-  });
-
-  const removeStorageProductMutation = useMutation({
-    mutationFn: core.commands.storage.removeProduct.execute,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['storages'] });
-      props.onSuccess();
-    },
-  });
 
   const handleRemoveStorage = (id: string) => () => {
-    removeStorageProductMutation.mutate({ storageId: props.storage.id, productId: id });
+    core.commands.storage.removeProduct.execute({ storageId: props.storage.id, productId: id }).then(props.onSuccess);
   };
 
   return (
@@ -52,18 +26,22 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
         initialValues={{ name: props.data?.name || '', quantity: props.data?.quantity || '' }}
         onSubmit={(values) => {
           if (!props.data) {
-            addNewItemMutation.mutate({
-              storageId: props.storage.id,
-              productName: values.name,
-              quantity: Number(values.quantity || 0),
-            });
+            core.commands.storage.addNewProduct
+              .execute({
+                storageId: props.storage.id,
+                productName: values.name,
+                quantity: Number(values.quantity || 0),
+              })
+              .then(props.onSuccess);
             return;
           }
-          changeProductQuantityMutation.mutate({
-            storageId: props.data.storageId,
-            productId: props.data.id,
-            quantity: Number(values.quantity || 0),
-          });
+          core.commands.storage.changeProductQuantity
+            .execute({
+              storageId: props.data.storageId,
+              productId: props.data.id,
+              quantity: Number(values.quantity || 0),
+            })
+            .then(props.onSuccess);
         }}
       >
         {({ values, handleChange, handleSubmit }) => (

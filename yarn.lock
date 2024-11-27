@@ -2055,24 +2055,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:5.60.6":
-  version: 5.60.6
-  resolution: "@tanstack/query-core@npm:5.60.6"
-  checksum: 10c0/3339c637b00b38b704dfdde26bc475e6d1b46d130b2b22383e73012e791c8747ebebb8c72dd645e214691fcdbd2f09138d7f5b61e5c1fe64955850ddbbe32e11
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query@npm:^5.61.0":
-  version: 5.61.0
-  resolution: "@tanstack/react-query@npm:5.61.0"
-  dependencies:
-    "@tanstack/query-core": "npm:5.60.6"
-  peerDependencies:
-    react: ^18 || ^19
-  checksum: 10c0/b65477a8bda401dbde0daae002c4a42ce8581d749eaec723634cdeb378f5a8eb609f00d2010060a05db995adb8e20e50b2540a560e782878f4b6db132e13c140
-  languageName: node
-  linkType: hard
-
 "@testing-library/dom@npm:^10.4.0":
   version: 10.4.0
   resolution: "@testing-library/dom@npm:10.4.0"
@@ -2165,6 +2147,13 @@ __metadata:
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
   checksum: 10c0/cdfd751f6f9065442cd40957c07fd80361c962869aa853c1c2fd03e101af8b9389d8ff4955a43a6fcfa223dd387a089937f95be0f3eec21ca527039fd2d9859a
+  languageName: node
+  linkType: hard
+
+"@types/events@npm:^3":
+  version: 3.0.3
+  resolution: "@types/events@npm:3.0.3"
+  checksum: 10c0/3a56f8c51eb4ebc0d05dcadca0c6636c816acc10216ce36c976fad11e54a01f4bb979a07211355686015884753b37f17d74bfdc7aaf4ebb027c1e8a501c7b21d
   languageName: node
   linkType: hard
 
@@ -3898,6 +3887,13 @@ __metadata:
   version: 0.4.14
   resolution: "eventemitter2@npm:0.4.14"
   checksum: 10c0/62598dcf6fc2e2f0510158925f1f27508cbe9f908a9493dd67cab69457e73a62af98ad3608a095595feadf0f3d685174f324f87f98deaac4f535df70caddee12
+  languageName: node
+  linkType: hard
+
+"events@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "events@npm:3.3.0"
+  checksum: 10c0/d6b6f2adbccbcda74ddbab52ed07db727ef52e31a61ed26db9feb7dc62af7fc8e060defa65e5f8af9449b86b52cc1a1f6a79f2eafcf4e62add2b7a1fa4a432f6
   languageName: node
   linkType: hard
 
@@ -7086,11 +7082,11 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": "npm:^6.7.1"
     "@fortawesome/free-solid-svg-icons": "npm:^6.7.1"
     "@fortawesome/react-fontawesome": "npm:^0.2.2"
-    "@tanstack/react-query": "npm:^5.61.0"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.0.1"
     "@types/bcrypt": "npm:^5.0.2"
+    "@types/events": "npm:^3"
     "@types/react": "npm:^18.3.12"
     "@types/react-dom": "npm:^18.3.1"
     "@vitejs/plugin-react-swc": "npm:^3.5.0"
@@ -7100,6 +7096,7 @@ __metadata:
     eslint: "npm:^9.13.0"
     eslint-plugin-react-hooks: "npm:^5.0.0"
     eslint-plugin-react-refresh: "npm:^0.4.14"
+    events: "npm:^3.3.0"
     formik: "npm:^2.4.6"
     globals: "npm:^15.11.0"
     jsdom: "npm:^25.0.1"

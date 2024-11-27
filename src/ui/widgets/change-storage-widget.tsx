@@ -1,6 +1,5 @@
 import { FC, useContext } from 'react';
 import { Formik } from 'formik';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import CoreContext from '../core-context.ts';
 import Storage from '../../core/domain/models/storage.ts';
 
@@ -11,41 +10,17 @@ type Props = {
 
 const ChangeStorageWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
-  const queryClient = useQueryClient();
-
-  const createStorageMutation = useMutation({
-    mutationFn: core.commands.storage.create.execute,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['storages'] });
-      props.onSuccess();
-    },
-  });
-  const updateStorageMutation = useMutation({
-    mutationFn: core.commands.storage.update.execute,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['storages'] });
-      props.onSuccess();
-    },
-  });
 
   const handleSubmitStorage = (values: { name: string }) => {
     if (props.data) {
-      updateStorageMutation.mutate({ id: props.data.id, name: values.name });
+      core.commands.storage.update.execute({ id: props.data.id, name: values.name }).then(props.onSuccess);
       return;
     }
-    createStorageMutation.mutate(values.name);
+    core.commands.storage.create.execute(values.name).then(props.onSuccess);
   };
 
-  const removeStorageMutation = useMutation({
-    mutationFn: core.commands.storage.remove.execute,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['storages'] });
-      props.onSuccess();
-    },
-  });
-
   const handleRemoveStorage = (id: string) => () => {
-    removeStorageMutation.mutate(id);
+    core.commands.storage.remove.execute(id).then(props.onSuccess);
   };
 
   return (

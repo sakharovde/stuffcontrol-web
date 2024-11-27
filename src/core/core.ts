@@ -22,8 +22,13 @@ import GetStoragesWithProducts from './application/queries/storage/get-storages-
 import RemoveProduct from './application/commands/storage/remove-product.ts';
 import GetChangedStorageProducts from './application/queries/storage/get-changed-storage-products.ts';
 import SaveStorageProductsChanges from './application/commands/storage/save-storage-products-changes.ts';
+import StorageEventBus from './application/events/storage-event-bus.ts';
 
 export default class Core {
+  public readonly eventBus = {
+    storage: new StorageEventBus(),
+  };
+
   private readonly repositories = {
     product: new ProductRepositoryImpl(),
     storage: new StorageRepositoryImpl(),
@@ -73,13 +78,17 @@ export default class Core {
 
   public readonly commands = {
     storage: {
-      create: new CreateStorage(this.services.storage),
-      addNewProduct: new AddNewProductToStorage(this.services.product, this.services.storageItem),
-      changeProductQuantity: new ChangeStorageProductQuantity(this.services.storageItem),
-      remove: new RemoveStorage(this.services.storage),
-      removeProduct: new RemoveProduct(this.services.storageItem),
-      update: new UpdateStorage(this.services.storage),
-      saveProductsChanges: new SaveStorageProductsChanges(this.services.storage),
+      create: new CreateStorage(this.services.storage, this.eventBus.storage),
+      addNewProduct: new AddNewProductToStorage(
+        this.services.product,
+        this.services.storageItem,
+        this.eventBus.storage
+      ),
+      changeProductQuantity: new ChangeStorageProductQuantity(this.services.storageItem, this.eventBus.storage),
+      remove: new RemoveStorage(this.services.storage, this.eventBus.storage),
+      removeProduct: new RemoveProduct(this.services.storageItem, this.eventBus.storage),
+      update: new UpdateStorage(this.services.storage, this.eventBus.storage),
+      saveProductsChanges: new SaveStorageProductsChanges(this.services.storage, this.eventBus.storage),
     },
     user: {
       register: new RegisterUser(this.services.user),
