@@ -94,11 +94,11 @@ const StorageWidget: FC<Props> = (props) => {
 
   const changedProducts = useQuery({
     queryKey,
-    queryFn: () => core.useCases.storage.getChangedProducts.execute(props.data.id),
+    queryFn: () => core.queries.storage.getChangedProducts.execute(props.data.id),
   });
 
   const changeProductQuantityMutation = useMutation({
-    mutationFn: core.useCases.storage.changeProductQuantity.execute,
+    mutationFn: core.commands.storage.changeProductQuantity.execute,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
     },

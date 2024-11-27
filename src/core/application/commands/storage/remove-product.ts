@@ -1,8 +1,8 @@
-import StorageItemService from '../services/storage-item-service.ts';
-import Product from '../../domain/models/product.ts';
-import Storage from '../../domain/models/storage.ts';
+import StorageItemService from '../../services/storage-item-service.ts';
+import Product from '../../../domain/models/product.ts';
+import Storage from '../../../domain/models/storage.ts';
 
-export default class RemoveProductUseCase {
+export default class RemoveProduct {
   constructor(private storageItemService: StorageItemService) {}
 
   execute = async (args: { productId: Product['id']; storageId: Storage['id'] }): Promise<void> => {

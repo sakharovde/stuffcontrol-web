@@ -1,19 +1,19 @@
-import RegisterUserUseCase from './register-user-use-case.ts';
-import UserService from '../services/user-service.ts';
-import UserRepository from '../../domain/repositories/user-repository.ts';
-import UserUniqueUsernameSpecification from '../../domain/specifications/user-username-unique-specification.ts';
-import UserRepositoryImpl from '../../infrastructure/repositories/user-repository.ts';
-import generateUser from '../../domain/models/__test__/generateUser.ts';
-import UserUsernameEmptySpecification from '../../domain/specifications/user-username-empty-specification.ts';
-import UserPasswordEmptySpecification from '../../domain/specifications/user-password-empty-specification.ts';
+import RegisterUser from './register-user.ts';
+import UserService from '../../services/user-service.ts';
+import UserRepository from '../../../domain/repositories/user-repository.ts';
+import UserUniqueUsernameSpecification from '../../../domain/specifications/user-username-unique-specification.ts';
+import UserRepositoryImpl from '../../../infrastructure/repositories/user-repository.ts';
+import generateUser from '../../../domain/models/__test__/generateUser.ts';
+import UserUsernameEmptySpecification from '../../../domain/specifications/user-username-empty-specification.ts';
+import UserPasswordEmptySpecification from '../../../domain/specifications/user-password-empty-specification.ts';
 
-describe('RegisterUserUseCase', () => {
+describe('RegisterUser', () => {
   let userRepository: UserRepository;
   let uniqueUsernameSpec: UserUniqueUsernameSpecification;
   let usernameEmptySpec: UserUsernameEmptySpecification;
   let passwordEmptySpec: UserPasswordEmptySpecification;
   let userService: UserService;
-  let registerUserUseCase: RegisterUserUseCase;
+  let registerUserUseCase: RegisterUser;
 
   beforeEach(() => {
     userRepository = new UserRepositoryImpl();
@@ -21,7 +21,7 @@ describe('RegisterUserUseCase', () => {
     usernameEmptySpec = new UserUsernameEmptySpecification();
     passwordEmptySpec = new UserPasswordEmptySpecification();
     userService = new UserService(userRepository, uniqueUsernameSpec, usernameEmptySpec, passwordEmptySpec);
-    registerUserUseCase = new RegisterUserUseCase(userService);
+    registerUserUseCase = new RegisterUser(userService);
   });
 
   it('executes successfully with valid username and password', async () => {

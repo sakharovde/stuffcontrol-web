@@ -1,7 +1,7 @@
-import UserService from '../services/user-service.ts';
-import User from '../../domain/models/user.ts';
+import UserService from '../../services/user-service.ts';
+import User from '../../../domain/models/user.ts';
 
-export default class RegisterUserUseCase {
+export default class RegisterUser {
   constructor(private userService: UserService) {}
 
   execute(username: string, password: string): Promise<User> {

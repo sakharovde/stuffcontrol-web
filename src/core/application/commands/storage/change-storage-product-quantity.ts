@@ -1,8 +1,8 @@
-import Product from '../../domain/models/product.ts';
-import StorageItem from '../../domain/models/storage-item.ts';
-import StorageItemService from '../services/storage-item-service.ts';
+import Product from '../../../domain/models/product.ts';
+import StorageItem from '../../../domain/models/storage-item.ts';
+import StorageItemService from '../../services/storage-item-service.ts';
 
-export default class ChangeStorageProductQuantityUseCase {
+export default class ChangeStorageProductQuantity {
   constructor(private readonly storageItemService: StorageItemService) {}
 
   execute = (args: {

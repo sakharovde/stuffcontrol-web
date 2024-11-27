@@ -18,12 +18,12 @@ const App: FC = () => {
   const core = useContext(CoreContext);
   const queryClient = useQueryClient();
 
-  const storagesQuery = useQuery({ queryKey: ['storages'], queryFn: core.useCases.storage.getAllWithProducts.execute });
+  const storagesQuery = useQuery({ queryKey: ['storages'], queryFn: core.queries.storage.getAllWithProducts.execute });
   const activeStorage = storagesQuery.data?.find((storage) => storage.id === storageId);
   const activeStorageProduct = activeStorage?.products.find((product) => product.id === productId);
 
   const saveStorageProductsMutation = useMutation({
-    mutationFn: core.useCases.storage.saveProductsChanges.execute,
+    mutationFn: core.commands.storage.saveProductsChanges.execute,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['storages'] });
       queryClient.invalidateQueries({ queryKey: ['changedProducts', variables] });

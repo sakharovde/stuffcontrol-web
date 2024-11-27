@@ -1,27 +1,27 @@
 import UserService from './application/services/user-service.ts';
 import UserRepositoryImpl from './infrastructure/repositories/user-repository.ts';
 import UserUniqueUsernameSpecification from './domain/specifications/user-username-unique-specification.ts';
-import RegisterUserUseCase from './application/use-cases/register-user-use-case.ts';
+import RegisterUser from './application/commands/user/register-user.ts';
 import UserUsernameEmptySpecification from './domain/specifications/user-username-empty-specification.ts';
 import UserPasswordEmptySpecification from './domain/specifications/user-password-empty-specification.ts';
 import StorageRepositoryImpl from './infrastructure/repositories/storage-repository.ts';
 import StorageService from './application/services/storage-service.ts';
-import CreateStorageUseCase from './application/use-cases/create-storage-use-case.ts';
+import CreateStorage from './application/commands/storage/create-storage.ts';
 import StorageNameEmptySpecification from './domain/specifications/storage-name-empty-specification.ts';
-import AddNewProductToStorageUseCase from './application/use-cases/add-new-product-to-storage-use-case.ts';
+import AddNewProductToStorage from './application/commands/storage/add-new-product-to-storage.ts';
 import ProductRepositoryImpl from './infrastructure/repositories/product-repository.ts';
 import ProductService from './application/services/product-service.ts';
 import StorageItemService from './application/services/storage-item-service.ts';
 import StorageItemRepositoryImpl from './infrastructure/repositories/storage-item-repository.ts';
 import { StorageTransactionRepositoryImpl } from './infrastructure/repositories/storage-transaction-repository.ts';
 import ProductNameEmptySpecification from './domain/specifications/product-name-empty-specification.ts';
-import ChangeStorageProductQuantityUseCase from './application/use-cases/change-storage-product-quantity-use-case.ts';
-import RemoveStorageUseCase from './application/use-cases/remove-storage-use-case.ts';
-import UpdateStorageUseCase from './application/use-cases/update-storage-use-case.ts';
-import GetStoragesWithProductsUseCase from './application/use-cases/get-storages-with-products-use-case.ts';
-import RemoveProductUseCase from './application/use-cases/remove-product-use-case.ts';
-import GetChangedStorageProductsUseCase from './application/use-cases/get-changed-storage-products-use-case.ts';
-import SaveStorageProductsChangesUseCase from './application/use-cases/save-storage-products-changes-use-case.ts';
+import ChangeStorageProductQuantity from './application/commands/storage/change-storage-product-quantity.ts';
+import RemoveStorage from './application/commands/storage/remove-storage.ts';
+import UpdateStorage from './application/commands/storage/update-storage.ts';
+import GetStoragesWithProducts from './application/queries/storage/get-storages-with-products.ts';
+import RemoveProduct from './application/commands/storage/remove-product.ts';
+import GetChangedStorageProducts from './application/queries/storage/get-changed-storage-products.ts';
+import SaveStorageProductsChanges from './application/commands/storage/save-storage-products-changes.ts';
 
 export default class Core {
   private readonly repositories = {
@@ -64,20 +64,25 @@ export default class Core {
     ),
   };
 
-  public readonly useCases = {
+  public readonly queries = {
     storage: {
-      create: new CreateStorageUseCase(this.services.storage),
-      addNewProduct: new AddNewProductToStorageUseCase(this.services.product, this.services.storageItem),
-      changeProductQuantity: new ChangeStorageProductQuantityUseCase(this.services.storageItem),
-      getAllWithProducts: new GetStoragesWithProductsUseCase(this.services.storage),
-      getChangedProducts: new GetChangedStorageProductsUseCase(this.services.storage),
-      remove: new RemoveStorageUseCase(this.services.storage),
-      removeProduct: new RemoveProductUseCase(this.services.storageItem),
-      update: new UpdateStorageUseCase(this.services.storage),
-      saveProductsChanges: new SaveStorageProductsChangesUseCase(this.services.storage),
+      getAllWithProducts: new GetStoragesWithProducts(this.services.storage),
+      getChangedProducts: new GetChangedStorageProducts(this.services.storage),
+    },
+  };
+
+  public readonly commands = {
+    storage: {
+      create: new CreateStorage(this.services.storage),
+      addNewProduct: new AddNewProductToStorage(this.services.product, this.services.storageItem),
+      changeProductQuantity: new ChangeStorageProductQuantity(this.services.storageItem),
+      remove: new RemoveStorage(this.services.storage),
+      removeProduct: new RemoveProduct(this.services.storageItem),
+      update: new UpdateStorage(this.services.storage),
+      saveProductsChanges: new SaveStorageProductsChanges(this.services.storage),
     },
     user: {
-      register: new RegisterUserUseCase(this.services.user),
+      register: new RegisterUser(this.services.user),
     },
   };
 }

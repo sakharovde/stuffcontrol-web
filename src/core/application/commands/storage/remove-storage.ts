@@ -1,7 +1,7 @@
-import Storage from '../../domain/models/storage.ts';
-import StorageService from '../services/storage-service.ts';
+import Storage from '../../../domain/models/storage.ts';
+import StorageService from '../../services/storage-service.ts';
 
-export default class RemoveStorageUseCase {
+export default class RemoveStorage {
   constructor(private storageService: StorageService) {}
 
   execute = (id: Storage['id']): Promise<void> => {

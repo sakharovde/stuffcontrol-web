@@ -1,7 +1,7 @@
-import StorageService from '../services/storage-service.ts';
-import Storage from '../../domain/models/storage.ts';
+import StorageService from '../../services/storage-service.ts';
+import Storage from '../../../domain/models/storage.ts';
 
-export default class SaveStorageProductsChangesUseCase {
+export default class SaveStorageProductsChanges {
   constructor(private readonly storageService: StorageService) {}
 
   execute = async (storageId: Storage['id']): Promise<void> => {

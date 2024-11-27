@@ -17,7 +17,7 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
   const queryClient = useQueryClient();
 
   const addNewItemMutation = useMutation({
-    mutationFn: core.useCases.storage.addNewProduct.execute,
+    mutationFn: core.commands.storage.addNewProduct.execute,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['storages'] });
       props.onSuccess();
@@ -25,7 +25,7 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
   });
 
   const changeProductQuantityMutation = useMutation({
-    mutationFn: core.useCases.storage.changeProductQuantity.execute,
+    mutationFn: core.commands.storage.changeProductQuantity.execute,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['storages'] });
       props.onSuccess();
@@ -33,7 +33,7 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
   });
 
   const removeStorageProductMutation = useMutation({
-    mutationFn: core.useCases.storage.removeProduct.execute,
+    mutationFn: core.commands.storage.removeProduct.execute,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['storages'] });
       props.onSuccess();
