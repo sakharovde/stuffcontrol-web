@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
   Product,
+  ProductNameEmptySpecification,
   ProductRepository,
   Storage,
   StorageItem,
@@ -11,7 +12,8 @@ import {
   StorageTransactionRepository,
 } from '../../domain';
 import StorageWithProductsDto, { StorageWithProductsDtoFactory } from '../dto/storage-with-products-dto.ts';
-import StorageProductDto from '../dto/storage-product-dto.ts';
+import StorageProductDto, { StorageProductDtoFactory } from '../dto/storage-product-dto.ts';
+import StorageDto, { StorageDtoFactory } from '../dto/storage-dto.ts';
 
 export default class StorageService {
   constructor(
@@ -19,30 +21,48 @@ export default class StorageService {
     private readonly storageItemRepository: StorageItemRepository,
     private readonly productRepository: ProductRepository,
     private readonly nameEmptySpecification: StorageNameEmptySpecification,
-    private readonly storageTransactionRepository: StorageTransactionRepository
+    private readonly storageTransactionRepository: StorageTransactionRepository,
+    private readonly productNameEmptySpecification: ProductNameEmptySpecification
   ) {}
 
-  async create(name: Storage['name']): Promise<Storage> {
+  async create(name: StorageDto['name']): Promise<StorageDto> {
     const isNameEmpty = await this.nameEmptySpecification.isSatisfiedBy(name);
     if (isNameEmpty) {
       throw new Error('Storage name cannot be empty');
     }
 
-    const storage = new Storage(uuidv4(), name);
+    const storage = await this.storageRepository.save(new Storage(uuidv4(), name));
 
-    return this.storageRepository.save(storage);
+    return StorageDtoFactory.create(storage);
   }
 
-  getAll(): Promise<Storage[]> {
+  getAll(): Promise<StorageDto[]> {
     return this.storageRepository.getAll();
   }
 
-  getAllWithProducts = async (): Promise<StorageWithProductsDto[]> => {
-    const storages = await this.storageRepository.getAll();
-    const storageItems = await this.storageItemRepository.getAll();
+  getAllProducts = async (storageId: StorageDto['id']): Promise<StorageProductDto[]> => {
+    const storageItems = await this.storageItemRepository.findAllByStorageId(storageId);
     const products = await this.productRepository.getAll();
 
-    return storages.map((storage) => StorageWithProductsDtoFactory.create(storage, storageItems, products));
+    return storageItems.reduce((acc, storageItem) => {
+      const product = products.find((product) => product.id === storageItem.productId);
+
+      if (!product) return acc;
+
+      return [...acc, StorageProductDtoFactory.create(storageItem, product)];
+    }, [] as StorageProductDto[]);
+  };
+
+  getAllWithProducts = async (): Promise<StorageWithProductsDto[]> => {
+    const storages = await this.getAll();
+    const result: StorageWithProductsDto[] = [];
+
+    for (const storage of storages) {
+      const products = await this.getAllProducts(storage.id);
+      result.push(StorageWithProductsDtoFactory.create(storage, products));
+    }
+
+    return result;
   };
 
   getAllChangedProducts = async (storageId: Storage['id']): Promise<StorageProductDto[]> => {
@@ -69,7 +89,13 @@ export default class StorageService {
       return [...acc, storageItem];
     }, [] as StorageItem[]);
 
-    return StorageWithProductsDtoFactory.create(storage, changedStorageItems, products).products;
+    return changedStorageItems.reduce((acc, storageItem) => {
+      const product = products.find((product) => product.id === storageItem.productId);
+
+      if (!product) return acc;
+
+      return [...acc, StorageProductDtoFactory.create(storageItem, product)];
+    }, [] as StorageProductDto[]);
   };
 
   update(storage: Storage): Promise<Storage> {
@@ -96,43 +122,59 @@ export default class StorageService {
     );
   };
 
-  remove(id: Storage['id']): Promise<void> {
+  remove(id: StorageDto['id']): Promise<void> {
     return this.storageRepository.remove(id);
   }
 
   async createProduct(
-    storageId: Storage['id'],
-    productId: Product['id'],
-    quantity: StorageItem['quantity']
-  ): Promise<StorageItem> {
+    storageId: StorageDto['id'],
+    productName: StorageProductDto['name'],
+    quantity: StorageProductDto['quantity']
+  ): Promise<StorageProductDto> {
+    const isNameEmpty = await this.productNameEmptySpecification.isSatisfiedBy(productName);
+
+    if (isNameEmpty) {
+      throw new Error('Product name cannot be empty');
+    }
+
     if (quantity < 0) {
       throw new Error('Quantity cannot be negative');
     }
 
-    const storageItem = await this.storageItemRepository.save(new StorageItem(uuidv4(), storageId, productId, 0));
+    const product = await this.productRepository.save(new Product(uuidv4(), productName));
+    const storageItem = await this.storageItemRepository.save(new StorageItem(uuidv4(), storageId, product.id, 0));
+    const storageProduct = StorageProductDtoFactory.create(storageItem, product);
 
-    await this.changeProductQuantity(storageId, productId, quantity);
+    await this.changeProductQuantity(storageProduct.id, quantity);
 
-    return storageItem;
+    return storageProduct;
   }
 
   async changeProductQuantity(
-    storageId: Storage['id'],
-    productId: Product['id'],
-    quantity: StorageItem['quantity']
-  ): Promise<StorageItem> {
+    productId: StorageProductDto['id'],
+    quantity: StorageProductDto['quantity']
+  ): Promise<StorageProductDto> {
     if (quantity < 0) {
       throw new Error('Quantity cannot be negative');
     }
 
-    const storageItem =
-      (await this.storageItemRepository.findByStorageIdAndProductId(storageId, productId)) ||
-      (await this.createProduct(storageId, productId, 0));
+    const storageItem = await this.storageItemRepository.findById(productId);
+
+    if (!storageItem) {
+      throw new Error('Product not found in storage');
+    }
+
+    const product = await this.productRepository.findById(storageItem.productId);
+
+    if (!product) {
+      throw new Error('Product not found');
+    }
+
     const quantityDelta = quantity - storageItem.quantity;
 
     const storageTransaction = await this.storageTransactionRepository.findUnappliedByStorageIdAndProductId(
-      storageId,
-      productId
+      storageItem.storageId,
+      storageItem.productId
     );
 
     if (!quantityDelta && storageTransaction) {
@@ -142,15 +184,16 @@ export default class StorageService {
       await this.storageTransactionRepository.save(storageTransaction);
     } else {
       await this.storageTransactionRepository.save(
-        new StorageTransaction(uuidv4(), storageId, productId, quantityDelta, 'pending')
+        new StorageTransaction(uuidv4(), storageItem.storageId, storageItem.productId, quantityDelta, 'pending')
       );
     }
 
-    return storageItem;
+    return StorageProductDtoFactory.create(storageItem, product);
   }
 
-  async removeProduct(storageId: Storage['id'], productId: Product['id']): Promise<void> {
-    const storageItem = await this.storageItemRepository.findByStorageIdAndProductId(storageId, productId);
+  async removeProduct(productId: StorageProductDto['id']): Promise<void> {
+    const storageItem = await this.storageItemRepository.findById(productId);
+
     if (storageItem) {
       return this.storageItemRepository.delete(storageItem);
     }

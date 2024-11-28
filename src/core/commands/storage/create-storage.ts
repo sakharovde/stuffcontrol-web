@@ -1,6 +1,5 @@
-import { StorageService } from '../../../application';
+import { StorageDto, StorageService } from '../../../application';
 import { StorageEventEmitter } from '../../../events';
-import { Storage } from '../../../domain';
 
 export default class CreateStorage {
   constructor(
@@ -8,7 +7,7 @@ export default class CreateStorage {
     private readonly storageEventEmitter: StorageEventEmitter
   ) {}
 
-  execute = async (name: Storage['name']): Promise<Storage> => {
+  execute = async (name: StorageDto['name']): Promise<StorageDto> => {
     const result = await this.storageService.create(name);
     this.storageEventEmitter.emit('storageCreated');
     return result;

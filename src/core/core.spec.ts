@@ -9,8 +9,9 @@ describe('Core', () => {
 
   describe('storage.addNewProduct', () => {
     it('adds a new product to storage successfully', async () => {
+      const storage = await core.commands.storage.create.execute('storageName');
       const result = await core.commands.storage.addNewProduct.execute({
-        storageId: 'storageId',
+        storageId: storage.id,
         productName: 'productName',
         quantity: 10,
       });
@@ -40,9 +41,14 @@ describe('Core', () => {
 
   describe('storage.changeProductQuantity', () => {
     it('changes product quantity successfully', async () => {
+      const storage = await core.commands.storage.create.execute('storageName');
+      const product = await core.commands.storage.addNewProduct.execute({
+        storageId: storage.id,
+        productName: 'productName',
+        quantity: 0,
+      });
       const result = await core.commands.storage.changeProductQuantity.execute({
-        storageId: 'storageId',
-        productId: 'productId',
+        productId: product.id,
         quantity: 10,
       });
       expect(result).toEqual(
@@ -53,10 +59,15 @@ describe('Core', () => {
     });
 
     it('throws an error when quantity is negative', async () => {
+      const storage = await core.commands.storage.create.execute('storageName');
+      const product = await core.commands.storage.addNewProduct.execute({
+        storageId: storage.id,
+        productName: 'productName',
+        quantity: 0,
+      });
       await expect(
         core.commands.storage.changeProductQuantity.execute({
-          storageId: 'storageId',
-          productId: 'productId',
+          productId: product.id,
           quantity: -1,
         })
       ).rejects.toThrow('Quantity cannot be negative');

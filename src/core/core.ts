@@ -13,7 +13,7 @@ import {
   UserUniqueUsernameSpecification,
   UserUsernameEmptySpecification,
 } from '../domain';
-import { ProductService, StorageService, UserService } from '../application';
+import { StorageService, UserService } from '../application';
 import { GetChangedStorageProducts, GetStoragesWithProducts } from './queries';
 import {
   AddNewProductToStorage,
@@ -54,13 +54,13 @@ export default class Core {
   };
 
   private readonly services = {
-    product: new ProductService(this.repositories.product, this.specifications.product.nameEmpty),
     storage: new StorageService(
       this.repositories.storage,
       this.repositories.storageItem,
       this.repositories.product,
       this.specifications.storage.nameEmpty,
-      this.repositories.storageTransaction
+      this.repositories.storageTransaction,
+      this.specifications.product.nameEmpty
     ),
     user: new UserService(
       this.repositories.user,
@@ -80,11 +80,7 @@ export default class Core {
   public readonly commands = {
     storage: {
       create: new CreateStorage(this.services.storage, this.eventEmitters.storage),
-      addNewProduct: new AddNewProductToStorage(
-        this.services.product,
-        this.services.storage,
-        this.eventEmitters.storage
-      ),
+      addNewProduct: new AddNewProductToStorage(this.services.storage, this.eventEmitters.storage),
       changeProductQuantity: new ChangeStorageProductQuantity(this.services.storage, this.eventEmitters.storage),
       remove: new RemoveStorage(this.services.storage, this.eventEmitters.storage),
       removeProduct: new RemoveProduct(this.services.storage, this.eventEmitters.storage),

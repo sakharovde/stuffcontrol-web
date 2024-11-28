@@ -10,7 +10,7 @@ export default interface StorageProductDto {
 export class StorageProductDtoFactory {
   static create(storageItem: StorageItem, product: Product): StorageProductDto {
     return {
-      id: product.id,
+      id: storageItem.id,
       name: product.name,
       storageId: storageItem.storageId,
       quantity: storageItem.quantity,
