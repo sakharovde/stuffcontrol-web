@@ -4,5 +4,4 @@ export type { default as StorageWithProductsDto } from './dto/storage-with-produ
 
 export { default as StorageService } from './services/storage-service.ts';
 export { default as ProductService } from './services/product-service.ts';
-export { default as StorageItemService } from './services/storage-item-service.ts';
 export { default as UserService } from './services/user-service.ts';

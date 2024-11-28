@@ -13,7 +13,7 @@ import {
   UserUniqueUsernameSpecification,
   UserUsernameEmptySpecification,
 } from '../domain';
-import { ProductService, StorageItemService, StorageService, UserService } from '../application';
+import { ProductService, StorageService, UserService } from '../application';
 import { GetChangedStorageProducts, GetStoragesWithProducts } from './queries';
 import {
   AddNewProductToStorage,
@@ -62,7 +62,6 @@ export default class Core {
       this.specifications.storage.nameEmpty,
       this.repositories.storageTransaction
     ),
-    storageItem: new StorageItemService(this.repositories.storageItem, this.repositories.storageTransaction),
     user: new UserService(
       this.repositories.user,
       this.specifications.user.usernameUnique,
@@ -83,12 +82,12 @@ export default class Core {
       create: new CreateStorage(this.services.storage, this.eventEmitters.storage),
       addNewProduct: new AddNewProductToStorage(
         this.services.product,
-        this.services.storageItem,
+        this.services.storage,
         this.eventEmitters.storage
       ),
-      changeProductQuantity: new ChangeStorageProductQuantity(this.services.storageItem, this.eventEmitters.storage),
+      changeProductQuantity: new ChangeStorageProductQuantity(this.services.storage, this.eventEmitters.storage),
       remove: new RemoveStorage(this.services.storage, this.eventEmitters.storage),
-      removeProduct: new RemoveProduct(this.services.storageItem, this.eventEmitters.storage),
+      removeProduct: new RemoveProduct(this.services.storage, this.eventEmitters.storage),
       update: new UpdateStorage(this.services.storage, this.eventEmitters.storage),
       saveProductsChanges: new SaveStorageProductsChanges(this.services.storage, this.eventEmitters.storage),
     },
