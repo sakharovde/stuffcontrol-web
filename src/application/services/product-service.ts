@@ -1,7 +1,5 @@
-import ProductRepository from '../../domain/repositories/product-repository.ts';
-import Product from '../../domain/models/product.ts';
 import { v4 as uuidv4 } from 'uuid';
-import ProductNameEmptySpecification from '../../domain/specifications/product-name-empty-specification.ts';
+import { Product, ProductNameEmptySpecification, ProductRepository } from '../../domain';
 
 export default class ProductService {
   constructor(

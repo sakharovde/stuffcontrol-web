@@ -1,10 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
+import {
+  User,
+  UserPasswordEmptySpecification,
+  UserRepository,
+  UserUniqueUsernameSpecification,
+  UserUsernameEmptySpecification,
+} from '../../domain';
 // import * as bcrypt from 'bcrypt';
-import UserRepository from '../../domain/repositories/user-repository.ts';
-import UserUniqueUsernameSpecification from '../../domain/specifications/user-username-unique-specification.ts';
-import User from '../../domain/models/user.ts';
-import UserUsernameEmptySpecification from '../../domain/specifications/user-username-empty-specification.ts';
-import UserPasswordEmptySpecification from '../../domain/specifications/user-password-empty-specification.ts';
 
 export default class UserService {
   constructor(

@@ -1,6 +1,5 @@
-import LocalForageFactory from '../factories/localforage-factory.ts';
-import ProductRepository from '../../domain/repositories/product-repository.ts';
-import Product from '../../domain/models/product.ts';
+import { Product, ProductRepository } from '../../domain';
+import { LocalForageFactory } from '../index.ts';
 
 export default class ProductRepositoryImpl implements ProductRepository {
   private readonly client = LocalForageFactory.createInstance({

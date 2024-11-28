@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import Core from '../core/core.ts';
+import Core from '../core';
 
 const CoreContext = createContext<Core>(new Core());
 

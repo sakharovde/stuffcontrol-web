@@ -1,5 +1,4 @@
-import UserRepository from '../../domain/repositories/user-repository.ts';
-import User from '../../domain/models/user.ts';
+import { User, UserRepository } from '../../domain';
 import LocalForageFactory from '../factories/localforage-factory.ts';
 
 export default class UserRepositoryImpl implements UserRepository {

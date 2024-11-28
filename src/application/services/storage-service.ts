@@ -1,12 +1,14 @@
-import StorageRepository from '../../domain/repositories/storage-repository.ts';
-import Storage from '../../domain/models/storage.ts';
 import { v4 as uuidv4 } from 'uuid';
-import StorageNameEmptySpecification from '../../domain/specifications/storage-name-empty-specification.ts';
+import {
+  ProductRepository,
+  Storage,
+  StorageItem,
+  StorageItemRepository,
+  StorageNameEmptySpecification,
+  StorageRepository,
+  StorageTransactionRepository,
+} from '../../domain';
 import StorageWithProductsDto, { StorageWithProductsDtoFactory } from '../dto/storage-with-products-dto.ts';
-import StorageItemRepository from '../../domain/repositories/storage-item-repository.ts';
-import ProductRepository from '../../domain/repositories/product-repository.ts';
-import StorageItem from '../../domain/models/storage-item.ts';
-import StorageTransactionRepository from '../../domain/repositories/storage-transaction-repository.ts';
 import StorageProductDto from '../dto/storage-product-dto.ts';
 
 export default class StorageService {

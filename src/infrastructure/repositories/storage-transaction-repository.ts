@@ -1,10 +1,7 @@
-import StorageTransactionRepository from '../../domain/repositories/storage-transaction-repository.ts';
-import StorageTransaction from '../../domain/models/storage-transaction.ts';
+import { Product, StorageTransaction, StorageTransactionRepository } from '../../domain';
 import LocalForageFactory from '../factories/localforage-factory.ts';
-import Storage from '../../domain/models/storage.ts';
-import Product from '../../domain/models/product.ts';
 
-export class StorageTransactionRepositoryImpl implements StorageTransactionRepository {
+export default class StorageTransactionRepositoryImpl implements StorageTransactionRepository {
   private readonly client = LocalForageFactory.createInstance({
     name: 'storage-transactions',
     storeName: 'v1',

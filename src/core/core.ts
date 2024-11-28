@@ -1,28 +1,30 @@
-import UserService from '../application/services/user-service.ts';
-import UserRepositoryImpl from '../infrastructure/repositories/user-repository.ts';
-import UserUniqueUsernameSpecification from '../domain/specifications/user-username-unique-specification.ts';
-import RegisterUser from './commands/user/register-user.ts';
-import UserUsernameEmptySpecification from '../domain/specifications/user-username-empty-specification.ts';
-import UserPasswordEmptySpecification from '../domain/specifications/user-password-empty-specification.ts';
-import StorageRepositoryImpl from '../infrastructure/repositories/storage-repository.ts';
-import StorageService from '../application/services/storage-service.ts';
-import CreateStorage from './commands/storage/create-storage.ts';
-import StorageNameEmptySpecification from '../domain/specifications/storage-name-empty-specification.ts';
-import AddNewProductToStorage from './commands/storage/add-new-product-to-storage.ts';
-import ProductRepositoryImpl from '../infrastructure/repositories/product-repository.ts';
-import ProductService from '../application/services/product-service.ts';
-import StorageItemService from '../application/services/storage-item-service.ts';
-import StorageItemRepositoryImpl from '../infrastructure/repositories/storage-item-repository.ts';
-import { StorageTransactionRepositoryImpl } from '../infrastructure/repositories/storage-transaction-repository.ts';
-import ProductNameEmptySpecification from '../domain/specifications/product-name-empty-specification.ts';
-import ChangeStorageProductQuantity from './commands/storage/change-storage-product-quantity.ts';
-import RemoveStorage from './commands/storage/remove-storage.ts';
-import UpdateStorage from './commands/storage/update-storage.ts';
-import GetStoragesWithProducts from './queries/storage/get-storages-with-products.ts';
-import RemoveProduct from './commands/storage/remove-product.ts';
-import GetChangedStorageProducts from './queries/storage/get-changed-storage-products.ts';
-import SaveStorageProductsChanges from './commands/storage/save-storage-products-changes.ts';
-import StorageEventBus from '../events/storage-event-bus.ts';
+import { StorageEventBus } from '../events';
+import {
+  ProductRepositoryImpl,
+  StorageItemRepositoryImpl,
+  StorageRepositoryImpl,
+  StorageTransactionRepositoryImpl,
+  UserRepositoryImpl,
+} from '../infrastructure';
+import {
+  ProductNameEmptySpecification,
+  StorageNameEmptySpecification,
+  UserPasswordEmptySpecification,
+  UserUniqueUsernameSpecification,
+  UserUsernameEmptySpecification,
+} from '../domain';
+import { ProductService, StorageItemService, StorageService, UserService } from '../application';
+import { GetChangedStorageProducts, GetStoragesWithProducts } from './queries';
+import {
+  AddNewProductToStorage,
+  ChangeStorageProductQuantity,
+  CreateStorage,
+  RegisterUser,
+  RemoveProduct,
+  RemoveStorage,
+  SaveStorageProductsChanges,
+  UpdateStorage,
+} from './commands';
 
 export default class Core {
   public readonly eventBus = {

@@ -1,10 +1,12 @@
+import {
+  UserPasswordEmptySpecification,
+  UserRepository,
+  UserUniqueUsernameSpecification,
+  UserUsernameEmptySpecification,
+} from '../../domain';
 import UserService from './user-service.ts';
-import UserRepository from '../../domain/repositories/user-repository.ts';
-import UserUniqueUsernameSpecification from '../../domain/specifications/user-username-unique-specification.ts';
-import UserRepositoryImpl from '../../infrastructure/repositories/user-repository.ts';
+import { UserRepositoryImpl } from '../../infrastructure';
 import generateUser from '../../domain/models/__test__/generateUser.ts';
-import UserUsernameEmptySpecification from '../../domain/specifications/user-username-empty-specification.ts';
-import UserPasswordEmptySpecification from '../../domain/specifications/user-password-empty-specification.ts';
 
 describe('UserService', () => {
   let userRepository: UserRepository;

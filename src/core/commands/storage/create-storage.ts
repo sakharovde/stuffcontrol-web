@@ -1,6 +1,6 @@
-import Storage from '../../../domain/models/storage.ts';
-import StorageService from '../../../application/services/storage-service.ts';
-import StorageEventBus from '../../../events/storage-event-bus.ts';
+import { StorageService } from '../../../application';
+import { StorageEventBus } from '../../../events';
+import { Storage } from '../../../domain';
 
 export default class CreateStorage {
   constructor(

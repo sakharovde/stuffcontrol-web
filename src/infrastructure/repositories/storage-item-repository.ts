@@ -1,6 +1,5 @@
+import { StorageItem, StorageItemRepository } from '../../domain';
 import LocalForageFactory from '../factories/localforage-factory.ts';
-import StorageItem from '../../domain/models/storage-item.ts';
-import StorageItemRepository from '../../domain/repositories/storage-item-repository.ts';
 
 export default class StorageItemRepositoryImpl implements StorageItemRepository {
   private readonly client = LocalForageFactory.createInstance({

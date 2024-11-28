@@ -1,9 +1,9 @@
 import { FC, useContext } from 'react';
 import CoreContext from '../core-context.ts';
 import { Formik } from 'formik';
-import Storage from '../../domain/models/storage.ts';
 import cn from 'classnames';
-import StorageProductDto from '../../application/dto/storage-product-dto.ts';
+import { StorageProductDto } from '../../application';
+import { Storage } from '../../domain';
 
 type Props = {
   data?: StorageProductDto;
