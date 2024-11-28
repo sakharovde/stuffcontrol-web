@@ -9,7 +9,13 @@ export default class ProductRepositoryImpl implements ProductRepository {
   });
 
   async findById(id: string): Promise<Product | null> {
-    return (await this.client.getItem(id)) || null;
+    const product = await this.client.getItem(id);
+
+    if (!product) {
+      return null;
+    }
+
+    return this.fromJSON(product);
   }
 
   async findByName(name: string): Promise<Product | null> {
@@ -18,7 +24,9 @@ export default class ProductRepositoryImpl implements ProductRepository {
   }
 
   async save(product: Product): Promise<Product> {
-    return this.client.setItem(product.id, product);
+    await this.client.setItem(product.id, this.toJSON(product));
+
+    return product;
   }
 
   async delete(product: Product): Promise<void> {
@@ -26,10 +34,33 @@ export default class ProductRepositoryImpl implements ProductRepository {
   }
 
   async getAll(): Promise<Product[]> {
-    const users: Product[] = [];
+    const products: Product[] = [];
     await this.client.iterate((value) => {
-      users.push(value as Product);
+      products.push(this.fromJSON(value));
     });
-    return users;
+    return products;
+  }
+
+  private toJSON(product: Product): unknown {
+    return {
+      id: product.id,
+      name: product.name,
+    };
+  }
+
+  private fromJSON(data: unknown): Product {
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid data');
+    }
+
+    if (!('id' in data) || typeof data.id !== 'string') {
+      throw new Error('Invalid id');
+    }
+
+    if (!('name' in data) || typeof data.name !== 'string') {
+      throw new Error('Invalid name');
+    }
+
+    return new Product(data.id, data.name);
   }
 }

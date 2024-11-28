@@ -126,14 +126,12 @@ const StorageWidget: FC<Props> = (props) => {
               onClick={() => props.onClickEditProduct(product.id)}
               onClickPlus={() =>
                 core.commands.storage.changeProductQuantity.execute({
-                  storageId: product.storageId,
                   productId: product.id,
                   quantity: quantity + 1,
                 })
               }
               onClickMinus={() =>
                 core.commands.storage.changeProductQuantity.execute({
-                  storageId: product.storageId,
                   productId: product.id,
                   quantity: quantity - 1,
                 })

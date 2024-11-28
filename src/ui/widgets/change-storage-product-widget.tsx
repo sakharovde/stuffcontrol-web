@@ -13,8 +13,8 @@ type Props = {
 const ChangeStorageProductWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
 
-  const handleRemoveStorage = (id: string) => () => {
-    core.commands.storage.removeProduct.execute({ storageId: props.storage.id, productId: id }).then(props.onSuccess);
+  const handleRemoveStorage = (id: StorageProductDto['id']) => () => {
+    core.commands.storage.removeProduct.execute({ productId: id }).then(props.onSuccess);
   };
 
   return (
@@ -36,7 +36,6 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
           }
           core.commands.storage.changeProductQuantity
             .execute({
-              storageId: props.data.storageId,
               productId: props.data.id,
               quantity: Number(values.quantity || 0),
             })
