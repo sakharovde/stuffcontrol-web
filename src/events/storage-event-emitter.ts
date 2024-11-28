@@ -6,7 +6,7 @@ interface Events {
   storageDeleted: void;
 }
 
-export default class StorageEventBus extends EventEmitter {
+export default class extends EventEmitter {
   emit<K extends keyof Events>(event: K, ...args: Events[K][]): boolean {
     return super.emit(event, ...args);
   }

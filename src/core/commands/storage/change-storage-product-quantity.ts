@@ -1,11 +1,11 @@
 import { StorageItemService } from '../../../application';
-import { StorageEventBus } from '../../../events';
+import { StorageEventEmitter } from '../../../events';
 import { Product, StorageItem } from '../../../domain';
 
 export default class ChangeStorageProductQuantity {
   constructor(
     private readonly storageItemService: StorageItemService,
-    private readonly storageEventBus: StorageEventBus
+    private readonly storageEventEmitter: StorageEventEmitter
   ) {}
 
   execute = async (args: {
@@ -15,7 +15,7 @@ export default class ChangeStorageProductQuantity {
   }): Promise<StorageItem> => {
     const result = await this.storageItemService.changeQuantity(args.storageId, args.productId, args.quantity);
 
-    this.storageEventBus.emit('storageUpdated');
+    this.storageEventEmitter.emit('storageUpdated');
 
     return result;
   };

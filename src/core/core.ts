@@ -1,4 +1,4 @@
-import { StorageEventBus } from '../events';
+import { StorageEventEmitter } from '../events';
 import {
   ProductRepositoryImpl,
   StorageItemRepositoryImpl,
@@ -27,8 +27,8 @@ import {
 } from './commands';
 
 export default class Core {
-  public readonly eventBus = {
-    storage: new StorageEventBus(),
+  public readonly eventEmitters = {
+    storage: new StorageEventEmitter(),
   };
 
   private readonly repositories = {
@@ -80,17 +80,17 @@ export default class Core {
 
   public readonly commands = {
     storage: {
-      create: new CreateStorage(this.services.storage, this.eventBus.storage),
+      create: new CreateStorage(this.services.storage, this.eventEmitters.storage),
       addNewProduct: new AddNewProductToStorage(
         this.services.product,
         this.services.storageItem,
-        this.eventBus.storage
+        this.eventEmitters.storage
       ),
-      changeProductQuantity: new ChangeStorageProductQuantity(this.services.storageItem, this.eventBus.storage),
-      remove: new RemoveStorage(this.services.storage, this.eventBus.storage),
-      removeProduct: new RemoveProduct(this.services.storageItem, this.eventBus.storage),
-      update: new UpdateStorage(this.services.storage, this.eventBus.storage),
-      saveProductsChanges: new SaveStorageProductsChanges(this.services.storage, this.eventBus.storage),
+      changeProductQuantity: new ChangeStorageProductQuantity(this.services.storageItem, this.eventEmitters.storage),
+      remove: new RemoveStorage(this.services.storage, this.eventEmitters.storage),
+      removeProduct: new RemoveProduct(this.services.storageItem, this.eventEmitters.storage),
+      update: new UpdateStorage(this.services.storage, this.eventEmitters.storage),
+      saveProductsChanges: new SaveStorageProductsChanges(this.services.storage, this.eventEmitters.storage),
     },
     user: {
       register: new RegisterUser(this.services.user),

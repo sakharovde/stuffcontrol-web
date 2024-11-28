@@ -25,16 +25,16 @@ const App: FC = () => {
       });
     };
 
-    core.eventBus.storage.on('storageCreated', updateStoragesState);
-    core.eventBus.storage.on('storageUpdated', updateStoragesState);
-    core.eventBus.storage.on('storageDeleted', updateStoragesState);
+    core.eventEmitters.storage.on('storageCreated', updateStoragesState);
+    core.eventEmitters.storage.on('storageUpdated', updateStoragesState);
+    core.eventEmitters.storage.on('storageDeleted', updateStoragesState);
 
     updateStoragesState();
 
     return () => {
-      core.eventBus.storage.off('storageCreated', updateStoragesState);
-      core.eventBus.storage.off('storageUpdated', updateStoragesState);
-      core.eventBus.storage.off('storageDeleted', updateStoragesState);
+      core.eventEmitters.storage.off('storageCreated', updateStoragesState);
+      core.eventEmitters.storage.off('storageUpdated', updateStoragesState);
+      core.eventEmitters.storage.off('storageDeleted', updateStoragesState);
     };
   }, [core]);
 

@@ -96,16 +96,16 @@ const StorageWidget: FC<Props> = (props) => {
       core.queries.storage.getChangedProducts.execute(props.data.id).then(setChangedProducts);
     };
 
-    core.eventBus.storage.on('storageCreated', updateChangedProductsState);
-    core.eventBus.storage.on('storageUpdated', updateChangedProductsState);
-    core.eventBus.storage.on('storageDeleted', updateChangedProductsState);
+    core.eventEmitters.storage.on('storageCreated', updateChangedProductsState);
+    core.eventEmitters.storage.on('storageUpdated', updateChangedProductsState);
+    core.eventEmitters.storage.on('storageDeleted', updateChangedProductsState);
 
     updateChangedProductsState();
 
     return () => {
-      core.eventBus.storage.off('storageCreated', updateChangedProductsState);
-      core.eventBus.storage.off('storageUpdated', updateChangedProductsState);
-      core.eventBus.storage.off('storageDeleted', updateChangedProductsState);
+      core.eventEmitters.storage.off('storageCreated', updateChangedProductsState);
+      core.eventEmitters.storage.off('storageUpdated', updateChangedProductsState);
+      core.eventEmitters.storage.off('storageDeleted', updateChangedProductsState);
     };
   }, [core]);
 

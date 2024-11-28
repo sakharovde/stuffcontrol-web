@@ -1,1 +1,1 @@
-export { default as StorageEventBus } from './storage-event-bus.ts';
+export { default as StorageEventEmitter } from './storage-event-emitter.ts';

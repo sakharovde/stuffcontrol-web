@@ -1,15 +1,15 @@
 import { StorageService } from '../../../application';
-import { StorageEventBus } from '../../../events';
+import { StorageEventEmitter } from '../../../events';
 
 export default class SaveStorageProductsChanges {
   constructor(
     private readonly storageService: StorageService,
-    private readonly storageEventBus: StorageEventBus
+    private readonly storageEventEmitter: StorageEventEmitter
   ) {}
 
   execute = async (storageId: Storage['id']): Promise<void> => {
     const result = await this.storageService.saveProductsChanges(storageId);
-    this.storageEventBus.emit('storageUpdated');
+    this.storageEventEmitter.emit('storageUpdated');
 
     return result;
   };
