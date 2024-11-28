@@ -1,9 +1,9 @@
-import ProductService from '../../services/product-service.ts';
+import ProductService from '../../../application/services/product-service.ts';
 import Product from '../../../domain/models/product.ts';
 import StorageItem from '../../../domain/models/storage-item.ts';
 import Storage from '../../../domain/models/storage.ts';
-import StorageItemService from '../../services/storage-item-service.ts';
-import StorageEventBus from '../../events/storage-event-bus.ts';
+import StorageItemService from '../../../application/services/storage-item-service.ts';
+import StorageEventBus from '../../../events/storage-event-bus.ts';
 
 export default class AddNewProductToStorage {
   constructor(

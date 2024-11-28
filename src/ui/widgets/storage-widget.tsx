@@ -1,7 +1,7 @@
 import { FC, useContext, useLayoutEffect, useState } from 'react';
 import cn from 'classnames';
-import StorageWithProductsDto from '../../core/application/dto/storage-with-products-dto.ts';
-import StorageProductDto from '../../core/application/dto/storage-product-dto.ts';
+import StorageWithProductsDto from '../../application/dto/storage-with-products-dto.ts';
+import StorageProductDto from '../../application/dto/storage-product-dto.ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightLong, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import CoreContext from '../core-context.ts';

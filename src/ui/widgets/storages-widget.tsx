@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import Storage from '../../core/domain/models/storage.ts';
-import StorageWithProductsDto from '../../core/application/dto/storage-with-products-dto.ts';
-import StorageProductDto from '../../core/application/dto/storage-product-dto.ts';
+import Storage from '../../domain/models/storage.ts';
+import StorageWithProductsDto from '../../application/dto/storage-with-products-dto.ts';
+import StorageProductDto from '../../application/dto/storage-product-dto.ts';
 
 type StorageItemProps = {
   data: StorageProductDto;

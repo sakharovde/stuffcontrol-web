@@ -6,7 +6,7 @@ import ChangeStorageWidget from './widgets/change-storage-widget.tsx';
 import StorageWidget from './widgets/storage-widget.tsx';
 import CoreContext from './core-context.ts';
 import ChangeStorageProductWidget from './widgets/change-storage-product-widget.tsx';
-import StorageWithProductsDto from '../core/application/dto/storage-with-products-dto.ts';
+import StorageWithProductsDto from '../application/dto/storage-with-products-dto.ts';
 
 const App: FC = () => {
   const navigate = useNavigate();

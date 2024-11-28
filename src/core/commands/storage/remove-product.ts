@@ -1,7 +1,7 @@
-import StorageItemService from '../../services/storage-item-service.ts';
+import StorageItemService from '../../../application/services/storage-item-service.ts';
 import Product from '../../../domain/models/product.ts';
 import Storage from '../../../domain/models/storage.ts';
-import StorageEventBus from '../../events/storage-event-bus.ts';
+import StorageEventBus from '../../../events/storage-event-bus.ts';
 
 export default class RemoveProduct {
   constructor(

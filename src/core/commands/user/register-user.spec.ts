@@ -1,5 +1,5 @@
 import RegisterUser from './register-user.ts';
-import UserService from '../../services/user-service.ts';
+import UserService from '../../../application/services/user-service.ts';
 import UserRepository from '../../../domain/repositories/user-repository.ts';
 import UserUniqueUsernameSpecification from '../../../domain/specifications/user-username-unique-specification.ts';
 import UserRepositoryImpl from '../../../infrastructure/repositories/user-repository.ts';

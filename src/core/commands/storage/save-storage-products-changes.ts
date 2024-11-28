@@ -1,6 +1,6 @@
-import StorageService from '../../services/storage-service.ts';
+import StorageService from '../../../application/services/storage-service.ts';
 import Storage from '../../../domain/models/storage.ts';
-import StorageEventBus from '../../events/storage-event-bus.ts';
+import StorageEventBus from '../../../events/storage-event-bus.ts';
 
 export default class SaveStorageProductsChanges {
   constructor(
