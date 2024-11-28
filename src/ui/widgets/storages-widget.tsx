@@ -1,8 +1,7 @@
 import { FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { Storage } from '../../domain';
-import { StorageProductDto, StorageWithProductsDto } from '../../application';
+import { StorageDto, StorageProductDto, StorageWithProductsDto } from '../../application';
 
 type StorageItemProps = {
   data: StorageProductDto;
@@ -40,7 +39,7 @@ const StorageCardWidget: FC<StorageCardWidgetProps> = (props) => {
 type StoragesWidgetProps = {
   data?: StorageWithProductsDto[];
   onClickAddStorage: () => void;
-  onClickStorageCard: (storageId: Storage['id']) => void;
+  onClickStorageCard: (storageId: StorageDto['id']) => void;
 };
 
 const StoragesWidget: FC<StoragesWidgetProps> = (props) => {

@@ -2,12 +2,11 @@ import { FC, useContext } from 'react';
 import CoreContext from '../core-context.ts';
 import { Formik } from 'formik';
 import cn from 'classnames';
-import { StorageProductDto } from '../../application';
-import { Storage } from '../../domain';
+import { StorageDto, StorageProductDto } from '../../application';
 
 type Props = {
   data?: StorageProductDto;
-  storage: Storage;
+  storage: StorageDto;
   onSuccess: () => void;
 };
 

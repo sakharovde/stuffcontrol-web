@@ -1,5 +1,6 @@
 import StorageProductDto, { StorageProductDtoFactory } from './storage-product-dto.ts';
 import { Product, Storage, StorageItem } from '../../domain';
+import { StorageDtoFactory } from './storage-dto.ts';
 
 export default interface StorageWithProductsDto {
   id: Storage['id'];
@@ -14,20 +15,18 @@ export class StorageWithProductsDtoFactory {
     products: Product[]
   ): StorageWithProductsDto => {
     return {
-      id: storage.id,
-      name: storage.name,
+      ...StorageDtoFactory.create(storage),
       products: storageItems
         .filter((storageItem) => storageItem.storageId === storage.id)
-        .reduce(
-          (acc, storageItem) => {
-            const product = products.find((product) => product.id === storageItem.productId);
+        .reduce((acc, storageItem) => {
+          if (storageItem.storageId !== storage.id) return acc;
 
-            if (!product) return acc;
+          const product = products.find((product) => product.id === storageItem.productId);
 
-            return [...acc, StorageProductDtoFactory.create(storageItem, product)];
-          },
-          [] as StorageWithProductsDto['products']
-        ),
+          if (!product) return acc;
+
+          return [...acc, StorageProductDtoFactory.create(storageItem, product)];
+        }, [] as StorageProductDto[]),
     };
   };
 }
