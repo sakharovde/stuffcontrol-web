@@ -5,6 +5,10 @@ export default interface StorageProductDto {
   name: Product['name'];
   storageId: StorageItem['storageId'];
   quantity: StorageItem['quantity'];
+  shelfLife: Product['shelfLife'];
+  shelfLifeAfterOpening: Product['shelfLifeAfterOpening'];
+  manufacturingDate: StorageItem['manufacturingDate'];
+  openingDate: StorageItem['openingDate'];
 }
 
 export class StorageProductDtoFactory {
@@ -14,6 +18,10 @@ export class StorageProductDtoFactory {
       name: product.name,
       storageId: storageItem.storageId,
       quantity: storageItem.quantity,
+      shelfLife: product.shelfLife,
+      shelfLifeAfterOpening: product.shelfLifeAfterOpening,
+      manufacturingDate: storageItem.manufacturingDate,
+      openingDate: storageItem.openingDate,
     };
   }
 }

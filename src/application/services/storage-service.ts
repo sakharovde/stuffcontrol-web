@@ -129,7 +129,10 @@ export default class StorageService {
   async createProduct(
     storageId: StorageDto['id'],
     productName: StorageProductDto['name'],
-    quantity: StorageProductDto['quantity']
+    quantity: StorageProductDto['quantity'],
+    shelfLife: Product['shelfLife'],
+    shelfLifeAfterOpening: Product['shelfLifeAfterOpening'],
+    manufacturingDate: StorageItem['manufacturingDate']
   ): Promise<StorageProductDto> {
     const isNameEmpty = await this.productNameEmptySpecification.isSatisfiedBy(productName);
 
@@ -141,8 +144,12 @@ export default class StorageService {
       throw new Error('Quantity cannot be negative');
     }
 
-    const product = await this.productRepository.save(new Product(uuidv4(), productName));
-    const storageItem = await this.storageItemRepository.save(new StorageItem(uuidv4(), storageId, product.id, 0));
+    const product = await this.productRepository.save(
+      new Product(uuidv4(), productName, shelfLife, shelfLifeAfterOpening)
+    );
+    const storageItem = await this.storageItemRepository.save(
+      new StorageItem(uuidv4(), storageId, product.id, 0, manufacturingDate)
+    );
     const storageProduct = StorageProductDtoFactory.create(storageItem, product);
 
     await this.changeProductQuantity(storageProduct.id, quantity);

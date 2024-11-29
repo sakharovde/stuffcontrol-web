@@ -4,6 +4,8 @@ export default class StorageItem {
     public storageId: string,
     public productId: string,
     public quantity: number,
+    public manufacturingDate: Date | null = null,
+    public openingDate: Date | null = null,
     public createdAt: Date = new Date()
   ) {}
 }
