@@ -1,4 +1,4 @@
-import { UserService } from '../../../application';
+import { UserService } from '../../index.ts';
 import { User } from '../../../domain';
 
 export default class RegisterUser {

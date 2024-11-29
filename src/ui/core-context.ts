@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import Core from '../core';
+import Application from '../application';
 
-const CoreContext = createContext<Core>(new Core());
+const CoreContext = createContext<Application>(new Application());
 
 export default CoreContext;

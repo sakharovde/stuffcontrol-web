@@ -1,5 +1,5 @@
-import { StorageDto, StorageService } from '../../../application';
-import { StorageEventEmitter } from '../../../events';
+import { StorageDto, StorageService } from '../../index.ts';
+import StorageEventEmitter from '../../events/storage-event-emitter.ts';
 
 export default class UpdateStorage {
   constructor(

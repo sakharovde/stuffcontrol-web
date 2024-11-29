@@ -1,5 +1,5 @@
-import { StorageProductDto, StorageService } from '../../../application';
-import { StorageEventEmitter } from '../../../events';
+import { StorageProductDto, StorageService } from '../../index.ts';
+import StorageEventEmitter from '../../events/storage-event-emitter.ts';
 
 export default class RemoveProduct {
   constructor(

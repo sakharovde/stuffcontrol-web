@@ -1,4 +1,4 @@
-import { StorageEventEmitter } from '../events';
+import StorageEventEmitter from './events/storage-event-emitter.ts';
 import {
   ProductRepositoryImpl,
   StorageItemRepositoryImpl,
@@ -26,7 +26,7 @@ import {
   UpdateStorage,
 } from './commands';
 
-export default class Core {
+export default class Application {
   public readonly eventEmitters = {
     storage: new StorageEventEmitter(),
   };

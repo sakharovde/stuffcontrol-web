@@ -4,7 +4,7 @@ import {
   UserUniqueUsernameSpecification,
   UserUsernameEmptySpecification,
 } from '../../../domain';
-import { UserService } from '../../../application';
+import { UserService } from '../../index.ts';
 import { RegisterUser } from '../index.ts';
 import { UserRepositoryImpl } from '../../../infrastructure';
 import generateUser from '../../../domain/models/__test__/generateUser.ts';

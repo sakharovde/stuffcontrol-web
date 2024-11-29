@@ -1,10 +1,10 @@
-import Core from './core.ts';
+import Application from './application';
 
-describe('Core', () => {
-  let core: Core;
+describe('Application', () => {
+  let core: Application;
 
   beforeEach(() => {
-    core = new Core();
+    core = new Application();
   });
 
   describe('storage.addNewProduct', () => {
@@ -14,6 +14,9 @@ describe('Core', () => {
         storageId: storage.id,
         productName: 'productName',
         quantity: 10,
+        shelfLife: null,
+        shelfLifeAfterOpening: null,
+        manufacturingDate: null,
       });
       expect(result).toEqual(
         expect.objectContaining({
@@ -24,7 +27,14 @@ describe('Core', () => {
 
     it('throws an error when product name is empty', async () => {
       await expect(
-        core.commands.storage.addNewProduct.execute({ storageId: 'storageId', productName: '', quantity: 10 })
+        core.commands.storage.addNewProduct.execute({
+          storageId: 'storageId',
+          productName: '',
+          quantity: 10,
+          shelfLife: null,
+          shelfLifeAfterOpening: null,
+          manufacturingDate: null,
+        })
       ).rejects.toThrow('Product name cannot be empty');
     });
 
@@ -34,6 +44,9 @@ describe('Core', () => {
           storageId: 'storageId',
           productName: 'productName',
           quantity: -1,
+          shelfLife: null,
+          shelfLifeAfterOpening: null,
+          manufacturingDate: null,
         })
       ).rejects.toThrow('Quantity cannot be negative');
     });
@@ -46,6 +59,9 @@ describe('Core', () => {
         storageId: storage.id,
         productName: 'productName',
         quantity: 0,
+        shelfLife: null,
+        shelfLifeAfterOpening: null,
+        manufacturingDate: null,
       });
       const result = await core.commands.storage.changeProductQuantity.execute({
         productId: product.id,
@@ -64,6 +80,9 @@ describe('Core', () => {
         storageId: storage.id,
         productName: 'productName',
         quantity: 0,
+        shelfLife: null,
+        shelfLifeAfterOpening: null,
+        manufacturingDate: null,
       });
       await expect(
         core.commands.storage.changeProductQuantity.execute({

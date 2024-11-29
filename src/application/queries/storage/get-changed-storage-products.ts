@@ -1,5 +1,5 @@
-import StorageService from '../../../application/services/storage-service.ts';
-import StorageProductDto from '../../../application/dto/storage-product-dto.ts';
+import StorageService from '../../services/storage-service.ts';
+import StorageProductDto from '../../dto/storage-product-dto.ts';
 
 export default class GetChangedStorageProducts {
   constructor(private readonly storageService: StorageService) {}
