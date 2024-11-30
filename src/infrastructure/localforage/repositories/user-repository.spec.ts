@@ -1,6 +1,6 @@
-import generateUser from '../../domain/models/__test__/generateUser.ts';
+import generateUser from '../../../domain/models/__test__/generateUser.ts';
 import UserRepositoryImpl from './user-repository.ts';
-import { User } from '../../domain';
+import { User } from '../../../domain';
 
 describe('UserRepositoryImpl', () => {
   let userRepository: UserRepositoryImpl;

@@ -1,5 +1,5 @@
-import { User, UserRepository } from '../../domain';
-import LocalForageFactory from '../factories/localforage-factory.ts';
+import { User, UserRepository } from '../../../domain';
+import LocalForageFactory from '../localforage-factory.ts';
 
 export default class UserRepositoryImpl implements UserRepository {
   private readonly client = LocalForageFactory.createInstance({
