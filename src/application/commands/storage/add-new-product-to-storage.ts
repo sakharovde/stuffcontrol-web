@@ -11,18 +11,8 @@ export default class AddNewProductToStorage {
     storageId: StorageDto['id'];
     productName: StorageProductDto['name'];
     quantity: StorageProductDto['quantity'];
-    shelfLife: StorageProductDto['shelfLife'];
-    shelfLifeAfterOpening: StorageProductDto['shelfLifeAfterOpening'];
-    manufacturingDate: StorageProductDto['manufacturingDate'];
   }): Promise<StorageProductDto> => {
-    const result = await this.storageService.createProduct(
-      args.storageId,
-      args.productName,
-      args.quantity,
-      args.shelfLife,
-      args.shelfLifeAfterOpening,
-      args.manufacturingDate
-    );
+    const result = await this.storageService.createProduct(args.storageId, args.productName, args.quantity);
 
     this.storageEventEmitter.emit('storageUpdated');
 

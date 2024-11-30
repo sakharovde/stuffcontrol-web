@@ -1,6 +1,5 @@
 import StorageEventEmitter from './events/storage-event-emitter.ts';
 import {
-  ProductRepositoryImpl,
   StorageItemRepositoryImpl,
   StorageRepositoryImpl,
   StorageTransactionRepositoryImpl,
@@ -32,7 +31,6 @@ export default class Application {
   };
 
   private readonly repositories = {
-    product: new ProductRepositoryImpl(),
     storage: new StorageRepositoryImpl(),
     storageItem: new StorageItemRepositoryImpl(),
     storageTransaction: new StorageTransactionRepositoryImpl(),
@@ -57,7 +55,6 @@ export default class Application {
     storage: new StorageService(
       this.repositories.storage,
       this.repositories.storageItem,
-      this.repositories.product,
       this.specifications.storage.nameEmpty,
       this.repositories.storageTransaction,
       this.specifications.product.nameEmpty

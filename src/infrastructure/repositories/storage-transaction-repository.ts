@@ -1,4 +1,4 @@
-import { Product, StorageTransaction, StorageTransactionRepository } from '../../domain';
+import { StorageItem, StorageTransaction, StorageTransactionRepository } from '../../domain';
 import LocalForageFactory from '../factories/localforage-factory.ts';
 
 export default class StorageTransactionRepositoryImpl implements StorageTransactionRepository {
@@ -8,18 +8,12 @@ export default class StorageTransactionRepositoryImpl implements StorageTransact
     description: 'Database for storage items',
   });
 
-  async findUnappliedByStorageIdAndProductId(
-    storageId: Storage['id'],
-    productId: Product['id']
-  ): Promise<StorageTransaction | null> {
+  async findUnappliedByProductId(productId: StorageItem['id']): Promise<StorageTransaction | null> {
     const storageTransactions: StorageTransaction[] = await this.getAll();
 
     return (
       storageTransactions
-        .filter(
-          (storageTransaction) =>
-            storageTransaction.storageId === storageId && storageTransaction.productId === productId
-        )
+        .filter((storageTransaction) => storageTransaction.productId === productId)
         .find((storageTransaction) => storageTransaction.state === 'pending') || null
     );
   }

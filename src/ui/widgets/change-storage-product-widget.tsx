@@ -30,9 +30,6 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
                 storageId: props.storage.id,
                 productName: values.name,
                 quantity: Number(values.quantity || 0),
-                shelfLife: null,
-                shelfLifeAfterOpening: null,
-                manufacturingDate: null,
               })
               .then(props.onSuccess);
             return;

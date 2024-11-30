@@ -18,18 +18,6 @@ export default class StorageItemRepositoryImpl implements StorageItemRepository 
     return this.fromJSON(storageItem);
   }
 
-  async findByStorageIdAndProductId(
-    storageId: StorageItem['storageId'],
-    productId: StorageItem['productId']
-  ): Promise<StorageItem | null> {
-    const storageItems = await this.getAll();
-
-    return (
-      storageItems.find((storageItem) => storageItem.storageId === storageId && storageItem.productId === productId) ||
-      null
-    );
-  }
-
   async findAllByStorageId(storageId: StorageItem['id']): Promise<StorageItem[]> {
     const storageItems = await this.getAll();
     return storageItems.filter((storageItem) => storageItem.storageId === storageId);
@@ -57,8 +45,9 @@ export default class StorageItemRepositoryImpl implements StorageItemRepository 
     return {
       id: storageItem.id,
       storageId: storageItem.storageId,
-      productId: storageItem.productId,
+      name: storageItem.name,
       quantity: storageItem.quantity,
+      createdAt: storageItem.createdAt.toString(),
     };
   }
 
@@ -72,14 +61,16 @@ export default class StorageItemRepositoryImpl implements StorageItemRepository 
       typeof data.id !== 'string' ||
       !('storageId' in data) ||
       typeof data.storageId !== 'string' ||
-      !('productId' in data) ||
-      typeof data.productId !== 'string' ||
       !('quantity' in data) ||
-      typeof data.quantity !== 'number'
+      typeof data.quantity !== 'number' ||
+      !('name' in data) ||
+      typeof data.name !== 'string' ||
+      !('createdAt' in data) ||
+      typeof data.createdAt !== 'string'
     ) {
       throw new Error('Invalid data');
     }
 
-    return data as StorageItem;
+    return new StorageItem(data.id, data.storageId, data.name, data.quantity, new Date(data.createdAt));
   }
 }

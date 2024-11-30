@@ -1,8 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
-  Product,
   ProductNameEmptySpecification,
-  ProductRepository,
   Storage,
   StorageItem,
   StorageItemRepository,
@@ -19,7 +17,6 @@ export default class StorageService {
   constructor(
     private readonly storageRepository: StorageRepository,
     private readonly storageItemRepository: StorageItemRepository,
-    private readonly productRepository: ProductRepository,
     private readonly nameEmptySpecification: StorageNameEmptySpecification,
     private readonly storageTransactionRepository: StorageTransactionRepository,
     private readonly productNameEmptySpecification: ProductNameEmptySpecification
@@ -42,15 +39,8 @@ export default class StorageService {
 
   getAllProducts = async (storageId: StorageDto['id']): Promise<StorageProductDto[]> => {
     const storageItems = await this.storageItemRepository.findAllByStorageId(storageId);
-    const products = await this.productRepository.getAll();
 
-    return storageItems.reduce((acc, storageItem) => {
-      const product = products.find((product) => product.id === storageItem.productId);
-
-      if (!product) return acc;
-
-      return [...acc, StorageProductDtoFactory.create(storageItem, product)];
-    }, [] as StorageProductDto[]);
+    return storageItems.map((storageItem) => StorageProductDtoFactory.create(storageItem));
   };
 
   getAllWithProducts = async (): Promise<StorageWithProductsDto[]> => {
@@ -73,11 +63,10 @@ export default class StorageService {
 
     const storageItems = await this.storageItemRepository.findAllByStorageId(storageId);
     const unappliedTransactions = await this.storageTransactionRepository.findAllUnappliedByStorageId(storageId);
-    const products = await this.productRepository.getAll();
 
     const changedStorageItems = storageItems.reduce((acc, storageItem) => {
       const unappliedTransaction = unappliedTransactions.find(
-        (transaction) => transaction.productId === storageItem.productId
+        (transaction) => transaction.productId === storageItem.id
       );
 
       if (!unappliedTransaction) {
@@ -89,13 +78,7 @@ export default class StorageService {
       return [...acc, storageItem];
     }, [] as StorageItem[]);
 
-    return changedStorageItems.reduce((acc, storageItem) => {
-      const product = products.find((product) => product.id === storageItem.productId);
-
-      if (!product) return acc;
-
-      return [...acc, StorageProductDtoFactory.create(storageItem, product)];
-    }, [] as StorageProductDto[]);
+    return changedStorageItems.map((storageItem) => StorageProductDtoFactory.create(storageItem));
   };
 
   update(storage: Storage): Promise<Storage> {
@@ -108,7 +91,7 @@ export default class StorageService {
 
     await Promise.all(
       unappliedTransactions.map(async (transaction) => {
-        const storageItem = storageItems.find((item) => item.productId === transaction.productId);
+        const storageItem = storageItems.find((item) => item.id === transaction.productId);
         if (!storageItem) {
           throw new Error('Storage item not found');
         }
@@ -129,10 +112,7 @@ export default class StorageService {
   async createProduct(
     storageId: StorageDto['id'],
     productName: StorageProductDto['name'],
-    quantity: StorageProductDto['quantity'],
-    shelfLife: Product['shelfLife'],
-    shelfLifeAfterOpening: Product['shelfLifeAfterOpening'],
-    manufacturingDate: StorageItem['manufacturingDate']
+    quantity: StorageProductDto['quantity']
   ): Promise<StorageProductDto> {
     const isNameEmpty = await this.productNameEmptySpecification.isSatisfiedBy(productName);
 
@@ -144,13 +124,8 @@ export default class StorageService {
       throw new Error('Quantity cannot be negative');
     }
 
-    const product = await this.productRepository.save(
-      new Product(uuidv4(), productName, shelfLife, shelfLifeAfterOpening)
-    );
-    const storageItem = await this.storageItemRepository.save(
-      new StorageItem(uuidv4(), storageId, product.id, 0, manufacturingDate)
-    );
-    const storageProduct = StorageProductDtoFactory.create(storageItem, product);
+    const storageItem = await this.storageItemRepository.save(new StorageItem(uuidv4(), storageId, productName, 0));
+    const storageProduct = StorageProductDtoFactory.create(storageItem);
 
     await this.changeProductQuantity(storageProduct.id, quantity);
 
@@ -171,18 +146,9 @@ export default class StorageService {
       throw new Error('Product not found in storage');
     }
 
-    const product = await this.productRepository.findById(storageItem.productId);
-
-    if (!product) {
-      throw new Error('Product not found');
-    }
-
     const quantityDelta = quantity - storageItem.quantity;
 
-    const storageTransaction = await this.storageTransactionRepository.findUnappliedByStorageIdAndProductId(
-      storageItem.storageId,
-      storageItem.productId
-    );
+    const storageTransaction = await this.storageTransactionRepository.findUnappliedByProductId(storageItem.id);
 
     if (!quantityDelta && storageTransaction) {
       await this.storageTransactionRepository.remove(storageTransaction);
@@ -191,11 +157,11 @@ export default class StorageService {
       await this.storageTransactionRepository.save(storageTransaction);
     } else {
       await this.storageTransactionRepository.save(
-        new StorageTransaction(uuidv4(), storageItem.storageId, storageItem.productId, quantityDelta, 'pending')
+        new StorageTransaction(uuidv4(), storageItem.storageId, storageItem.id, quantityDelta, 'pending')
       );
     }
 
-    return StorageProductDtoFactory.create(storageItem, product);
+    return StorageProductDtoFactory.create(storageItem);
   }
 
   async removeProduct(productId: StorageProductDto['id']): Promise<void> {

@@ -1,11 +1,9 @@
 export default class StorageItem {
   constructor(
-    public id: string,
+    public readonly id: string,
     public storageId: string,
-    public productId: string,
+    public name: string,
     public quantity: number,
-    public manufacturingDate: Date | null = null,
-    public openingDate: Date | null = null,
-    public createdAt: Date = new Date()
+    public readonly createdAt: Date = new Date()
   ) {}
 }
