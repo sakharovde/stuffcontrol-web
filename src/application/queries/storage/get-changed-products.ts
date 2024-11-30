@@ -1,10 +1,10 @@
 import StorageService from '../../services/storage-service.ts';
-import StorageProductDto from '../../dto/storage-product-dto.ts';
+import ProductDto from '../../dto/product-dto.ts';
 
-export default class GetChangedStorageProducts {
+export default class GetChangedProducts {
   constructor(private readonly storageService: StorageService) {}
 
-  execute = async (storageId: string): Promise<StorageProductDto[]> => {
+  execute = async (storageId: string): Promise<ProductDto[]> => {
     return await this.storageService.getAllChangedProducts(storageId);
   };
 }

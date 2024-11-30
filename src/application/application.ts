@@ -1,6 +1,5 @@
-import StorageEventEmitter from './events/storage-event-emitter.ts';
 import {
-  StorageItemRepositoryImpl,
+  ProductRepositoryImpl,
   StorageRepositoryImpl,
   StorageTransactionRepositoryImpl,
   UserRepositoryImpl,
@@ -12,18 +11,19 @@ import {
   UserUniqueUsernameSpecification,
   UserUsernameEmptySpecification,
 } from '../domain';
-import { StorageService, UserService } from '../application';
-import { GetChangedStorageProducts, GetStoragesWithProducts } from './queries';
-import {
-  AddNewProductToStorage,
-  ChangeStorageProductQuantity,
-  CreateStorage,
-  RegisterUser,
-  RemoveProduct,
-  RemoveStorage,
-  SaveStorageProductsChanges,
-  UpdateStorage,
-} from './commands';
+import StorageEventEmitter from './events/storage-event-emitter.ts';
+import StorageService from './services/storage-service.ts';
+import UserService from './services/user-service.ts';
+import GetStoragesWithProducts from './queries/storage/get-storages-with-products.ts';
+import GetChangedProducts from './queries/storage/get-changed-products.ts';
+import CreateStorage from './commands/storage/create-storage.ts';
+import AddNewProductToStorage from './commands/storage/add-new-product-to-storage.ts';
+import ChangeStorageProductQuantity from './commands/storage/change-storage-product-quantity.ts';
+import RemoveStorage from './commands/storage/remove-storage.ts';
+import RemoveProduct from './commands/storage/remove-product.ts';
+import UpdateStorage from './commands/storage/update-storage.ts';
+import SaveStorageProductsChanges from './commands/storage/save-storage-products-changes.ts';
+import RegisterUser from './commands/user/register-user.ts';
 
 export default class Application {
   public readonly eventEmitters = {
@@ -32,7 +32,7 @@ export default class Application {
 
   private readonly repositories = {
     storage: new StorageRepositoryImpl(),
-    storageItem: new StorageItemRepositoryImpl(),
+    storageItem: new ProductRepositoryImpl(),
     storageTransaction: new StorageTransactionRepositoryImpl(),
     user: new UserRepositoryImpl(),
   };
@@ -70,7 +70,7 @@ export default class Application {
   public readonly queries = {
     storage: {
       getAllWithProducts: new GetStoragesWithProducts(this.services.storage),
-      getChangedProducts: new GetChangedStorageProducts(this.services.storage),
+      getChangedProducts: new GetChangedProducts(this.services.storage),
     },
   };
 

@@ -1,10 +1,10 @@
 export { default as Storage } from './models/storage.ts';
-export { default as StorageItem } from './models/storage-item.ts';
+export { default as Product } from './models/product.ts';
 export { default as StorageTransaction } from './models/storage-transaction.ts';
 export { default as User } from './models/user.ts';
 
 export type { default as StorageRepository } from './repositories/storage-repository.ts';
-export type { default as StorageItemRepository } from './repositories/storage-item-repository.ts';
+export type { default as ProductRepository } from './repositories/product-repository.ts';
 export type { default as StorageTransactionRepository } from './repositories/storage-transaction-repository.ts';
 export type { default as UserRepository } from './repositories/user-repository.ts';
 

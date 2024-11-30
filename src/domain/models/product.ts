@@ -1,4 +1,4 @@
-export default class StorageItem {
+export default class Product {
   constructor(
     public readonly id: string,
     public storageId: string,

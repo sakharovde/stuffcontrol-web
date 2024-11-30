@@ -1,4 +1,4 @@
-import { StorageDto, StorageProductDto, StorageService } from '../../index.ts';
+import { StorageDto, ProductDto, StorageService } from '../../index.ts';
 import StorageEventEmitter from '../../events/storage-event-emitter.ts';
 
 export default class AddNewProductToStorage {
@@ -9,9 +9,9 @@ export default class AddNewProductToStorage {
 
   execute = async (args: {
     storageId: StorageDto['id'];
-    productName: StorageProductDto['name'];
-    quantity: StorageProductDto['quantity'];
-  }): Promise<StorageProductDto> => {
+    productName: ProductDto['name'];
+    quantity: ProductDto['quantity'];
+  }): Promise<ProductDto> => {
     const result = await this.storageService.createProduct(args.storageId, args.productName, args.quantity);
 
     this.storageEventEmitter.emit('storageUpdated');

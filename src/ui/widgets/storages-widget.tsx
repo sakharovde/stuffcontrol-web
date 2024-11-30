@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { StorageDto, StorageProductDto, StorageWithProductsDto } from '../../application';
+import { StorageDto, ProductDto, StorageWithProductsDto } from '../../application';
 
 type StorageItemProps = {
-  data: StorageProductDto;
+  data: ProductDto;
 };
 const StorageProductWidget: FC<StorageItemProps> = (props) => {
   return (

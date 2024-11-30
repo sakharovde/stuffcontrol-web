@@ -2,10 +2,10 @@ import { FC, useContext } from 'react';
 import CoreContext from '../core-context.ts';
 import { Formik } from 'formik';
 import cn from 'classnames';
-import { StorageDto, StorageProductDto } from '../../application';
+import { StorageDto, ProductDto } from '../../application';
 
 type Props = {
-  data?: StorageProductDto;
+  data?: ProductDto;
   storage: StorageDto;
   onSuccess: () => void;
 };
@@ -13,7 +13,7 @@ type Props = {
 const ChangeStorageProductWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
 
-  const handleRemoveStorage = (id: StorageProductDto['id']) => () => {
+  const handleRemoveStorage = (id: ProductDto['id']) => () => {
     core.commands.storage.removeProduct.execute({ productId: id }).then(props.onSuccess);
   };
 

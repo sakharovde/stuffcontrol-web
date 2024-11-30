@@ -1,7 +1,7 @@
-import StorageItem from '../models/storage-item.ts';
+import Product from '../models/product.ts';
 
 export default class ProductNameEmptySpecification {
-  async isSatisfiedBy(name: StorageItem['name']): Promise<boolean> {
+  async isSatisfiedBy(name: Product['name']): Promise<boolean> {
     return !name || !name.trim();
   }
 }

@@ -1,14 +1,14 @@
 import { FC, useContext, useLayoutEffect, useState } from 'react';
 import cn from 'classnames';
 import StorageWithProductsDto from '../../application/dto/storage-with-products-dto.ts';
-import StorageProductDto from '../../application/dto/storage-product-dto.ts';
+import ProductDto from '../../application/dto/product-dto.ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightLong, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import CoreContext from '../core-context.ts';
 
 type StorageItemWidgetProps = {
-  data: StorageProductDto;
-  changedData: StorageProductDto | null;
+  data: ProductDto;
+  changedData: ProductDto | null;
   onClick: () => void;
   onClickPlus: () => void;
   onClickMinus: () => void;
@@ -83,11 +83,11 @@ type Props = {
   data: StorageWithProductsDto;
   onClickEditStorage: () => void;
   onClickAddProduct: () => void;
-  onClickEditProduct: (storageProductId: StorageProductDto['id']) => void;
+  onClickEditProduct: (storageProductId: ProductDto['id']) => void;
 };
 
 const StorageWidget: FC<Props> = (props) => {
-  const [changedProducts, setChangedProducts] = useState<StorageProductDto[]>([]);
+  const [changedProducts, setChangedProducts] = useState<ProductDto[]>([]);
 
   const core = useContext(CoreContext);
 
