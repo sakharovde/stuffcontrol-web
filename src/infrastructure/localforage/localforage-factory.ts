@@ -18,8 +18,9 @@ const mapDriver: LocalForageDriver & { _storage: Map<string, never> } = {
     return Promise.resolve(this._storage.get(key) || null);
   },
   setItem: function (key, value: never) {
-    this._storage.set(key, value);
-    return Promise.resolve(value);
+    const data = JSON.parse(JSON.stringify(value));
+    this._storage.set(key, data as never);
+    return Promise.resolve(data);
   },
   removeItem: function (key) {
     this._storage.delete(key);

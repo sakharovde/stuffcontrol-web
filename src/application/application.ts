@@ -1,4 +1,5 @@
 import {
+  ProductItemRepositoryImpl,
   ProductRepositoryImpl,
   StorageRepositoryImpl,
   StorageTransactionRepositoryImpl,
@@ -32,7 +33,8 @@ export default class Application {
 
   private readonly repositories = {
     storage: new StorageRepositoryImpl(),
-    storageItem: new ProductRepositoryImpl(),
+    product: new ProductRepositoryImpl(),
+    productItem: new ProductItemRepositoryImpl(),
     storageTransaction: new StorageTransactionRepositoryImpl(),
     user: new UserRepositoryImpl(),
   };
@@ -54,10 +56,11 @@ export default class Application {
   private readonly services = {
     storage: new StorageService(
       this.repositories.storage,
-      this.repositories.storageItem,
+      this.repositories.product,
       this.specifications.storage.nameEmpty,
       this.repositories.storageTransaction,
-      this.specifications.product.nameEmpty
+      this.specifications.product.nameEmpty,
+      this.repositories.productItem
     ),
     user: new UserService(
       this.repositories.user,

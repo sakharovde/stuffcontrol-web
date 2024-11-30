@@ -13,7 +13,7 @@ describe('Application', () => {
       const result = await core.commands.storage.addNewProduct.execute({
         storageId: storage.id,
         productName: 'productName',
-        quantity: 10,
+        quantity: 0,
       });
       expect(result).toEqual(
         expect.objectContaining({
@@ -27,7 +27,7 @@ describe('Application', () => {
         core.commands.storage.addNewProduct.execute({
           storageId: 'storageId',
           productName: '',
-          quantity: 10,
+          quantity: 0,
         })
       ).rejects.toThrow('Product name cannot be empty');
     });
@@ -57,7 +57,7 @@ describe('Application', () => {
       });
       expect(result).toEqual(
         expect.objectContaining({
-          quantity: 0,
+          quantity: 10,
         })
       );
     });

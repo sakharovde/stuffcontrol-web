@@ -6,7 +6,6 @@ export default class ProductMapper {
       id: product.id,
       storageId: product.storageId,
       name: product.name,
-      quantity: product.quantity,
       createdAt: product.createdAt.toISOString(),
     };
   }
@@ -21,8 +20,6 @@ export default class ProductMapper {
       typeof data.id !== 'string' ||
       !('storageId' in data) ||
       typeof data.storageId !== 'string' ||
-      !('quantity' in data) ||
-      typeof data.quantity !== 'number' ||
       !('name' in data) ||
       typeof data.name !== 'string' ||
       !('createdAt' in data) ||
@@ -31,6 +28,6 @@ export default class ProductMapper {
       throw new Error('Invalid data');
     }
 
-    return new Product(data.id, data.storageId, data.name, data.quantity, new Date(data.createdAt));
+    return new Product(data.id, data.storageId, data.name, new Date(data.createdAt));
   }
 }

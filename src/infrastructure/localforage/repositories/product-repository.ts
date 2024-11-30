@@ -4,7 +4,7 @@ import ProductMapper from '../mappers/product.ts';
 
 export default class ProductRepositoryImpl implements ProductRepository {
   private readonly client = LocalForageFactory.createInstance({
-    name: 'storage-items',
+    name: 'products',
     storeName: 'v1',
     description: 'Database for storage items',
   });
