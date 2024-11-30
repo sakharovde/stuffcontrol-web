@@ -44,7 +44,7 @@ const App: FC = () => {
   if (storageId === 'new') {
     return (
       <LayoutWidget
-        backText='Home'
+        backText='Storages'
         onBack={() => {
           searchParams.delete('storageId');
           navigate({ search: searchParams.toString() });
@@ -124,7 +124,7 @@ const App: FC = () => {
   if (activeStorage) {
     return (
       <LayoutWidget
-        backText='Home'
+        backText='Storages'
         onBack={() => {
           searchParams.delete('storageId');
           navigate({ search: searchParams.toString() });

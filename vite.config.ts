@@ -8,6 +8,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // devOptions: {
+      //   enabled: process.env.NODE_ENV !== 'production',
+      // },
       manifest: {
         name: 'Stuff Control',
         short_name: 'Stuff',
