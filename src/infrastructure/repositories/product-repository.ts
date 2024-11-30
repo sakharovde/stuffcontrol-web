@@ -45,6 +45,8 @@ export default class ProductRepositoryImpl implements ProductRepository {
     return {
       id: product.id,
       name: product.name,
+      shelfLife: product.shelfLife,
+      shelfLifeAfterOpening: product.shelfLifeAfterOpening,
     };
   }
 
@@ -61,6 +63,14 @@ export default class ProductRepositoryImpl implements ProductRepository {
       throw new Error('Invalid name');
     }
 
-    return new Product(data.id, data.name);
+    if (!('shelfLife' in data) || typeof data.shelfLife !== 'number') {
+      throw new Error('Invalid shelfLife');
+    }
+
+    if (!('shelfLifeAfterOpening' in data) || typeof data.shelfLifeAfterOpening !== 'number') {
+      throw new Error('Invalid shelfLifeAfterOpening');
+    }
+
+    return new Product(data.id, data.name, data.shelfLife, data.shelfLifeAfterOpening);
   }
 }
