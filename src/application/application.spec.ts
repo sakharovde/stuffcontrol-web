@@ -9,8 +9,8 @@ describe('Application', () => {
 
   describe('storage.addNewProduct', () => {
     it('adds a new product to storage successfully', async () => {
-      const storage = await core.commands.storage.create.execute('storageName');
-      const result = await core.commands.storage.addNewProduct.execute({
+      const storage = await core.commands.storage.create('storageName');
+      const result = await core.commands.storage.addNewProduct({
         storageId: storage.id,
         productName: 'productName',
         quantity: 0,
@@ -24,7 +24,7 @@ describe('Application', () => {
 
     it('throws an error when product name is empty', async () => {
       await expect(
-        core.commands.storage.addNewProduct.execute({
+        core.commands.storage.addNewProduct({
           storageId: 'storageId',
           productName: '',
           quantity: 0,
@@ -34,7 +34,7 @@ describe('Application', () => {
 
     it('throws an error when quantity is negative', async () => {
       await expect(
-        core.commands.storage.addNewProduct.execute({
+        core.commands.storage.addNewProduct({
           storageId: 'storageId',
           productName: 'productName',
           quantity: -1,
@@ -45,13 +45,13 @@ describe('Application', () => {
 
   describe('storage.changeProductQuantity', () => {
     it('changes product quantity successfully', async () => {
-      const storage = await core.commands.storage.create.execute('storageName');
-      const product = await core.commands.storage.addNewProduct.execute({
+      const storage = await core.commands.storage.create('storageName');
+      const product = await core.commands.storage.addNewProduct({
         storageId: storage.id,
         productName: 'productName',
         quantity: 0,
       });
-      const result = await core.commands.storage.changeProductQuantity.execute({
+      const result = await core.commands.storage.changeProductQuantity({
         productId: product.id,
         quantity: 10,
       });
@@ -63,14 +63,14 @@ describe('Application', () => {
     });
 
     it('throws an error when quantity is negative', async () => {
-      const storage = await core.commands.storage.create.execute('storageName');
-      const product = await core.commands.storage.addNewProduct.execute({
+      const storage = await core.commands.storage.create('storageName');
+      const product = await core.commands.storage.addNewProduct({
         storageId: storage.id,
         productName: 'productName',
         quantity: 0,
       });
       await expect(
-        core.commands.storage.changeProductQuantity.execute({
+        core.commands.storage.changeProductQuantity({
           productId: product.id,
           quantity: -1,
         })
@@ -80,7 +80,7 @@ describe('Application', () => {
 
   describe('storage.create', () => {
     it('creates storage successfully', async () => {
-      const result = await core.commands.storage.create.execute('storageName');
+      const result = await core.commands.storage.create('storageName');
       expect(result).toEqual(
         expect.objectContaining({
           name: 'storageName',
@@ -89,13 +89,13 @@ describe('Application', () => {
     });
 
     it('throws an error when storage name is empty', async () => {
-      await expect(core.commands.storage.create.execute('')).rejects.toThrow('Storage name cannot be empty');
+      await expect(core.commands.storage.create('')).rejects.toThrow('Storage name cannot be empty');
     });
   });
 
   describe('user.register', () => {
     it('registers a user successfully', async () => {
-      const result = await core.commands.user.register.execute('testuser', 'password');
+      const result = await core.commands.user.register('testuser', 'password');
       expect(result).toEqual(
         expect.objectContaining({
           username: 'testuser',
@@ -104,19 +104,17 @@ describe('Application', () => {
     });
 
     it('throws an error when username is already taken', async () => {
-      await core.commands.user.register.execute('testuser', 'password');
+      await core.commands.user.register('testuser', 'password');
 
-      await expect(core.commands.user.register.execute('testuser', 'password')).rejects.toThrow(
-        'Username is already taken'
-      );
+      await expect(core.commands.user.register('testuser', 'password')).rejects.toThrow('Username is already taken');
     });
 
     it('throws an error when username is empty', async () => {
-      await expect(core.commands.user.register.execute('', 'password')).rejects.toThrow('Username cannot be empty');
+      await expect(core.commands.user.register('', 'password')).rejects.toThrow('Username cannot be empty');
     });
 
     it('throws an error when password is empty', async () => {
-      await expect(core.commands.user.register.execute('testuser', '')).rejects.toThrow('Password cannot be empty');
+      await expect(core.commands.user.register('testuser', '')).rejects.toThrow('Password cannot be empty');
     });
   });
 });

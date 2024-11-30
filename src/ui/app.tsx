@@ -20,7 +20,7 @@ const App: FC = () => {
 
   useLayoutEffect(() => {
     const updateStoragesState = () => {
-      core.queries.storage.getAllWithProducts.execute().then((data) => {
+      core.queries.storage.getAllWithProducts().then((data) => {
         setStorages(data);
       });
     };
@@ -131,7 +131,7 @@ const App: FC = () => {
         }}
         actionText='Save'
         onAction={() => {
-          core.commands.storage.saveProductsChanges.execute(activeStorage.id).then(() => {
+          core.commands.storage.saveProductsChanges(activeStorage.id).then(() => {
             searchParams.delete('storageId');
             navigate({ search: searchParams.toString() });
           });

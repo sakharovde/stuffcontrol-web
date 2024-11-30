@@ -14,7 +14,7 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
 
   const handleRemoveStorage = (id: ProductDto['id']) => () => {
-    core.commands.storage.removeProduct.execute({ productId: id }).then(props.onSuccess);
+    core.commands.storage.removeProduct({ productId: id }).then(props.onSuccess);
   };
 
   return (
@@ -25,8 +25,8 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
         initialValues={{ name: props.data?.name || '', quantity: props.data?.quantity || '' }}
         onSubmit={(values) => {
           if (!props.data) {
-            core.commands.storage.addNewProduct
-              .execute({
+            core.commands.storage
+              .addNewProduct({
                 storageId: props.storage.id,
                 productName: values.name,
                 quantity: Number(values.quantity || 0),
@@ -34,8 +34,8 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
               .then(props.onSuccess);
             return;
           }
-          core.commands.storage.changeProductQuantity
-            .execute({
+          core.commands.storage
+            .changeProductQuantity({
               productId: props.data.id,
               quantity: Number(values.quantity || 0),
             })

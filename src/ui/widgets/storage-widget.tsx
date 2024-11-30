@@ -93,7 +93,7 @@ const StorageWidget: FC<Props> = (props) => {
 
   useLayoutEffect(() => {
     const updateChangedProductsState = () => {
-      core.queries.storage.getChangedProducts.execute(props.data.id).then(setChangedProducts);
+      core.queries.storage.getChangedProducts(props.data.id).then(setChangedProducts);
     };
 
     core.eventEmitters.storage.on('storageCreated', updateChangedProductsState);
@@ -125,13 +125,13 @@ const StorageWidget: FC<Props> = (props) => {
               changedData={changedData}
               onClick={() => props.onClickEditProduct(product.id)}
               onClickPlus={() =>
-                core.commands.storage.changeProductQuantity.execute({
+                core.commands.storage.changeProductQuantity({
                   productId: product.id,
                   quantity: quantity + 1,
                 })
               }
               onClickMinus={() =>
-                core.commands.storage.changeProductQuantity.execute({
+                core.commands.storage.changeProductQuantity({
                   productId: product.id,
                   quantity: quantity - 1,
                 })

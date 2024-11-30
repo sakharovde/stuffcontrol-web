@@ -70,25 +70,41 @@ export default class Application {
     ),
   };
 
+  private readonly queryHandlers = {
+    getStoragesWithProducts: new GetStoragesWithProducts(this.services.storage),
+    getChangedProducts: new GetChangedProducts(this.services.storage),
+  };
+
+  private readonly commandHandlers = {
+    createStorage: new CreateStorage(this.services.storage, this.eventEmitters.storage),
+    addNewProductToStorage: new AddNewProductToStorage(this.services.storage, this.eventEmitters.storage),
+    changeStorageProductQuantity: new ChangeStorageProductQuantity(this.services.storage, this.eventEmitters.storage),
+    removeStorage: new RemoveStorage(this.services.storage, this.eventEmitters.storage),
+    removeProduct: new RemoveProduct(this.services.storage, this.eventEmitters.storage),
+    updateStorage: new UpdateStorage(this.services.storage, this.eventEmitters.storage),
+    saveStorageProductsChanges: new SaveStorageProductsChanges(this.services.storage, this.eventEmitters.storage),
+    registerUser: new RegisterUser(this.services.user),
+  };
+
   public readonly queries = {
     storage: {
-      getAllWithProducts: new GetStoragesWithProducts(this.services.storage),
-      getChangedProducts: new GetChangedProducts(this.services.storage),
+      getAllWithProducts: this.queryHandlers.getStoragesWithProducts.execute,
+      getChangedProducts: this.queryHandlers.getChangedProducts.execute,
     },
   };
 
   public readonly commands = {
     storage: {
-      create: new CreateStorage(this.services.storage, this.eventEmitters.storage),
-      addNewProduct: new AddNewProductToStorage(this.services.storage, this.eventEmitters.storage),
-      changeProductQuantity: new ChangeStorageProductQuantity(this.services.storage, this.eventEmitters.storage),
-      remove: new RemoveStorage(this.services.storage, this.eventEmitters.storage),
-      removeProduct: new RemoveProduct(this.services.storage, this.eventEmitters.storage),
-      update: new UpdateStorage(this.services.storage, this.eventEmitters.storage),
-      saveProductsChanges: new SaveStorageProductsChanges(this.services.storage, this.eventEmitters.storage),
+      create: this.commandHandlers.createStorage.execute,
+      addNewProduct: this.commandHandlers.addNewProductToStorage.execute,
+      changeProductQuantity: this.commandHandlers.changeStorageProductQuantity.execute,
+      remove: this.commandHandlers.removeStorage.execute,
+      removeProduct: this.commandHandlers.removeProduct.execute,
+      update: this.commandHandlers.updateStorage.execute,
+      saveProductsChanges: this.commandHandlers.saveStorageProductsChanges.execute,
     },
     user: {
-      register: new RegisterUser(this.services.user),
+      register: this.commandHandlers.registerUser.execute,
     },
   };
 }
