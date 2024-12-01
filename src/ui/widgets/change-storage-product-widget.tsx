@@ -79,8 +79,7 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
               value={values.expirationDate}
               onChange={handleChange}
               placeholder='Expiration date'
-              className='mt-5 p-4 bg-gray-100 rounded-md'
-              style={{ appearance: 'initial' }}
+              className='mt-5 p-4 bg-gray-100 rounded-md appearance-none'
             />
 
             <div
