@@ -56,32 +56,46 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
       >
         {({ values, handleChange, handleSubmit }) => (
           <form onSubmit={handleSubmit} className='px-3 flex flex-col'>
-            <input
-              type='text'
-              name='name'
-              value={values.name}
-              onChange={handleChange}
-              placeholder='Name'
-              className={cn('mt-5 p-4 rounded-md', { 'bg-gray-100': !props.data })}
-              disabled={!!props.data}
-            />
-            <input
-              type='number'
-              name='quantity'
-              value={values.quantity}
-              onChange={handleChange}
-              placeholder='Quantity'
-              className='mt-5 p-4 bg-gray-100 rounded-md'
-            />
-            <input
-              type='date'
-              name='expirationDate'
-              value={values.expirationDate}
-              onChange={handleChange}
-              placeholder='Expiration date'
-              className='mt-5 p-4 bg-gray-100 rounded-md appearance-none'
-            />
-
+            <div className='mt-5 w-full'>
+              <label className='text-sm font-medium text-gray-700' htmlFor='name'>
+                Name
+              </label>
+              <input
+                type='text'
+                name='name'
+                value={values.name}
+                onChange={handleChange}
+                placeholder='Name'
+                className={cn('p-4 rounded-md w-full', { 'bg-gray-100': !props.data })}
+                disabled={!!props.data}
+              />
+            </div>
+            <div className='mt-5 w-full'>
+              <label className='text-sm font-medium text-gray-700' htmlFor='quantity'>
+                Quantity
+              </label>
+              <input
+                type='number'
+                name='quantity'
+                value={values.quantity}
+                onChange={handleChange}
+                placeholder='Quantity'
+                className='p-4 bg-gray-100 rounded-md w-full'
+              />
+            </div>
+            <div className='mt-5 w-full'>
+              <label className='text-sm font-medium text-gray-700' htmlFor='expirationDate'>
+                Expiration date
+              </label>
+              <input
+                type='date'
+                name='expirationDate'
+                value={values.expirationDate}
+                onChange={handleChange}
+                placeholder='Expiration date'
+                className='p-4 bg-gray-100 rounded-md appearance-none w-full'
+              />
+            </div>
             <div
               className='absolute bottom-0 left-0 bg-gray-100 w-full'
               style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
