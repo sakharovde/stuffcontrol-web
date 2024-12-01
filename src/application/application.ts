@@ -15,16 +15,16 @@ import {
 import StorageEventEmitter from './events/storage-event-emitter.ts';
 import StorageService from './services/storage-service.ts';
 import UserService from './services/user-service.ts';
-import GetStoragesWithProducts from './queries/storage/get-storages-with-products.ts';
-import GetChangedProducts from './queries/storage/get-changed-products.ts';
-import CreateStorage from './commands/storage/create-storage.ts';
-import AddNewProductToStorage from './commands/storage/add-new-product-to-storage.ts';
-import ChangeStorageProductQuantity from './commands/storage/change-storage-product-quantity.ts';
-import RemoveStorage from './commands/storage/remove-storage.ts';
-import RemoveProduct from './commands/storage/remove-product.ts';
-import UpdateStorage from './commands/storage/update-storage.ts';
-import SaveStorageProductsChanges from './commands/storage/save-storage-products-changes.ts';
-import RegisterUser from './commands/user/register-user.ts';
+import GetStoragesWithProductsQueryHandler from './queries/storage/get-storages-with-products.ts';
+import GetChangedProductsQueryHandler from './queries/storage/get-changed-products.ts';
+import CreateStorageCommandHandler from './commands/storage/create-storage.ts';
+import AddNewProductToStorageCommandHandler from './commands/storage/add-new-product-to-storage.ts';
+import ChangeStorageProductQuantityCommandHandler from './commands/storage/change-storage-product-quantity.ts';
+import RemoveStorageCommandHandler from './commands/storage/remove-storage.ts';
+import RemoveProductCommandHandler from './commands/storage/remove-product.ts';
+import UpdateStorageCommandHandler from './commands/storage/update-storage.ts';
+import SaveStorageProductsChangesCommandHandler from './commands/storage/save-storage-products-changes.ts';
+import RegisterUserCommandHandler from './commands/user/register-user.ts';
 
 export default class Application {
   public readonly eventEmitters = {
@@ -71,19 +71,25 @@ export default class Application {
   };
 
   private readonly queryHandlers = {
-    getStoragesWithProducts: new GetStoragesWithProducts(this.services.storage),
-    getChangedProducts: new GetChangedProducts(this.services.storage),
+    getStoragesWithProducts: new GetStoragesWithProductsQueryHandler(this.services.storage),
+    getChangedProducts: new GetChangedProductsQueryHandler(this.services.storage),
   };
 
   private readonly commandHandlers = {
-    createStorage: new CreateStorage(this.services.storage, this.eventEmitters.storage),
-    addNewProductToStorage: new AddNewProductToStorage(this.services.storage, this.eventEmitters.storage),
-    changeStorageProductQuantity: new ChangeStorageProductQuantity(this.services.storage, this.eventEmitters.storage),
-    removeStorage: new RemoveStorage(this.services.storage, this.eventEmitters.storage),
-    removeProduct: new RemoveProduct(this.services.storage, this.eventEmitters.storage),
-    updateStorage: new UpdateStorage(this.services.storage, this.eventEmitters.storage),
-    saveStorageProductsChanges: new SaveStorageProductsChanges(this.services.storage, this.eventEmitters.storage),
-    registerUser: new RegisterUser(this.services.user),
+    createStorage: new CreateStorageCommandHandler(this.services.storage, this.eventEmitters.storage),
+    addNewProductToStorage: new AddNewProductToStorageCommandHandler(this.services.storage, this.eventEmitters.storage),
+    changeStorageProductQuantity: new ChangeStorageProductQuantityCommandHandler(
+      this.services.storage,
+      this.eventEmitters.storage
+    ),
+    removeStorage: new RemoveStorageCommandHandler(this.services.storage, this.eventEmitters.storage),
+    removeProduct: new RemoveProductCommandHandler(this.services.storage, this.eventEmitters.storage),
+    updateStorage: new UpdateStorageCommandHandler(this.services.storage, this.eventEmitters.storage),
+    saveStorageProductsChanges: new SaveStorageProductsChangesCommandHandler(
+      this.services.storage,
+      this.eventEmitters.storage
+    ),
+    registerUser: new RegisterUserCommandHandler(this.services.user),
   };
 
   public readonly queries = {

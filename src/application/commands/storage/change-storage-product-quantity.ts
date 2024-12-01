@@ -1,14 +1,19 @@
 import { ProductDto, StorageService } from '../../index.ts';
 import StorageEventEmitter from '../../events/storage-event-emitter.ts';
 
-export default class ChangeStorageProductQuantity {
+export interface ChangeStorageProductQuantityCommand {
+  productId: ProductDto['id'];
+  quantity: ProductDto['quantity'];
+}
+
+export default class ChangeStorageProductQuantityCommandHandler {
   constructor(
     private readonly storageItemService: StorageService,
     private readonly storageEventEmitter: StorageEventEmitter
   ) {}
 
-  execute = async (args: { productId: ProductDto['id']; quantity: ProductDto['quantity'] }): Promise<ProductDto> => {
-    const result = await this.storageItemService.changeProductQuantity(args.productId, args.quantity);
+  execute = async (command: ChangeStorageProductQuantityCommand): Promise<ProductDto> => {
+    const result = await this.storageItemService.changeProductQuantity(command.productId, command.quantity);
 
     this.storageEventEmitter.emit('storageUpdated');
 

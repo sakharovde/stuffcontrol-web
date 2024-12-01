@@ -13,14 +13,14 @@ const ChangeStorageWidget: FC<Props> = (props) => {
 
   const handleSubmitStorage = (values: { name: string }) => {
     if (props.data) {
-      core.commands.storage.update({ id: props.data.id, name: values.name }).then(props.onSuccess);
+      core.commands.storage.update({ storage: { id: props.data.id, name: values.name } }).then(props.onSuccess);
       return;
     }
-    core.commands.storage.create(values.name).then(props.onSuccess);
+    core.commands.storage.create({ name: values.name }).then(props.onSuccess);
   };
 
   const handleRemoveStorage = (id: string) => () => {
-    core.commands.storage.remove(id).then(props.onSuccess);
+    core.commands.storage.remove({ id }).then(props.onSuccess);
   };
 
   return (

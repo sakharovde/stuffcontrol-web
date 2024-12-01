@@ -93,7 +93,7 @@ const StorageWidget: FC<Props> = (props) => {
 
   useLayoutEffect(() => {
     const updateChangedProductsState = () => {
-      core.queries.storage.getChangedProducts(props.data.id).then(setChangedProducts);
+      core.queries.storage.getChangedProducts({ storageId: props.data.id }).then(setChangedProducts);
     };
 
     core.eventEmitters.storage.on('storageCreated', updateChangedProductsState);
