@@ -7,7 +7,6 @@ export type { default as StorageWithProductsDto } from './dto/storage-with-produ
 export { default as StorageService } from './services/storage-service.ts';
 export { default as UserService } from './services/user-service.ts';
 
-export type { GetChangedProductsQuery } from './queries/storage/get-changed-products.ts';
 export type { GetProductItemsByProductQuery } from './queries/product-item/get-by-product.ts';
 
 export type { CreateStorageCommand } from './commands/storage/create-storage.ts';
@@ -16,5 +15,4 @@ export type { ChangeStorageProductQuantityCommand } from './commands/storage/cha
 export type { RemoveStorageCommand } from './commands/storage/remove-storage.ts';
 export type { RemoveProductCommand } from './commands/storage/remove-product.ts';
 export type { UpdateStorageCommand } from './commands/storage/update-storage.ts';
-export type { SaveStorageProductsChangesCommand } from './commands/storage/save-storage-products-changes.ts';
 export type { RegisterUserCommand } from './commands/user/register-user.ts';

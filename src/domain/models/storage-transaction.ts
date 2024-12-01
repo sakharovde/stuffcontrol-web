@@ -7,7 +7,6 @@ export default class StorageTransaction {
     public storageId: Storage['id'],
     public productId: Product['id'],
     public quantityChange: number,
-    public state: 'pending' | 'applied',
     public createdAt: Date = new Date()
   ) {}
 }

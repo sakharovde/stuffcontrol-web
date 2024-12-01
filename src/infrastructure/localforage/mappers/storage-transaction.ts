@@ -7,7 +7,6 @@ export default class StorageTransactionMapper {
       storageId: storageTransaction.storageId,
       productId: storageTransaction.productId,
       quantityChange: storageTransaction.quantityChange,
-      state: storageTransaction.state,
       createdAt: storageTransaction.createdAt.toISOString(),
     };
   }
@@ -26,9 +25,6 @@ export default class StorageTransactionMapper {
       typeof data.productId !== 'string' ||
       !('quantityChange' in data) ||
       typeof data.quantityChange !== 'number' ||
-      !('state' in data) ||
-      typeof data.state !== 'string' ||
-      !['pending', 'applied'].includes(data.state) ||
       !('createdAt' in data) ||
       typeof data.createdAt !== 'string'
     ) {
@@ -40,7 +36,6 @@ export default class StorageTransactionMapper {
       data.storageId,
       data.productId,
       data.quantityChange,
-      data.state as 'pending' | 'applied',
       new Date(data.createdAt)
     );
   }

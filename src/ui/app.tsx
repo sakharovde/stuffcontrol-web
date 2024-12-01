@@ -129,13 +129,6 @@ const App: FC = () => {
           searchParams.delete('storageId');
           navigate({ search: searchParams.toString() });
         }}
-        actionText='Save'
-        onAction={() => {
-          core.commands.storage.saveProductsChanges({ storageId: activeStorage.id }).then(() => {
-            searchParams.delete('storageId');
-            navigate({ search: searchParams.toString() });
-          });
-        }}
       >
         <StorageWidget
           data={activeStorage}
