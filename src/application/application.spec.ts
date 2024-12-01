@@ -41,6 +41,23 @@ describe('Application', () => {
         })
       ).rejects.toThrow('Quantity cannot be negative');
     });
+
+    it('adds a new product with expiration date successfully', async () => {
+      const storage = await core.commands.storage.create({ name: 'storageName' });
+      const expirationDate = new Date();
+      const product = await core.commands.storage.addNewProduct({
+        storageId: storage.id,
+        productName: 'productName',
+        quantity: 10,
+        expirationDate,
+      });
+      const productItems = await core.queries.productItem.getByProduct({ productId: product.id });
+
+      expect(productItems).toHaveLength(10);
+      productItems.forEach((productItem) => {
+        expect(productItem.expiredAt).toEqual(expirationDate);
+      });
+    });
   });
 
   describe('storage.changeProductQuantity', () => {

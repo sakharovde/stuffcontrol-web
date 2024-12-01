@@ -10,6 +10,12 @@ type Props = {
   onSuccess: () => void;
 };
 
+interface FormValues {
+  name: string;
+  quantity: number | undefined;
+  expirationDate: string | undefined;
+}
+
 const ChangeStorageProductWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
 
@@ -21,8 +27,12 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
     <div>
       <h3 className='text-xl font-semibold px-3'>{props.data ? 'Edit product' : 'New product'}</h3>
 
-      <Formik
-        initialValues={{ name: props.data?.name || '', quantity: props.data?.quantity || '' }}
+      <Formik<FormValues>
+        initialValues={{
+          name: props.data?.name || '',
+          quantity: props.data?.quantity,
+          expirationDate: undefined,
+        }}
         onSubmit={(values) => {
           if (!props.data) {
             core.commands.storage
@@ -30,6 +40,7 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
                 storageId: props.storage.id,
                 productName: values.name,
                 quantity: Number(values.quantity || 0),
+                expirationDate: values.expirationDate ? new Date(values.expirationDate) : undefined,
               })
               .then(props.onSuccess);
             return;
@@ -38,6 +49,7 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
             .changeProductQuantity({
               productId: props.data.id,
               quantity: Number(values.quantity || 0),
+              expirationDate: values.expirationDate ? new Date(values.expirationDate) : undefined,
             })
             .then(props.onSuccess);
         }}
@@ -59,6 +71,14 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
               value={values.quantity || ''}
               onChange={handleChange}
               placeholder='Quantity'
+              className='mt-5 p-4 text-center bg-gray-100 rounded-md'
+            />
+            <input
+              type='date'
+              name='expirationDate'
+              value={values.expirationDate}
+              onChange={handleChange}
+              placeholder='Expiration date'
               className='mt-5 p-4 text-center bg-gray-100 rounded-md'
             />
 

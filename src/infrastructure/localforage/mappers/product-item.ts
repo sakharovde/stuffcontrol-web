@@ -6,6 +6,17 @@ export default class ProductItemMapper {
       throw new Error('Invalid data');
     }
 
+    let expiredAt: ProductItem['expiredAt'] = null;
+
+    if (
+      'expiredAt' in data &&
+      data.expiredAt !== null &&
+      typeof data.expiredAt === 'string' &&
+      !isNaN(Date.parse(data.expiredAt))
+    ) {
+      expiredAt = new Date(data.expiredAt);
+    }
+
     if (
       !('id' in data) ||
       typeof data.id !== 'string' ||
@@ -26,6 +37,7 @@ export default class ProductItemMapper {
     return new ProductItem(
       data.id,
       data.productId,
+      expiredAt ? new Date(expiredAt) : null,
       data.removedAt ? new Date(data.removedAt) : null,
       new Date(data.createdAt),
       new Date(data.createdAt)
@@ -36,6 +48,7 @@ export default class ProductItemMapper {
     return {
       id: item.id,
       productId: item.productId,
+      expiredAt: item.expiredAt?.toISOString().toString() || null,
       addedAt: item.addedAt.toISOString().toString(),
       removedAt: item.removedAt?.toISOString().toString() || null,
       createdAt: item.createdAt.toISOString(),

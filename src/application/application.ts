@@ -92,15 +92,15 @@ export default class Application {
   };
 
   public readonly queries = {
+    productItem: {
+      getByProduct: this.commandHandlers.getProductItemsByProduct.execute,
+    },
     storage: {
       getAllWithProducts: this.queryHandlers.getStoragesWithProducts.execute,
     },
   };
 
   public readonly commands = {
-    productItem: {
-      getByProduct: this.commandHandlers.getProductItemsByProduct.execute,
-    },
     storage: {
       create: this.commandHandlers.createStorage.execute,
       addNewProduct: this.commandHandlers.addNewProductToStorage.execute,

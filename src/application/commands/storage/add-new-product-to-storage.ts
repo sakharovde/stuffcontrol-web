@@ -5,6 +5,7 @@ export interface AddNewProductToStorageCommand {
   storageId: StorageDto['id'];
   productName: ProductDto['name'];
   quantity: ProductDto['quantity'];
+  expirationDate?: Date;
 }
 
 export default class AddNewProductToStorageCommandHandler {
@@ -14,7 +15,12 @@ export default class AddNewProductToStorageCommandHandler {
   ) {}
 
   execute = async (command: AddNewProductToStorageCommand): Promise<ProductDto> => {
-    const result = await this.storageService.createProduct(command.storageId, command.productName, command.quantity);
+    const result = await this.storageService.createProduct(
+      command.storageId,
+      command.productName,
+      command.quantity,
+      command.expirationDate
+    );
 
     this.storageEventEmitter.emit('storageUpdated');
 

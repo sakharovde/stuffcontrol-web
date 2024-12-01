@@ -4,6 +4,7 @@ import StorageEventEmitter from '../../events/storage-event-emitter.ts';
 export interface ChangeStorageProductQuantityCommand {
   productId: ProductDto['id'];
   quantity: ProductDto['quantity'];
+  expirationDate?: Date;
 }
 
 export default class ChangeStorageProductQuantityCommandHandler {
@@ -13,7 +14,11 @@ export default class ChangeStorageProductQuantityCommandHandler {
   ) {}
 
   execute = async (command: ChangeStorageProductQuantityCommand): Promise<ProductDto> => {
-    const result = await this.storageItemService.changeProductQuantity(command.productId, command.quantity);
+    const result = await this.storageItemService.changeProductQuantity(
+      command.productId,
+      command.quantity,
+      command.expirationDate
+    );
 
     this.storageEventEmitter.emit('storageUpdated');
 

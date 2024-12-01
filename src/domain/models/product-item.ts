@@ -5,6 +5,8 @@ export default class ProductItem {
     public readonly id: string,
     public readonly productId: Product['id'],
 
+    public readonly expiredAt: Date | null = null,
+
     public removedAt: Date | null = null,
     public readonly addedAt: Date = new Date(),
     public readonly createdAt: Date = new Date()
