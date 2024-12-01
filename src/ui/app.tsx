@@ -41,38 +41,19 @@ const App: FC = () => {
   const activeStorage = storages.find((storage) => storage.id === storageId);
   const activeStorageProduct = activeStorage?.products.find((product) => product.id === productId);
 
-  if (storageId === 'new') {
-    return (
-      <LayoutWidget
-        backText='Storages'
-        onBack={() => {
-          searchParams.delete('storageId');
-          navigate({ search: searchParams.toString() });
-        }}
-      >
-        <ChangeStorageWidget
-          onSuccess={() => {
-            searchParams.delete('storageId');
-            navigate({ search: searchParams.toString() });
-          }}
-        />
-      </LayoutWidget>
-    );
-  }
-
-  if (activeStorage && productId === 'new') {
+  if (activeStorage && mode === 'new') {
     return (
       <LayoutWidget
         backText={activeStorage.name}
         onBack={() => {
-          searchParams.delete('productId');
+          searchParams.delete('mode');
           navigate({ search: searchParams.toString() });
         }}
       >
         <ChangeStorageProductWidget
           storage={activeStorage}
           onSuccess={() => {
-            searchParams.delete('productId');
+            searchParams.delete('mode');
             navigate({ search: searchParams.toString() });
           }}
         />
@@ -80,12 +61,32 @@ const App: FC = () => {
     );
   }
 
-  if (activeStorage && activeStorageProduct) {
+  if (mode === 'new') {
+    return (
+      <LayoutWidget
+        backText='Storages'
+        onBack={() => {
+          searchParams.delete('mode');
+          navigate({ search: searchParams.toString() });
+        }}
+      >
+        <ChangeStorageWidget
+          onSuccess={() => {
+            searchParams.delete('mode');
+            navigate({ search: searchParams.toString() });
+          }}
+        />
+      </LayoutWidget>
+    );
+  }
+
+  if (activeStorage && activeStorageProduct && mode === 'edit') {
     return (
       <LayoutWidget
         backText={activeStorage.name}
         onBack={() => {
           searchParams.delete('productId');
+          searchParams.delete('mode');
           navigate({ search: searchParams.toString() });
         }}
       >
@@ -94,6 +95,7 @@ const App: FC = () => {
           storage={activeStorage}
           onSuccess={() => {
             searchParams.delete('productId');
+            searchParams.delete('mode');
             navigate({ search: searchParams.toString() });
           }}
         />
@@ -138,6 +140,7 @@ const App: FC = () => {
           }}
           onClickEditProduct={(productId) => {
             searchParams.set('productId', productId);
+            searchParams.set('mode', 'edit');
             navigate({ search: searchParams.toString() });
           }}
           onClickEditStorage={() => {
