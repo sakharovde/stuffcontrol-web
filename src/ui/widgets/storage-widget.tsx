@@ -1,40 +1,41 @@
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 import cn from 'classnames';
 import StorageWithProductsDto from '../../application/dto/storage-with-products-dto.ts';
 import ProductDto from '../../application/dto/product-dto.ts';
-import CoreContext from '../core-context.ts';
 
 type StorageItemWidgetProps = {
   data: ProductDto;
-  onClick: () => void;
-  onClickPlus: () => void;
-  onClickMinus: () => void;
+  onClickEdit: () => void;
 };
 
 const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
   return (
-    <div className={cn('py-1', 'pl-3', 'pr-1', 'rounded-md', 'bg-gray-100', 'border', 'border-gray-50')}>
+    <div className={cn('py-1', 'px-3', 'rounded-md', 'bg-gray-100', 'border', 'border-gray-50')}>
       <div className='flex justify-between gap-5'>
-        <div className='cursor-pointer flex-1' onClick={props.onClick}>
-          {props.data.name}
-        </div>
+        <div className='flex-1 text-sm'>{props.data.name}</div>
 
         <div className='flex flex-col gap-1'>
           <div className='flex gap-2'>
-            <div
-              className={cn(
-                'font-semibold',
-                'text-lg',
-                'w-10',
-                'flex',
-                'items-center',
-                'justify-center',
-                'text-gray-500'
-              )}
-            >
+            <div className={cn('font-semibold', 'text-lg', 'flex', 'items-center', 'justify-center', 'text-gray-500')}>
               {props.data.quantity}
             </div>
           </div>
+        </div>
+      </div>
+      <div>
+        <div className='flex justify-between gap-1'>
+          <button
+            className={cn('flex', 'items-center', 'gap-1', 'text-blue-600', 'font-medium', 'text-xs')}
+            onClick={props.onClickEdit}
+          >
+            <span>Edit</span>
+          </button>
+          {/*<button*/}
+          {/*  className={cn('flex', 'items-center', 'gap-1', 'text-blue-600', 'font-medium', 'text-xs')}*/}
+          {/*  onClick={props.onClickPlus}*/}
+          {/*>*/}
+          {/*  <span>Items</span>*/}
+          {/*</button>*/}
         </div>
       </div>
     </div>
@@ -49,8 +50,6 @@ type Props = {
 };
 
 const StorageWidget: FC<Props> = (props) => {
-  const core = useContext(CoreContext);
-
   return (
     <div>
       <h3 className='text-xl font-semibold px-3'>{props.data.name}</h3>
@@ -61,19 +60,7 @@ const StorageWidget: FC<Props> = (props) => {
             <StorageProductWidget
               key={product.id}
               data={product}
-              onClick={() => props.onClickEditProduct(product.id)}
-              onClickPlus={() =>
-                core.commands.storage.changeProductQuantity({
-                  productId: product.id,
-                  quantity: product.quantity + 1,
-                })
-              }
-              onClickMinus={() =>
-                core.commands.storage.changeProductQuantity({
-                  productId: product.id,
-                  quantity: product.quantity - 1,
-                })
-              }
+              onClickEdit={() => props.onClickEditProduct(product.id)}
             />
           );
         })}
@@ -88,7 +75,7 @@ const StorageWidget: FC<Props> = (props) => {
             <span>Edit storage</span>
           </button>
           <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickAddProduct}>
-            <span>Add product</span>
+            <span>Add products</span>
           </button>
         </div>
       </div>
