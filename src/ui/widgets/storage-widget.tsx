@@ -2,8 +2,6 @@ import { FC, useContext } from 'react';
 import cn from 'classnames';
 import StorageWithProductsDto from '../../application/dto/storage-with-products-dto.ts';
 import ProductDto from '../../application/dto/product-dto.ts';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import CoreContext from '../core-context.ts';
 
 type StorageItemWidgetProps = {
@@ -23,17 +21,10 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
 
         <div className='flex flex-col gap-1'>
           <div className='flex gap-2'>
-            <button
-              className='bg-white py-3 px-5 rounded cursor-pointer flex items-center'
-              onClick={props.onClickMinus}
-            >
-              <FontAwesomeIcon icon={faMinus} />
-            </button>
             <div
               className={cn(
                 'font-semibold',
                 'text-lg',
-                'py-3',
                 'w-10',
                 'flex',
                 'items-center',
@@ -43,9 +34,6 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
             >
               {props.data.quantity}
             </div>
-            <button className='bg-white py-3 px-5 rounded cursor-pointer flex items-center' onClick={props.onClickPlus}>
-              <FontAwesomeIcon icon={faPlus} />
-            </button>
           </div>
         </div>
       </div>

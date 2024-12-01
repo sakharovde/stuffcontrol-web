@@ -31,7 +31,7 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
         initialValues={{
           name: props.data?.name || '',
           quantity: props.data?.quantity,
-          expirationDate: undefined,
+          expirationDate: new Date().toISOString().split('T')[0],
         }}
         onSubmit={(values) => {
           if (!props.data) {
@@ -62,16 +62,16 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
               value={values.name}
               onChange={handleChange}
               placeholder='Name'
-              className={cn('mt-5 p-4 text-center rounded-md', { 'bg-gray-100': !props.data })}
+              className={cn('mt-5 p-4 rounded-md', { 'bg-gray-100': !props.data })}
               disabled={!!props.data}
             />
             <input
               type='number'
               name='quantity'
-              value={values.quantity || ''}
+              value={values.quantity}
               onChange={handleChange}
               placeholder='Quantity'
-              className='mt-5 p-4 text-center bg-gray-100 rounded-md'
+              className='mt-5 p-4 bg-gray-100 rounded-md'
             />
             <input
               type='date'
@@ -79,7 +79,8 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
               value={values.expirationDate}
               onChange={handleChange}
               placeholder='Expiration date'
-              className='mt-5 p-4 text-center bg-gray-100 rounded-md'
+              className='mt-5 p-4 bg-gray-100 rounded-md'
+              style={{ appearance: 'initial' }}
             />
 
             <div

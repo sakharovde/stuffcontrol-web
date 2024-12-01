@@ -36,7 +36,7 @@ const ChangeStorageWidget: FC<Props> = (props) => {
               value={values.name}
               onChange={handleChange}
               placeholder='Name'
-              className='mt-5 p-4 text-center bg-gray-100 rounded-md'
+              className='mt-5 p-4 bg-gray-100 rounded-md'
             />
 
             <div
