@@ -27,7 +27,7 @@ import SaveStorageProductsChangesCommandHandler from './commands/storage/save-st
 import RegisterUserCommandHandler from './commands/user/register-user.ts';
 
 export default class Application {
-  public readonly eventEmitters = {
+  public readonly events = {
     storage: new StorageEventEmitter(),
   };
 
@@ -76,18 +76,18 @@ export default class Application {
   };
 
   private readonly commandHandlers = {
-    createStorage: new CreateStorageCommandHandler(this.services.storage, this.eventEmitters.storage),
-    addNewProductToStorage: new AddNewProductToStorageCommandHandler(this.services.storage, this.eventEmitters.storage),
+    createStorage: new CreateStorageCommandHandler(this.services.storage, this.events.storage),
+    addNewProductToStorage: new AddNewProductToStorageCommandHandler(this.services.storage, this.events.storage),
     changeStorageProductQuantity: new ChangeStorageProductQuantityCommandHandler(
       this.services.storage,
-      this.eventEmitters.storage
+      this.events.storage
     ),
-    removeStorage: new RemoveStorageCommandHandler(this.services.storage, this.eventEmitters.storage),
-    removeProduct: new RemoveProductCommandHandler(this.services.storage, this.eventEmitters.storage),
-    updateStorage: new UpdateStorageCommandHandler(this.services.storage, this.eventEmitters.storage),
+    removeStorage: new RemoveStorageCommandHandler(this.services.storage, this.events.storage),
+    removeProduct: new RemoveProductCommandHandler(this.services.storage, this.events.storage),
+    updateStorage: new UpdateStorageCommandHandler(this.services.storage, this.events.storage),
     saveStorageProductsChanges: new SaveStorageProductsChangesCommandHandler(
       this.services.storage,
-      this.eventEmitters.storage
+      this.events.storage
     ),
     registerUser: new RegisterUserCommandHandler(this.services.user),
   };
