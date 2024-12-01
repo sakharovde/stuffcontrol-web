@@ -25,6 +25,7 @@ import RemoveProductCommandHandler from './commands/storage/remove-product.ts';
 import UpdateStorageCommandHandler from './commands/storage/update-storage.ts';
 import SaveStorageProductsChangesCommandHandler from './commands/storage/save-storage-products-changes.ts';
 import RegisterUserCommandHandler from './commands/user/register-user.ts';
+import GetProductItemsByProductQueryHandler from './queries/product-item/get-by-product.ts';
 
 export default class Application {
   public readonly events = {
@@ -76,12 +77,16 @@ export default class Application {
   };
 
   private readonly commandHandlers = {
-    createStorage: new CreateStorageCommandHandler(this.services.storage, this.events.storage),
+    // product item
+    getProductItemsByProduct: new GetProductItemsByProductQueryHandler(this.repositories.productItem),
+    // product
     addNewProductToStorage: new AddNewProductToStorageCommandHandler(this.services.storage, this.events.storage),
     changeStorageProductQuantity: new ChangeStorageProductQuantityCommandHandler(
       this.services.storage,
       this.events.storage
     ),
+    // storage
+    createStorage: new CreateStorageCommandHandler(this.services.storage, this.events.storage),
     removeStorage: new RemoveStorageCommandHandler(this.services.storage, this.events.storage),
     removeProduct: new RemoveProductCommandHandler(this.services.storage, this.events.storage),
     updateStorage: new UpdateStorageCommandHandler(this.services.storage, this.events.storage),
@@ -89,6 +94,7 @@ export default class Application {
       this.services.storage,
       this.events.storage
     ),
+    // user
     registerUser: new RegisterUserCommandHandler(this.services.user),
   };
 
@@ -100,6 +106,9 @@ export default class Application {
   };
 
   public readonly commands = {
+    productItem: {
+      getByProduct: this.commandHandlers.getProductItemsByProduct.execute,
+    },
     storage: {
       create: this.commandHandlers.createStorage.execute,
       addNewProduct: this.commandHandlers.addNewProductToStorage.execute,

@@ -8,6 +8,7 @@ export { default as StorageService } from './services/storage-service.ts';
 export { default as UserService } from './services/user-service.ts';
 
 export type { GetChangedProductsQuery } from './queries/storage/get-changed-products.ts';
+export type { GetProductItemsByProductQuery } from './queries/product-item/get-by-product.ts';
 
 export type { CreateStorageCommand } from './commands/storage/create-storage.ts';
 export type { AddNewProductToStorageCommand } from './commands/storage/add-new-product-to-storage.ts';
