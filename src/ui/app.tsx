@@ -7,6 +7,7 @@ import StorageWidget from './widgets/storage-widget.tsx';
 import CoreContext from './core-context.ts';
 import ChangeStorageProductWidget from './widgets/change-storage-product-widget.tsx';
 import StorageWithProductsDto from '../application/dto/storage-with-products-dto.ts';
+import ProductWidget from './widgets/product-widget.tsx';
 
 const App: FC = () => {
   const navigate = useNavigate();
@@ -103,6 +104,20 @@ const App: FC = () => {
     );
   }
 
+  if (activeStorage && activeStorageProduct) {
+    return (
+      <LayoutWidget
+        backText={activeStorageProduct.name}
+        onBack={() => {
+          searchParams.delete('productId');
+          navigate({ search: searchParams.toString() });
+        }}
+      >
+        <ProductWidget productId={activeStorageProduct.id} />
+      </LayoutWidget>
+    );
+  }
+
   if (activeStorage && mode === 'edit') {
     return (
       <LayoutWidget
@@ -135,7 +150,11 @@ const App: FC = () => {
         <StorageWidget
           data={activeStorage}
           onClickAddProduct={() => {
-            searchParams.set('productId', 'new');
+            searchParams.set('mode', 'new');
+            navigate({ search: searchParams.toString() });
+          }}
+          onClickShowProduct={(productId) => {
+            searchParams.set('productId', productId);
             navigate({ search: searchParams.toString() });
           }}
           onClickEditProduct={(productId) => {

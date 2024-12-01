@@ -6,6 +6,7 @@ import ProductDto from '../../application/dto/product-dto.ts';
 type StorageItemWidgetProps = {
   data: ProductDto;
   onClickEdit: () => void;
+  onClickShow: () => void;
 };
 
 const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
@@ -30,12 +31,12 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
           >
             <span>Edit</span>
           </button>
-          {/*<button*/}
-          {/*  className={cn('flex', 'items-center', 'gap-1', 'text-blue-600', 'font-medium', 'text-xs')}*/}
-          {/*  onClick={props.onClickPlus}*/}
-          {/*>*/}
-          {/*  <span>Items</span>*/}
-          {/*</button>*/}
+          <button
+            className={cn('flex', 'items-center', 'gap-1', 'text-blue-600', 'font-medium', 'text-xs')}
+            onClick={props.onClickShow}
+          >
+            <span>Items</span>
+          </button>
         </div>
       </div>
     </div>
@@ -47,6 +48,7 @@ type Props = {
   onClickEditStorage: () => void;
   onClickAddProduct: () => void;
   onClickEditProduct: (storageProductId: ProductDto['id']) => void;
+  onClickShowProduct: (storageProductId: ProductDto['id']) => void;
 };
 
 const StorageWidget: FC<Props> = (props) => {
@@ -61,6 +63,7 @@ const StorageWidget: FC<Props> = (props) => {
               key={product.id}
               data={product}
               onClickEdit={() => props.onClickEditProduct(product.id)}
+              onClickShow={() => props.onClickShowProduct(product.id)}
             />
           );
         })}
