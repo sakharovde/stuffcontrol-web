@@ -29,6 +29,10 @@ const App: FC = () => {
     core.events.storage.on('storageCreated', updateStoragesState);
     core.events.storage.on('storageUpdated', updateStoragesState);
     core.events.storage.on('storageDeleted', updateStoragesState);
+    core.events.product.on('productCreated', updateStoragesState);
+    core.events.product.on('productUpdated', updateStoragesState);
+    core.events.batch.on('batchCreated', updateStoragesState);
+    core.events.batch.on('batchUpdated', updateStoragesState);
 
     updateStoragesState();
 
@@ -36,6 +40,10 @@ const App: FC = () => {
       core.events.storage.off('storageCreated', updateStoragesState);
       core.events.storage.off('storageUpdated', updateStoragesState);
       core.events.storage.off('storageDeleted', updateStoragesState);
+      core.events.product.on('productCreated', updateStoragesState);
+      core.events.product.on('productUpdated', updateStoragesState);
+      core.events.batch.on('batchCreated', updateStoragesState);
+      core.events.batch.on('batchUpdated', updateStoragesState);
     };
   }, [core]);
 
@@ -176,7 +184,7 @@ const App: FC = () => {
       <StoragesWidget
         data={storages}
         onClickAddStorage={() => {
-          searchParams.set('storageId', 'new');
+          searchParams.set('mode', 'new');
           navigate({ search: searchParams.toString() });
         }}
         onClickStorageCard={(storageId) => {

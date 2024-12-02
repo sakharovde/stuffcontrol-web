@@ -1,7 +1,6 @@
 import { FC, useContext, useLayoutEffect, useState } from 'react';
-import { ProductDto } from '../../application';
+import { BatchDto, ProductDto } from '../../application';
 import CoreContext from '../core-context.ts';
-import { ProductItem } from '../../domain';
 
 type Props = {
   productId: ProductDto['id'];
@@ -9,20 +8,28 @@ type Props = {
 
 const ProductWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
-  const [items, setItems] = useState<ProductItem[]>([]);
+  const [batches, setBatches] = useState<BatchDto[]>([]);
 
   useLayoutEffect(() => {
-    core.queries.productItem.getByProduct({ productId: props.productId }).then(setItems);
+    core.queries.batch.getByProduct({ productId: props.productId }).then(setBatches);
   }, [core]);
 
   return (
     <div>
       <h3 className='text-xl font-semibold px-3'>Items</h3>
       <div className='px-3 py-5 flex flex-col gap-1'>
-        {items.map((item) => (
+        {batches.map((item) => (
           <div key={item.id} className='py-1 px-3 rounded-md bg-gray-100 border border-gray-50'>
-            <div className='text-xs'>{`Added: ${item.addedAt ? item.addedAt.toISOString().split('T')[0] : '-'}`}</div>
-            <div className='text-xs'>{`Expiring: ${item.expiredAt ? item.expiredAt.toISOString().split('T')[0] : '-'}`}</div>
+            <div className='flex justify-between gap-5'>
+              <div className='flex-1 text-sm'>{item.expirationDate?.toISOString().split('T')[0] || 'Other'}</div>
+              <div className='flex flex-col gap-1'>
+                <div className='flex gap-2'>
+                  <div className='font-semibold text-lg flex items-center justify-center text-gray-500'>
+                    {item.quantity}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         ))}
       </div>

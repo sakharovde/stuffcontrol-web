@@ -20,7 +20,7 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
 
   const handleRemoveStorage = (id: ProductDto['id']) => () => {
-    core.commands.storage.removeProduct({ productId: id }).then(props.onSuccess);
+    core.commands.product.removeProduct({ productId: id }).then(props.onSuccess);
   };
 
   return (
@@ -35,23 +35,16 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
         }}
         onSubmit={(values) => {
           if (!props.data) {
-            core.commands.storage
+            core.commands.product
               .addNewProduct({
                 storageId: props.storage.id,
                 productName: values.name,
                 quantity: Number(values.quantity || 0),
-                expirationDate: values.expirationDate ? new Date(values.expirationDate) : undefined,
+                expirationDate: values.expirationDate ? new Date(values.expirationDate) : null,
               })
               .then(props.onSuccess);
             return;
           }
-          core.commands.storage
-            .changeProductQuantity({
-              productId: props.data.id,
-              quantity: Number(values.quantity || 0),
-              expirationDate: values.expirationDate ? new Date(values.expirationDate) : undefined,
-            })
-            .then(props.onSuccess);
         }}
       >
         {({ values, handleChange, handleSubmit }) => (
@@ -70,32 +63,36 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
                 disabled={!!props.data}
               />
             </div>
-            <div className='mt-5 w-full'>
-              <label className='text-sm font-medium text-gray-700' htmlFor='quantity'>
-                Quantity
-              </label>
-              <input
-                type='number'
-                name='quantity'
-                value={values.quantity}
-                onChange={handleChange}
-                placeholder='Quantity'
-                className='p-4 bg-gray-100 rounded-md w-full'
-              />
-            </div>
-            <div className='mt-5 w-full'>
-              <label className='text-sm font-medium text-gray-700' htmlFor='expirationDate'>
-                Expiration date
-              </label>
-              <input
-                type='date'
-                name='expirationDate'
-                value={values.expirationDate}
-                onChange={handleChange}
-                placeholder='Expiration date'
-                className='p-4 bg-gray-100 rounded-md appearance-none w-full'
-              />
-            </div>
+            {!props.data && (
+              <div className='mt-5 w-full'>
+                <label className='text-sm font-medium text-gray-700' htmlFor='quantity'>
+                  Quantity
+                </label>
+                <input
+                  type='number'
+                  name='quantity'
+                  value={values.quantity}
+                  onChange={handleChange}
+                  placeholder='Quantity'
+                  className='p-4 bg-gray-100 rounded-md w-full'
+                />
+              </div>
+            )}
+            {!props.data && (
+              <div className='mt-5 w-full'>
+                <label className='text-sm font-medium text-gray-700' htmlFor='expirationDate'>
+                  Expiration date
+                </label>
+                <input
+                  type='date'
+                  name='expirationDate'
+                  value={values.expirationDate}
+                  onChange={handleChange}
+                  placeholder='Expiration date'
+                  className='p-4 bg-gray-100 rounded-md appearance-none w-full'
+                />
+              </div>
+            )}
             <div
               className='absolute bottom-0 left-0 bg-gray-100 w-full'
               style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
@@ -112,9 +109,13 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
                 ) : (
                   <div />
                 )}
-                <button type='submit' className='flex items-center gap-1 text-blue-600 font-medium'>
-                  <span>Submit</span>
-                </button>
+                {!props.data ? (
+                  <button type='submit' className='flex items-center gap-1 text-blue-600 font-medium'>
+                    <span>Submit</span>
+                  </button>
+                ) : (
+                  <div />
+                )}
               </div>
             </div>
           </form>

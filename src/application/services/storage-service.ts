@@ -1,9 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
-  Product,
+  BatchRepository,
   ProductItem,
   ProductItemRepository,
-  ProductNameEmptySpecification,
   ProductRepository,
   Storage,
   StorageNameEmptySpecification,
@@ -21,8 +20,8 @@ export default class StorageService {
     private readonly productRepository: ProductRepository,
     private readonly nameEmptySpecification: StorageNameEmptySpecification,
     private readonly storageTransactionRepository: StorageTransactionRepository,
-    private readonly productNameEmptySpecification: ProductNameEmptySpecification,
-    private readonly productItemRepository: ProductItemRepository
+    private readonly productItemRepository: ProductItemRepository,
+    private readonly batchRepository: BatchRepository
   ) {}
 
   async create(name: StorageDto['name']): Promise<StorageDto> {
@@ -45,8 +44,10 @@ export default class StorageService {
 
     return await Promise.all(
       products.map(async (product) => {
-        const productItems = await this.productItemRepository.findAllByProductId(product.id);
-        return ProductDtoFactory.create(product, productItems.length);
+        const batches = await this.batchRepository.findAllByProductId(product.id);
+        const quantity = batches.reduce((acc, batch) => acc + batch.quantity, 0);
+
+        return ProductDtoFactory.create(product, quantity);
       })
     );
   };
@@ -69,27 +70,6 @@ export default class StorageService {
 
   remove(id: StorageDto['id']): Promise<void> {
     return this.storageRepository.remove(id);
-  }
-
-  async createProduct(
-    storageId: StorageDto['id'],
-    productName: ProductDto['name'],
-    quantity: ProductDto['quantity'],
-    expirationDate?: Date
-  ): Promise<ProductDto> {
-    const isNameEmpty = await this.productNameEmptySpecification.isSatisfiedBy(productName);
-
-    if (isNameEmpty) {
-      throw new Error('Product name cannot be empty');
-    }
-
-    if (quantity < 0) {
-      throw new Error('Quantity cannot be negative');
-    }
-
-    const product = await this.productRepository.save(new Product(uuidv4(), storageId, productName));
-
-    return await this.changeProductQuantity(product.id, quantity, expirationDate);
   }
 
   async changeProductQuantity(
