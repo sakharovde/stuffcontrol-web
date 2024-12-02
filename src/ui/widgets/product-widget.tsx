@@ -21,7 +21,7 @@ const ProductWidget: FC<Props> = (props) => {
         {batches.map((item) => (
           <div key={item.id} className='py-1 px-3 rounded-md bg-gray-100 border border-gray-50'>
             <div className='flex justify-between gap-5'>
-              <div className='flex-1 text-sm'>{item.expirationDate?.toISOString().split('T')[0] || 'Other'}</div>
+              <div className='flex-1 text-sm'>{`Exp. date: ${item.expirationDate?.toISOString().split('T')[0] || '-'}`}</div>
               <div className='flex flex-col gap-1'>
                 <div className='flex gap-2'>
                   <div className='font-semibold text-lg flex items-center justify-center text-gray-500'>
@@ -29,6 +29,11 @@ const ProductWidget: FC<Props> = (props) => {
                   </div>
                 </div>
               </div>
+            </div>
+            <div className='flex justify-between text-xs font-medium'>
+              <button className='text-red-700'>Remove</button>
+              <button className='text-blue-700'>Change exp. date</button>
+              <button className='text-blue-700'>Change quantity</button>
             </div>
           </div>
         ))}

@@ -12,8 +12,8 @@ type Props = {
 
 interface FormValues {
   name: string;
-  quantity: number | undefined;
-  expirationDate: string | undefined;
+  quantity: number | '';
+  expirationDate: string | '';
 }
 
 const ChangeStorageProductWidget: FC<Props> = (props) => {
@@ -30,8 +30,8 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
       <Formik<FormValues>
         initialValues={{
           name: props.data?.name || '',
-          quantity: props.data?.quantity,
-          expirationDate: new Date().toISOString().split('T')[0],
+          quantity: props.data?.quantity || '',
+          expirationDate: '',
         }}
         onSubmit={(values) => {
           if (!props.data) {
