@@ -7,6 +7,8 @@ import {
   Batch,
   BatchRepository,
   Product,
+  ProductItem,
+  ProductItemRepository,
   ProductNameEmptySpecification,
   ProductRepository,
   StorageTransaction,
@@ -28,7 +30,8 @@ export default class AddNewProductToStorageCommandHandler {
     private readonly batchRepository: BatchRepository,
     private readonly storageTransactionRepository: StorageTransactionRepository,
     private readonly productEventEmitter: ProductEventEmitter,
-    private readonly batchEventEmitter: BatchEventEmitter
+    private readonly batchEventEmitter: BatchEventEmitter,
+    private readonly productItemRepository: ProductItemRepository
   ) {}
 
   execute = async (command: AddNewProductToStorageCommand): Promise<void> => {
@@ -48,6 +51,10 @@ export default class AddNewProductToStorageCommandHandler {
 
     const batch = new Batch(uuidv4(), product.id, command.quantity, command.expirationDate);
     await this.batchRepository.save(batch);
+
+    for (let i = 0; i < command.quantity; i++) {
+      await this.productItemRepository.save(new ProductItem(uuidv4(), product.id, batch.id, command.expirationDate));
+    }
 
     await this.storageTransactionRepository.save(
       new StorageTransaction(uuidv4(), product.storageId, product.id, command.quantity)

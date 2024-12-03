@@ -72,7 +72,8 @@ export default class Application {
       this.events.batch,
       this.repositories.batch,
       this.repositories.product,
-      this.repositories.storageTransaction
+      this.repositories.storageTransaction,
+      this.repositories.productItem
     ),
     // product item
     getProductItemsByProduct: new GetProductItemsByProductQueryHandler(this.repositories.productItem),
@@ -83,7 +84,8 @@ export default class Application {
       this.repositories.batch,
       this.repositories.storageTransaction,
       this.events.product,
-      this.events.batch
+      this.events.batch,
+      this.repositories.productItem
     ),
     // storage
     createStorage: new CreateStorageCommandHandler(

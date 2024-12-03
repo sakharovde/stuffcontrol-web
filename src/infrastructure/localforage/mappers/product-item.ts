@@ -6,15 +6,15 @@ export default class ProductItemMapper {
       throw new Error('Invalid data');
     }
 
-    let expiredAt: ProductItem['expiredAt'] = null;
+    let expirationDate: ProductItem['expirationDate'] = null;
 
     if (
-      'expiredAt' in data &&
-      data.expiredAt !== null &&
-      typeof data.expiredAt === 'string' &&
-      !isNaN(Date.parse(data.expiredAt))
+      'expirationDate' in data &&
+      data.expirationDate !== null &&
+      typeof data.expirationDate === 'string' &&
+      !isNaN(Date.parse(data.expirationDate))
     ) {
-      expiredAt = new Date(data.expiredAt);
+      expirationDate = new Date(data.expirationDate);
     }
 
     if (
@@ -22,6 +22,8 @@ export default class ProductItemMapper {
       typeof data.id !== 'string' ||
       !('productId' in data) ||
       typeof data.productId !== 'string' ||
+      !('batchId' in data) ||
+      typeof data.batchId !== 'string' ||
       !('addedAt' in data) ||
       typeof data.addedAt !== 'string' ||
       isNaN(Date.parse(data.addedAt)) ||
@@ -37,7 +39,8 @@ export default class ProductItemMapper {
     return new ProductItem(
       data.id,
       data.productId,
-      expiredAt ? new Date(expiredAt) : null,
+      data.batchId,
+      expirationDate,
       data.removedAt ? new Date(data.removedAt) : null,
       new Date(data.createdAt),
       new Date(data.createdAt)
@@ -48,7 +51,8 @@ export default class ProductItemMapper {
     return {
       id: item.id,
       productId: item.productId,
-      expiredAt: item.expiredAt?.toISOString().toString() || null,
+      batchId: item.batchId,
+      expirationDate: item.expirationDate?.toISOString().toString() || null,
       addedAt: item.addedAt.toISOString().toString(),
       removedAt: item.removedAt?.toISOString().toString() || null,
       createdAt: item.createdAt.toISOString(),

@@ -7,7 +7,8 @@ describe('ProductItemMapper', () => {
       const data = {
         id: '1',
         productId: 'product1',
-        expiredAt: null,
+        batchId: 'batch1',
+        expirationDate: null,
         addedAt: '2023-01-01T00:00:00.000Z',
         removedAt: null,
         createdAt: '2023-01-01T00:00:00.000Z',
@@ -18,6 +19,7 @@ describe('ProductItemMapper', () => {
         new ProductItem(
           '1',
           'product1',
+          'batch1',
           null,
           null,
           new Date('2023-01-01T00:00:00.000Z'),
@@ -78,6 +80,7 @@ describe('ProductItemMapper', () => {
       const productItem = new ProductItem(
         '1',
         'product1',
+        'batch1',
         null,
         null,
         new Date('2023-01-01T00:00:00.000Z'),
@@ -87,7 +90,8 @@ describe('ProductItemMapper', () => {
       expect(result).toEqual({
         id: '1',
         productId: 'product1',
-        expiredAt: null,
+        batchId: 'batch1',
+        expirationDate: null,
         addedAt: '2023-01-01T00:00:00.000Z',
         removedAt: null,
         createdAt: '2023-01-01T00:00:00.000Z',
