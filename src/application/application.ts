@@ -13,8 +13,6 @@ import {
   UserUsernameEmptySpecification,
 } from '../domain';
 import StorageEventEmitter from './events/storage-event-emitter.ts';
-import StorageService from './services/storage-service.ts';
-import UserService from './services/user-service.ts';
 import GetStoragesWithProductsQueryHandler from './queries/storage/get-storages-with-products.ts';
 import CreateStorageCommandHandler from './commands/storage/create-storage.ts';
 import AddNewProductToStorageCommandHandler from './commands/product/add-new-product-to-storage.ts';
@@ -28,8 +26,6 @@ import BatchRepositoryImpl from '../infrastructure/localforage/repositories/batc
 import { GetBatchesByProductQueryHandler } from './queries/batch/get-by-product.ts';
 import BatchEventEmitter from './events/batch-event-emitter.ts';
 import ProductEventEmitter from './events/product-event-emitter.ts';
-import BatchService from './services/batch-service.ts';
-import ProductService from './services/product-service.ts';
 
 export default class Application {
   public readonly events = {
@@ -61,49 +57,50 @@ export default class Application {
     },
   };
 
-  private readonly services = {
-    batch: new BatchService(this.repositories.batch, this.repositories.product, this.repositories.storageTransaction),
-    product: new ProductService(this.repositories.product, this.specifications.product.nameEmpty),
-    storage: new StorageService(
-      this.repositories.storage,
-      this.repositories.product,
-      this.specifications.storage.nameEmpty,
-      this.repositories.storageTransaction,
-      this.repositories.productItem,
-      this.repositories.batch
-    ),
-    user: new UserService(
-      this.repositories.user,
-      this.specifications.user.usernameUnique,
-      this.specifications.user.usernameEmpty,
-      this.specifications.user.passwordEmpty
-    ),
-  };
-
   private readonly queryHandlers = {
-    getStoragesWithProducts: new GetStoragesWithProductsQueryHandler(this.services.storage),
+    getStoragesWithProducts: new GetStoragesWithProductsQueryHandler(
+      this.repositories.storage,
+      this.repositories.batch,
+      this.repositories.product
+    ),
     getBatchesByProduct: new GetBatchesByProductQueryHandler(this.repositories.batch),
   };
 
   private readonly commandHandlers = {
     // batch
-    changeStorageProductQuantity: new ChangeBatchQuantityCommandHandler(this.events.batch, this.services.batch),
+    changeStorageProductQuantity: new ChangeBatchQuantityCommandHandler(
+      this.events.batch,
+      this.repositories.batch,
+      this.repositories.product,
+      this.repositories.storageTransaction
+    ),
     // product item
     getProductItemsByProduct: new GetProductItemsByProductQueryHandler(this.repositories.productItem),
     // product
     addNewProductToStorage: new AddNewProductToStorageCommandHandler(
-      this.services.product,
-      this.services.batch,
+      this.repositories.product,
+      this.specifications.product.nameEmpty,
+      this.repositories.batch,
+      this.repositories.storageTransaction,
       this.events.product,
       this.events.batch
     ),
     // storage
-    createStorage: new CreateStorageCommandHandler(this.services.storage, this.events.storage),
-    removeStorage: new RemoveStorageCommandHandler(this.services.storage, this.events.storage),
-    removeProduct: new RemoveProductCommandHandler(this.services.storage, this.events.storage),
-    updateStorage: new UpdateStorageCommandHandler(this.services.storage, this.events.storage),
+    createStorage: new CreateStorageCommandHandler(
+      this.repositories.storage,
+      this.specifications.storage.nameEmpty,
+      this.events.storage
+    ),
+    removeStorage: new RemoveStorageCommandHandler(this.repositories.storage, this.events.storage),
+    removeProduct: new RemoveProductCommandHandler(this.repositories.product, this.events.storage),
+    updateStorage: new UpdateStorageCommandHandler(this.repositories.storage, this.events.storage),
     // user
-    registerUser: new RegisterUserCommandHandler(this.services.user),
+    registerUser: new RegisterUserCommandHandler(
+      this.repositories.user,
+      this.specifications.user.usernameUnique,
+      this.specifications.user.usernameEmpty,
+      this.specifications.user.passwordEmpty
+    ),
   };
 
   public readonly queries = {

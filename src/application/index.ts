@@ -5,9 +5,6 @@ export type { default as ProductDto } from './dto/product-dto.ts';
 export type { default as StorageWithProductsDto } from './dto/storage-with-products-dto.ts';
 export type { default as BatchDto } from './dto/batch-dto.ts';
 
-export { default as StorageService } from './services/storage-service.ts';
-export { default as UserService } from './services/user-service.ts';
-
 export type { GetProductItemsByProductQuery } from './queries/product-item/get-by-product.ts';
 export type { default as GetStoragesWithProductsQuery } from './queries/batch/get-by-product.ts';
 

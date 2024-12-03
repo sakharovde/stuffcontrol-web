@@ -1,5 +1,6 @@
-import { StorageDto, StorageService } from '../../index.ts';
+import { StorageDto } from '../../index.ts';
 import StorageEventEmitter from '../../events/storage-event-emitter.ts';
+import { StorageRepository } from '../../../domain';
 
 export interface UpdateStorageCommand {
   storage: StorageDto;
@@ -7,15 +8,13 @@ export interface UpdateStorageCommand {
 
 export default class UpdateStorageCommandHandler {
   constructor(
-    private readonly storageService: StorageService,
+    private readonly storageRepository: StorageRepository,
     private readonly storageEventEmitter: StorageEventEmitter
   ) {}
 
-  execute = async (command: UpdateStorageCommand): Promise<StorageDto> => {
-    const result = await this.storageService.update(command.storage);
+  execute = async (command: UpdateStorageCommand): Promise<void> => {
+    await this.storageRepository.save(command.storage);
 
     this.storageEventEmitter.emit('storageUpdated');
-
-    return result;
   };
 }

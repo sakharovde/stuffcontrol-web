@@ -1,5 +1,11 @@
-import { User } from '../../../domain';
-import UserService from '../../services/user-service.ts';
+import {
+  User,
+  UserPasswordEmptySpecification,
+  UserRepository,
+  UserUniqueUsernameSpecification,
+  UserUsernameEmptySpecification,
+} from '../../../domain';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface RegisterUserCommand {
   username: string;
@@ -7,9 +13,32 @@ export interface RegisterUserCommand {
 }
 
 export default class RegisterUserCommandHandler {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userRepository: UserRepository,
+    private uniqueUsernameSpec: UserUniqueUsernameSpecification,
+    private usernameEmptySpec: UserUsernameEmptySpecification,
+    private passwordEmptySpec: UserPasswordEmptySpecification
+  ) {}
 
-  execute = (command: RegisterUserCommand): Promise<User> => {
-    return this.userService.registerUser(command.username, command.password);
+  execute = async (command: RegisterUserCommand): Promise<void> => {
+    const isUsernameEmpty = await this.usernameEmptySpec.isSatisfiedBy(command.username);
+    if (isUsernameEmpty) {
+      throw new Error('Username cannot be empty');
+    }
+
+    const isPasswordEmpty = await this.passwordEmptySpec.isSatisfiedBy(command.password);
+    if (isPasswordEmpty) {
+      throw new Error('Password cannot be empty');
+    }
+
+    const isUnique = await this.uniqueUsernameSpec.isSatisfiedBy(command.username);
+    if (!isUnique) {
+      throw new Error('Username is already taken');
+    }
+
+    const passwordHash = await Buffer.from(command.password).toString('base64');
+    const user = new User(uuidv4(), command.username, passwordHash);
+
+    await this.userRepository.save(user);
   };
 }

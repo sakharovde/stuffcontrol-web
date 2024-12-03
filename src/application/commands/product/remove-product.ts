@@ -1,5 +1,6 @@
-import { ProductDto, StorageService } from '../../index.ts';
 import StorageEventEmitter from '../../events/storage-event-emitter.ts';
+import { ProductRepository } from '../../../domain';
+import ProductDto from '../../dto/product-dto.ts';
 
 export interface RemoveProductCommand {
   productId: ProductDto['id'];
@@ -7,13 +8,17 @@ export interface RemoveProductCommand {
 
 export default class RemoveProductCommandHandler {
   constructor(
-    private storageService: StorageService,
+    private readonly productRepository: ProductRepository,
     private readonly storageEventEmitter: StorageEventEmitter
   ) {}
 
   execute = async (command: RemoveProductCommand): Promise<void> => {
-    const result = await this.storageService.removeProduct(command.productId);
+    const storageItem = await this.productRepository.findById(command.productId);
+
+    if (storageItem) {
+      return this.productRepository.delete(storageItem);
+    }
+
     this.storageEventEmitter.emit('storageUpdated');
-    return result;
   };
 }
