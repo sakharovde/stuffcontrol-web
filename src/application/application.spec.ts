@@ -8,19 +8,23 @@ describe('Application', () => {
   });
 
   describe('product.addNewProduct', () => {
-    // it('adds a new product to storage successfully', async () => {
-    //   const storage = await core.commands.storage.create({ name: 'storageName' });
-    //   const result = await core.commands.product.addNewProduct({
-    //     storageId: storage.id,
-    //     productName: 'productName',
-    //     quantity: 0,
-    //   });
-    //   expect(result).toEqual(
-    //     expect.objectContaining({
-    //       quantity: 0,
-    //     })
-    //   );
-    // });
+    it('adds a new product to storage successfully', async () => {
+      await core.commands.storage.create({ name: 'storageName' });
+      const storage = await core.queries.storage.getAllWithProducts().then((storages) => storages[0]);
+      await core.commands.product.addNewProduct({
+        storageId: storage.id,
+        productName: 'productName',
+        quantity: 0,
+        expirationDate: null,
+      });
+      const result = await core.queries.storage.getAllWithProducts().then((storages) => storages[0].products[0]);
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          quantity: 0,
+        })
+      );
+    });
 
     it('throws an error when product name is empty', async () => {
       await expect(
@@ -45,14 +49,17 @@ describe('Application', () => {
     });
 
     // it('adds a new product with expiration date successfully', async () => {
-    //   const storage = await core.commands.storage.create({ name: 'storageName' });
+    //   await core.commands.storage.create({ name: 'storageName' });
+    //   const storage = await core.queries.storage.getAllWithProducts().then((storages) => storages[0]);
+    //
     //   const expirationDate = new Date();
-    //   const product = await core.commands.product.addNewProduct({
+    //   await core.commands.product.addNewProduct({
     //     storageId: storage.id,
     //     productName: 'productName',
     //     quantity: 10,
     //     expirationDate,
     //   });
+    //   const product = await core.queries.storage.getAllWithProducts().then((storages) => storages[0].products[0]);
     //   const productItems = await core.queries.productItem.getByProduct({ productId: product.id });
     //
     //   expect(productItems).toHaveLength(10);
@@ -63,14 +70,15 @@ describe('Application', () => {
   });
 
   describe('storage.create', () => {
-    // it('creates storage successfully', async () => {
-    //   const result = await core.commands.storage.create({ name: 'storageName' });
-    //   expect(result).toEqual(
-    //     expect.objectContaining({
-    //       name: 'storageName',
-    //     })
-    //   );
-    // });
+    it('creates storage successfully', async () => {
+      await core.commands.storage.create({ name: 'storageName' });
+      const result = await core.queries.storage.getAllWithProducts().then((storages) => storages[0]);
+      expect(result).toEqual(
+        expect.objectContaining({
+          name: 'storageName',
+        })
+      );
+    });
 
     it('throws an error when storage name is empty', async () => {
       await expect(core.commands.storage.create({ name: '' })).rejects.toThrow('Storage name cannot be empty');
