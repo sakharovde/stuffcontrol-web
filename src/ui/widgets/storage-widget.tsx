@@ -13,7 +13,12 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
   return (
     <div className={cn('py-1', 'px-3', 'rounded-md', 'bg-gray-100', 'border', 'border-gray-50')}>
       <div className='flex justify-between gap-5'>
-        <div className='flex-1 text-sm'>{props.data.name}</div>
+        <div className='flex-1'>
+          <div className='text-sm'>{props.data.name}</div>
+          {props.data.expirationDate && (
+            <div className='text-gray-500 text-xs'>{`Expires on ${props.data.expirationDate.toISOString().split('T')[0]}`}</div>
+          )}
+        </div>
 
         <div className='flex flex-col gap-1'>
           <div className='flex gap-2'>
@@ -23,6 +28,7 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
           </div>
         </div>
       </div>
+
       <div>
         <div className='flex justify-between gap-1'>
           <button
