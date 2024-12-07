@@ -12,13 +12,17 @@ export default class BatchProductRepositoryImpl implements BatchProductRepositor
   findAll = async () => {
     const batchProducts: BatchProduct[] = [];
 
-    await this.client.iterate((value) => batchProducts.push(BatchProductMapper.toDomain(value)));
+    await this.client.iterate((value) => {
+      const batchProduct = BatchProductMapper.toDomain(value);
+      if (batchProduct) batchProducts.push(batchProduct);
+    });
 
     return batchProducts;
   };
 
   findAllByBatchId = async (batchId: BatchProduct['batchId']) => {
     const allBatchProducts: BatchProduct[] = await this.findAll();
+    console.log(allBatchProducts);
     return allBatchProducts.filter((batchProduct) => batchProduct.batchId === batchId);
   };
 

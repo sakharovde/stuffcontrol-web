@@ -1,6 +1,7 @@
 import BatchDto from '../../dto/batch-dto.ts';
 import BatchEventEmitter from '../../events/batch-event-emitter.ts';
 import {
+  BatchProduct,
   BatchProductRepository,
   BatchRepository,
   Product,
@@ -43,7 +44,11 @@ export default class ChangeBatchQuantityCommandHandler {
 
     if (quantityDelta > 0) {
       for (let i = 0; i < quantityDelta; i++) {
-        await this.productRepository.save(new Product(uuidv4(), batch.storageId, batch.name, batch.expirationDate));
+        await this.productRepository
+          .save(new Product(uuidv4(), batch.storageId, batch.name, batch.expirationDate))
+          .then((product) => {
+            return this.batchProductRepository.save(new BatchProduct(uuidv4(), batch.id, product.id));
+          });
       }
     }
 
@@ -51,11 +56,10 @@ export default class ChangeBatchQuantityCommandHandler {
 
     batch.quantity = batchProducts.length;
     await this.batchRepository.save(batch);
+    this.batchEventEmitter.emit('batchUpdated');
 
     await this.storageTransactionRepository.save(
-      new StorageTransaction(uuidv4(), batch.storageId, batchProducts[0].id, quantityDelta)
+      new StorageTransaction(uuidv4(), batch.storageId, batchProducts[0]?.id, quantityDelta)
     );
-
-    this.batchEventEmitter.emit('batchUpdated');
   };
 }

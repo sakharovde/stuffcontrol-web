@@ -13,7 +13,7 @@ const App: FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const storageId = searchParams.get('storageId');
-  const productId = searchParams.get('productId');
+  const batchId = searchParams.get('batchId');
   const mode = searchParams.get('mode');
 
   const core = useContext(CoreContext);
@@ -36,6 +36,9 @@ const App: FC = () => {
     core.events.storage.on('storageCreated', updateStoragesState);
     core.events.storage.on('storageUpdated', updateStoragesState);
     core.events.storage.on('storageDeleted', updateStoragesState);
+    core.events.batch.on('batchCreated', updateStoragesState);
+    core.events.batch.on('batchUpdated', updateStoragesState);
+    core.events.batch.on('batchDeleted', updateStoragesState);
 
     updateStoragesState();
 
@@ -43,11 +46,14 @@ const App: FC = () => {
       core.events.storage.off('storageCreated', updateStoragesState);
       core.events.storage.off('storageUpdated', updateStoragesState);
       core.events.storage.off('storageDeleted', updateStoragesState);
+      core.events.batch.off('batchCreated', updateStoragesState);
+      core.events.batch.off('batchUpdated', updateStoragesState);
+      core.events.batch.off('batchDeleted', updateStoragesState);
     };
   }, [core]);
 
   const activeStorage = storages.find((storage) => storage.id === storageId);
-  const activeStorageBatch = activeStorageBatches?.find((product) => product.id === productId);
+  const activeStorageBatch = activeStorageBatches?.find((batch) => batch.id === batchId);
 
   if (activeStorage && mode === 'new') {
     return (
@@ -93,7 +99,7 @@ const App: FC = () => {
       <LayoutWidget
         backText={activeStorage.name}
         onBack={() => {
-          searchParams.delete('productId');
+          searchParams.delete('batchId');
           searchParams.delete('mode');
           navigate({ search: searchParams.toString() });
         }}
@@ -102,7 +108,7 @@ const App: FC = () => {
           data={activeStorageBatch}
           storage={activeStorage}
           onSuccess={() => {
-            searchParams.delete('productId');
+            searchParams.delete('batchId');
             searchParams.delete('mode');
             navigate({ search: searchParams.toString() });
           }}
@@ -116,11 +122,17 @@ const App: FC = () => {
       <LayoutWidget
         backText={activeStorage.name}
         onBack={() => {
-          searchParams.delete('productId');
+          searchParams.delete('batchId');
           navigate({ search: searchParams.toString() });
         }}
       >
-        <BatchWidget productId={activeStorageBatch.id} />
+        <BatchWidget
+          batch={activeStorageBatch}
+          onSuccess={() => {
+            searchParams.delete('batchId');
+            navigate({ search: searchParams.toString() });
+          }}
+        />
       </LayoutWidget>
     );
   }
@@ -160,12 +172,12 @@ const App: FC = () => {
             searchParams.set('mode', 'new');
             navigate({ search: searchParams.toString() });
           }}
-          onClickShowProduct={(productId) => {
-            searchParams.set('productId', productId);
+          onClickShowProduct={(batchId) => {
+            searchParams.set('batchId', batchId);
             navigate({ search: searchParams.toString() });
           }}
-          onClickEditProduct={(productId) => {
-            searchParams.set('productId', productId);
+          onClickEditProduct={(batchId) => {
+            searchParams.set('batchId', batchId);
             searchParams.set('mode', 'edit');
             navigate({ search: searchParams.toString() });
           }}
