@@ -32,12 +32,14 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
       <div>
         <div className='flex justify-between gap-1'>
           <button
+            type='button'
             className={cn('flex', 'items-center', 'gap-1', 'text-blue-600', 'font-medium', 'text-xs')}
             onClick={props.onClickEdit}
           >
             <span>Edit</span>
           </button>
           <button
+            type='button'
             className={cn('flex', 'items-center', 'gap-1', 'text-blue-600', 'font-medium', 'text-xs')}
             onClick={props.onClickShow}
           >
