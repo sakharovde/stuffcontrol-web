@@ -1,9 +1,9 @@
 import BatchDto from '../../dto/batch-dto.ts';
 import BatchEventEmitter from '../../events/batch-event-emitter.ts';
 import {
+  BatchProductRepository,
   BatchRepository,
-  ProductItem,
-  ProductItemRepository,
+  Product,
   ProductRepository,
   StorageTransaction,
   StorageTransactionRepository,
@@ -21,7 +21,7 @@ export default class ChangeBatchQuantityCommandHandler {
     private readonly batchRepository: BatchRepository,
     private readonly productRepository: ProductRepository,
     private readonly storageTransactionRepository: StorageTransactionRepository,
-    private readonly productItemRepository: ProductItemRepository
+    private readonly batchProductRepository: BatchProductRepository
   ) {}
 
   execute = async (command: ChangeBatchQuantityCommand): Promise<void> => {
@@ -31,32 +31,29 @@ export default class ChangeBatchQuantityCommandHandler {
       throw new Error('Batch not found');
     }
 
-    const product = await this.productRepository.findById(batch.productId);
-
-    if (!product) {
-      throw new Error('Product not found');
-    }
-
-    const quantityDelta = command.quantity - batch.quantity;
+    let batchProducts = await this.batchProductRepository.findAllByBatchId(batch.id);
+    const quantityDelta = command.quantity - batchProducts.length;
 
     if (quantityDelta < 0) {
-      const productItems = await this.productItemRepository.findAllByProductId(batch.productId);
       for (let i = 0; i < -quantityDelta; i++) {
-        await this.productItemRepository.delete(productItems[i]);
+        await this.batchProductRepository.delete(batchProducts[i].id);
+        await this.productRepository.delete(batchProducts[i].productId);
       }
     }
 
     if (quantityDelta > 0) {
       for (let i = 0; i < quantityDelta; i++) {
-        await this.productItemRepository.save(new ProductItem(uuidv4(), product.id, batch.id, batch.expirationDate));
+        await this.productRepository.save(new Product(uuidv4(), batch.storageId, batch.name, batch.expirationDate));
       }
     }
 
-    batch.quantity = command.quantity;
+    batchProducts = await this.batchProductRepository.findAllByBatchId(batch.id);
+
+    batch.quantity = batchProducts.length;
     await this.batchRepository.save(batch);
 
     await this.storageTransactionRepository.save(
-      new StorageTransaction(uuidv4(), product.storageId, product.id, quantityDelta)
+      new StorageTransaction(uuidv4(), batch.storageId, batchProducts[0].id, quantityDelta)
     );
 
     this.batchEventEmitter.emit('batchUpdated');

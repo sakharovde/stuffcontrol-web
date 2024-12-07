@@ -10,35 +10,35 @@ export default class ProductRepositoryImpl implements ProductRepository {
   });
 
   async findById(id: Product['id']): Promise<Product | null> {
-    const storageItem = await this.client.getItem(id);
+    const product = await this.client.getItem(id);
 
-    if (!storageItem) {
+    if (!product) {
       return null;
     }
 
-    return ProductMapper.toDomain(storageItem);
+    return ProductMapper.toDomain(product);
   }
 
   async findAllByStorageId(storageId: Product['id']): Promise<Product[]> {
-    const storageItems = await this.getAll();
-    return storageItems.filter((storageItem) => storageItem.storageId === storageId);
+    const products = await this.getAll();
+    return products.filter((product) => product.storageId === storageId);
   }
 
-  async save(storageItem: Product): Promise<Product> {
-    await this.client.setItem(storageItem.id, ProductMapper.toPersistence(storageItem));
+  async save(product: Product): Promise<Product> {
+    await this.client.setItem(product.id, ProductMapper.toPersistence(product));
 
-    return storageItem;
+    return product;
   }
 
-  async delete(storageItem: Product): Promise<void> {
-    return this.client.removeItem(storageItem.id);
+  async delete(id: Product['id']): Promise<void> {
+    return this.client.removeItem(id);
   }
 
   async getAll(): Promise<Product[]> {
-    const storageItems: Product[] = [];
+    const products: Product[] = [];
     await this.client.iterate((value) => {
-      storageItems.push(ProductMapper.toDomain(value));
+      products.push(ProductMapper.toDomain(value));
     });
-    return storageItems;
+    return products;
   }
 }

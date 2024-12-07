@@ -5,9 +5,9 @@ import { useNavigate, useSearchParams } from 'react-router';
 import ChangeStorageWidget from './widgets/change-storage-widget.tsx';
 import StorageWidget from './widgets/storage-widget.tsx';
 import CoreContext from './core-context.ts';
-import ChangeStorageProductWidget from './widgets/change-storage-product-widget.tsx';
-import StorageWithProductsDto from '../application/dto/storage-with-products-dto.ts';
-import ProductWidget from './widgets/product-widget.tsx';
+import ChangeBatchWidget from './widgets/change-batch-widget.tsx';
+import BatchWidget from './widgets/batch-widget.tsx';
+import { BatchDto, StorageDto } from '../application';
 
 const App: FC = () => {
   const navigate = useNavigate();
@@ -17,22 +17,25 @@ const App: FC = () => {
   const mode = searchParams.get('mode');
 
   const core = useContext(CoreContext);
-  const [storages, setStorages] = useState<StorageWithProductsDto[]>([]);
+  const [storages, setStorages] = useState<StorageDto[]>([]);
+  const [activeStorageBatches, setActiveStorageBatches] = useState<BatchDto[]>([]);
 
   useLayoutEffect(() => {
     const updateStoragesState = () => {
       core.queries.storage.getAllWithProducts().then((data) => {
         setStorages(data);
       });
+
+      if (storageId) {
+        core.queries.batch.getByStorage({ storageId }).then((data) => {
+          setActiveStorageBatches(data);
+        });
+      }
     };
 
     core.events.storage.on('storageCreated', updateStoragesState);
     core.events.storage.on('storageUpdated', updateStoragesState);
     core.events.storage.on('storageDeleted', updateStoragesState);
-    core.events.product.on('productCreated', updateStoragesState);
-    core.events.product.on('productUpdated', updateStoragesState);
-    core.events.batch.on('batchCreated', updateStoragesState);
-    core.events.batch.on('batchUpdated', updateStoragesState);
 
     updateStoragesState();
 
@@ -40,15 +43,11 @@ const App: FC = () => {
       core.events.storage.off('storageCreated', updateStoragesState);
       core.events.storage.off('storageUpdated', updateStoragesState);
       core.events.storage.off('storageDeleted', updateStoragesState);
-      core.events.product.on('productCreated', updateStoragesState);
-      core.events.product.on('productUpdated', updateStoragesState);
-      core.events.batch.on('batchCreated', updateStoragesState);
-      core.events.batch.on('batchUpdated', updateStoragesState);
     };
   }, [core]);
 
   const activeStorage = storages.find((storage) => storage.id === storageId);
-  const activeStorageProduct = activeStorage?.products.find((product) => product.id === productId);
+  const activeStorageBatch = activeStorageBatches?.find((product) => product.id === productId);
 
   if (activeStorage && mode === 'new') {
     return (
@@ -59,7 +58,7 @@ const App: FC = () => {
           navigate({ search: searchParams.toString() });
         }}
       >
-        <ChangeStorageProductWidget
+        <ChangeBatchWidget
           storage={activeStorage}
           onSuccess={() => {
             searchParams.delete('mode');
@@ -89,7 +88,7 @@ const App: FC = () => {
     );
   }
 
-  if (activeStorage && activeStorageProduct && mode === 'edit') {
+  if (activeStorage && activeStorageBatch && mode === 'edit') {
     return (
       <LayoutWidget
         backText={activeStorage.name}
@@ -99,8 +98,8 @@ const App: FC = () => {
           navigate({ search: searchParams.toString() });
         }}
       >
-        <ChangeStorageProductWidget
-          data={activeStorageProduct}
+        <ChangeBatchWidget
+          data={activeStorageBatch}
           storage={activeStorage}
           onSuccess={() => {
             searchParams.delete('productId');
@@ -112,16 +111,16 @@ const App: FC = () => {
     );
   }
 
-  if (activeStorage && activeStorageProduct) {
+  if (activeStorage && activeStorageBatch) {
     return (
       <LayoutWidget
-        backText={activeStorageProduct.name}
+        backText={activeStorage.name}
         onBack={() => {
           searchParams.delete('productId');
           navigate({ search: searchParams.toString() });
         }}
       >
-        <ProductWidget productId={activeStorageProduct.id} />
+        <BatchWidget productId={activeStorageBatch.id} />
       </LayoutWidget>
     );
   }

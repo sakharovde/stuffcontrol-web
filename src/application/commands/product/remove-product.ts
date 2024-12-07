@@ -16,7 +16,7 @@ export default class RemoveProductCommandHandler {
     const storageItem = await this.productRepository.findById(command.productId);
 
     if (storageItem) {
-      return this.productRepository.delete(storageItem);
+      return this.productRepository.delete(storageItem.id);
     }
 
     this.storageEventEmitter.emit('storageUpdated');

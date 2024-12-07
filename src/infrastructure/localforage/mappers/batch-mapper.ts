@@ -9,14 +9,16 @@ export default class BatchMapper {
     if (
       !('id' in data) ||
       typeof data.id !== 'string' ||
-      !('productId' in data) ||
-      typeof data.productId !== 'string'
+      !('name' in data) ||
+      typeof data.name !== 'string' ||
+      !('storageId' in data) ||
+      typeof data.storageId !== 'string'
     ) {
       return null;
     }
 
     const id: Batch['id'] = data.id;
-    const productId: Batch['productId'] = data.productId;
+    const storageId: Batch['storageId'] = data.storageId;
 
     let quantity: Batch['quantity'] = 0;
 
@@ -40,13 +42,14 @@ export default class BatchMapper {
       createdAt = new Date(data.createdAt);
     }
 
-    return new Batch(id, productId, quantity, expirationDate, createdAt);
+    return new Batch(id, storageId, data.name, quantity, expirationDate, createdAt);
   };
 
   static toPersistence = (batch: Batch) => {
     return {
       id: batch.id,
-      productId: batch.productId,
+      storageId: batch.storageId,
+      name: batch.name,
       quantity: batch.quantity,
       expirationDate: batch.expirationDate?.toISOString() || null,
       createdAt: batch.createdAt.toISOString(),

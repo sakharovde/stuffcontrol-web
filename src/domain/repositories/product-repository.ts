@@ -5,5 +5,5 @@ export default interface ProductRepository {
   findAllByStorageId(storageId: string): Promise<Product[]>;
   getAll(): Promise<Product[]>;
   save(storageItem: Product): Promise<Product>;
-  delete(storageItem: Product): Promise<void>;
+  delete(storageItem: Product['id']): Promise<void>;
 }

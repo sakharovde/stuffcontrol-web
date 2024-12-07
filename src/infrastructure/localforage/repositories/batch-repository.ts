@@ -21,10 +21,10 @@ export default class BatchRepositoryImpl implements BatchRepository {
     return batches;
   };
 
-  findAllByProductId = async (productId: string): Promise<Batch[]> => {
+  findAllByStorageId = async (storageId: Batch['storageId']): Promise<Batch[]> => {
     const batches = await this.findAll();
 
-    return batches.filter((batch) => batch.productId === productId);
+    return batches.filter((batch) => batch.storageId === storageId);
   };
 
   findById = async (id: Batch['id']): Promise<Batch | null> => {

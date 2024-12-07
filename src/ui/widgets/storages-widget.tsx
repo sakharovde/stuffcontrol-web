@@ -1,10 +1,11 @@
-import { FC } from 'react';
+import { FC, useContext, useLayoutEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { StorageDto, ProductDto, StorageWithProductsDto } from '../../application';
+import { StorageDto, BatchDto } from '../../application';
+import CoreContext from '../core-context.ts';
 
 type StorageItemProps = {
-  data: ProductDto;
+  data: BatchDto;
 };
 const StorageProductWidget: FC<StorageItemProps> = (props) => {
   return (
@@ -16,18 +17,41 @@ const StorageProductWidget: FC<StorageItemProps> = (props) => {
 };
 
 type StorageCardWidgetProps = {
-  data: StorageWithProductsDto;
+  data: StorageDto;
   onClick: () => void;
 };
 
 const StorageCardWidget: FC<StorageCardWidgetProps> = (props) => {
+  const core = useContext(CoreContext);
+  const [products, setProducts] = useState<BatchDto[]>([]);
+
+  useLayoutEffect(() => {
+    const updateProsuctsState = () => {
+      core.queries.batch.getByStorage({ storageId: props.data.id }).then(setProducts);
+    };
+
+    core.events.product.on('productCreated', updateProsuctsState);
+    core.events.product.on('productUpdated', updateProsuctsState);
+    core.events.batch.on('batchCreated', updateProsuctsState);
+    core.events.batch.on('batchUpdated', updateProsuctsState);
+
+    updateProsuctsState();
+
+    return () => {
+      core.events.product.off('productCreated', updateProsuctsState);
+      core.events.product.off('productUpdated', updateProsuctsState);
+      core.events.batch.off('batchCreated', updateProsuctsState);
+      core.events.batch.off('batchUpdated', updateProsuctsState);
+    };
+  }, [core]);
+
   return (
     <div className='border rounded-md p-3 cursor-pointer' onClick={props.onClick}>
       <div className='font-semibold'>{props.data.name}</div>
-      {!props.data.products.length && <div className='text-gray-400'>Empty</div>}
-      {!!props.data.products.length && (
+      {!products.length && <div className='text-gray-400'>Empty</div>}
+      {!!products.length && (
         <div>
-          {props.data.products.map((product) => (
+          {products.map((product) => (
             <StorageProductWidget key={product.id} data={product} />
           ))}
         </div>
@@ -37,7 +61,7 @@ const StorageCardWidget: FC<StorageCardWidgetProps> = (props) => {
 };
 
 type StoragesWidgetProps = {
-  data?: StorageWithProductsDto[];
+  data?: StorageDto[];
   onClickAddStorage: () => void;
   onClickStorageCard: (storageId: StorageDto['id']) => void;
 };

@@ -1,35 +1,35 @@
-import { Product } from '../../../domain';
-import ProductMapper from './product';
+import Product from '../../../domain/models/product.ts';
+import ProductMapper from './product.ts';
 
 describe('ProductMapper', () => {
-  describe('toPersistence', () => {
-    it('converts a Product to persistence format', () => {
-      const product = new Product('1', 'storage1', 'product1', new Date('2023-01-01'));
-      const result = ProductMapper.toPersistence(product);
-      expect(result).toEqual({
-        id: '1',
-        storageId: 'storage1',
-        name: 'product1',
-        createdAt: '2023-01-01T00:00:00.000Z',
-      });
-    });
-  });
-
   describe('toDomain', () => {
     it('converts valid data to a Product', () => {
       const data = {
         id: '1',
         storageId: 'storage1',
-        name: 'product1',
+        name: 'name1',
+        expirationDate: null,
+        addedAt: '2023-01-01T00:00:00.000Z',
+        removedAt: null,
         createdAt: '2023-01-01T00:00:00.000Z',
       };
       const result = ProductMapper.toDomain(data);
       expect(result).toBeInstanceOf(Product);
-      expect(result).toEqual(new Product('1', 'storage1', 'product1', new Date('2023-01-01')));
+      expect(result).toEqual(
+        new Product(
+          '1',
+          'storage1',
+          'name1',
+          null,
+          null,
+          new Date('2023-01-01T00:00:00.000Z'),
+          new Date('2023-01-01T00:00:00.000Z')
+        )
+      );
     });
 
     it('throws an error when data is invalid', () => {
-      const invalidData = { id: '1', storageId: 'storage1', name: 'product1', quantity: 10 };
+      const invalidData = { id: '1', storageId: 'storage1', addedAt: 'invalid', removedAt: null, createdAt: 'invalid' };
       expect(() => ProductMapper.toDomain(invalidData)).toThrow('Invalid data');
     });
 
@@ -41,15 +41,64 @@ describe('ProductMapper', () => {
       expect(() => ProductMapper.toDomain('invalid')).toThrow('Invalid data');
     });
 
-    it('throws an error when createdAt is not a string', () => {
+    it('throws an error when addedAt is not a valid date string', () => {
       const invalidData = {
         id: '1',
         storageId: 'storage1',
-        name: 'product1',
-        quantity: 10,
-        createdAt: 12345,
+        name: 'name1',
+        addedAt: 'invalid',
+        removedAt: null,
+        createdAt: '2023-01-01T00:00:00.000Z',
       };
       expect(() => ProductMapper.toDomain(invalidData)).toThrow('Invalid data');
+    });
+
+    it('throws an error when removedAt is not a valid date string or null', () => {
+      const invalidData = {
+        id: '1',
+        storageId: 'storage1',
+        name: 'name1',
+        addedAt: '2023-01-01T00:00:00.000Z',
+        removedAt: 'invalid',
+        createdAt: '2023-01-01T00:00:00.000Z',
+      };
+      expect(() => ProductMapper.toDomain(invalidData)).toThrow('Invalid data');
+    });
+
+    it('throws an error when createdAt is not a valid date string', () => {
+      const invalidData = {
+        id: '1',
+        storageId: 'storage1',
+        name: 'name1',
+        addedAt: '2023-01-01T00:00:00.000Z',
+        removedAt: null,
+        createdAt: 'invalid',
+      };
+      expect(() => ProductMapper.toDomain(invalidData)).toThrow('Invalid data');
+    });
+  });
+
+  describe('toPersistence', () => {
+    it('converts a Product to persistence format', () => {
+      const productItem = new Product(
+        '1',
+        'storage1',
+        'name1',
+        null,
+        null,
+        new Date('2023-01-01T00:00:00.000Z'),
+        new Date('2023-01-01T00:00:00.000Z')
+      );
+      const result = ProductMapper.toPersistence(productItem);
+      expect(result).toEqual({
+        id: '1',
+        storageId: 'storage1',
+        name: 'name1',
+        expirationDate: null,
+        addedAt: '2023-01-01T00:00:00.000Z',
+        removedAt: null,
+        createdAt: '2023-01-01T00:00:00.000Z',
+      });
     });
   });
 });

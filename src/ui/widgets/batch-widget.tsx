@@ -6,12 +6,12 @@ type Props = {
   productId: ProductDto['id'];
 };
 
-const ProductWidget: FC<Props> = (props) => {
+const BatchWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
   const [batches, setBatches] = useState<BatchDto[]>([]);
 
   useLayoutEffect(() => {
-    core.queries.batch.getByProduct({ productId: props.productId }).then(setBatches);
+    core.queries.batch.getByStorage({ storageId: props.productId }).then(setBatches);
   }, [core]);
 
   return (
@@ -42,4 +42,4 @@ const ProductWidget: FC<Props> = (props) => {
   );
 };
 
-export default ProductWidget;
+export default BatchWidget;

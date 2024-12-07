@@ -1,5 +1,5 @@
 import {
-  ProductItemRepositoryImpl,
+  BatchProductRepositoryImpl,
   ProductRepositoryImpl,
   StorageRepositoryImpl,
   StorageTransactionRepositoryImpl,
@@ -13,19 +13,19 @@ import {
   UserUsernameEmptySpecification,
 } from '../domain';
 import StorageEventEmitter from './events/storage-event-emitter.ts';
-import GetStoragesWithProductsQueryHandler from './queries/storage/get-storages-with-products.ts';
+import GetStoragesQueryHandler from './queries/storage/get-storages.ts';
 import CreateStorageCommandHandler from './commands/storage/create-storage.ts';
-import AddNewProductToStorageCommandHandler from './commands/product/add-new-product-to-storage.ts';
+import AddNewProductsToStorageCommandHandler from './commands/product/add-new-products-to-storage.ts';
 import ChangeBatchQuantityCommandHandler from './commands/batch/change-batch-quantity-command.ts';
 import RemoveStorageCommandHandler from './commands/storage/remove-storage.ts';
 import RemoveProductCommandHandler from './commands/product/remove-product.ts';
 import UpdateStorageCommandHandler from './commands/storage/update-storage.ts';
 import RegisterUserCommandHandler from './commands/user/register-user.ts';
-import GetProductItemsByProductQueryHandler from './queries/product-item/get-by-product.ts';
 import BatchRepositoryImpl from '../infrastructure/localforage/repositories/batch-repository.ts';
-import { GetBatchesByProductQueryHandler } from './queries/batch/get-by-product.ts';
+import { GetBatchesByStorageQueryHandler } from './queries/batch/get-by-storage.ts';
 import BatchEventEmitter from './events/batch-event-emitter.ts';
 import ProductEventEmitter from './events/product-event-emitter.ts';
+import { GetStorageByIdQueryHandler } from './queries/storage/get-by-id.ts';
 
 export default class Application {
   public readonly events = {
@@ -37,10 +37,10 @@ export default class Application {
   private readonly repositories = {
     storage: new StorageRepositoryImpl(),
     product: new ProductRepositoryImpl(),
-    productItem: new ProductItemRepositoryImpl(),
     storageTransaction: new StorageTransactionRepositoryImpl(),
     user: new UserRepositoryImpl(),
     batch: new BatchRepositoryImpl(),
+    batchProduct: new BatchProductRepositoryImpl(),
   };
 
   private readonly specifications = {
@@ -58,12 +58,11 @@ export default class Application {
   };
 
   private readonly queryHandlers = {
-    getStoragesWithProducts: new GetStoragesWithProductsQueryHandler(
-      this.repositories.storage,
-      this.repositories.batch,
-      this.repositories.product
-    ),
-    getBatchesByProduct: new GetBatchesByProductQueryHandler(this.repositories.batch),
+    // batch
+    getBatchesByStorage: new GetBatchesByStorageQueryHandler(this.repositories.batch),
+    // storage
+    getStoragesWithProducts: new GetStoragesQueryHandler(this.repositories.storage),
+    getStorageById: new GetStorageByIdQueryHandler(this.repositories.storage),
   };
 
   private readonly commandHandlers = {
@@ -73,19 +72,17 @@ export default class Application {
       this.repositories.batch,
       this.repositories.product,
       this.repositories.storageTransaction,
-      this.repositories.productItem
+      this.repositories.batchProduct
     ),
-    // product item
-    getProductItemsByProduct: new GetProductItemsByProductQueryHandler(this.repositories.productItem),
     // product
-    addNewProductToStorage: new AddNewProductToStorageCommandHandler(
+    addNewProductsToStorage: new AddNewProductsToStorageCommandHandler(
       this.repositories.product,
       this.specifications.product.nameEmpty,
       this.repositories.batch,
       this.repositories.storageTransaction,
       this.events.product,
       this.events.batch,
-      this.repositories.productItem
+      this.repositories.batchProduct
     ),
     // storage
     createStorage: new CreateStorageCommandHandler(
@@ -107,13 +104,11 @@ export default class Application {
 
   public readonly queries = {
     batch: {
-      getByProduct: this.queryHandlers.getBatchesByProduct.execute,
-    },
-    productItem: {
-      getByProduct: this.commandHandlers.getProductItemsByProduct.execute,
+      getByStorage: this.queryHandlers.getBatchesByStorage.execute,
     },
     storage: {
       getAllWithProducts: this.queryHandlers.getStoragesWithProducts.execute,
+      getById: this.queryHandlers.getStorageById.execute,
     },
   };
 
@@ -122,7 +117,7 @@ export default class Application {
       changeQuantity: this.commandHandlers.changeStorageProductQuantity.execute,
     },
     product: {
-      addNewProduct: this.commandHandlers.addNewProductToStorage.execute,
+      addNewProducts: this.commandHandlers.addNewProductsToStorage.execute,
       removeProduct: this.commandHandlers.removeProduct.execute,
     },
     storage: {

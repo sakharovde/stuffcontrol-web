@@ -2,10 +2,10 @@ import { FC, useContext } from 'react';
 import CoreContext from '../core-context.ts';
 import { Formik } from 'formik';
 import cn from 'classnames';
-import { StorageDto, ProductDto } from '../../application';
+import { StorageDto, BatchDto } from '../../application';
 
 type Props = {
-  data?: ProductDto;
+  data?: BatchDto;
   storage: StorageDto;
   onSuccess: () => void;
 };
@@ -16,10 +16,10 @@ interface FormValues {
   expirationDate: string | '';
 }
 
-const ChangeStorageProductWidget: FC<Props> = (props) => {
+const ChangeBatchWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
 
-  const handleRemoveStorage = (id: ProductDto['id']) => () => {
+  const handleRemoveStorage = (id: BatchDto['id']) => () => {
     core.commands.product.removeProduct({ productId: id }).then(props.onSuccess);
   };
 
@@ -36,7 +36,7 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
         onSubmit={(values) => {
           if (!props.data) {
             core.commands.product
-              .addNewProduct({
+              .addNewProducts({
                 storageId: props.storage.id,
                 productName: values.name,
                 quantity: Number(values.quantity || 0),
@@ -125,4 +125,4 @@ const ChangeStorageProductWidget: FC<Props> = (props) => {
   );
 };
 
-export default ChangeStorageProductWidget;
+export default ChangeBatchWidget;

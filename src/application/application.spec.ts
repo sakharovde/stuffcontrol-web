@@ -11,13 +11,13 @@ describe('Application', () => {
     it('adds a new product to storage successfully', async () => {
       await core.commands.storage.create({ name: 'storageName' });
       const storage = await core.queries.storage.getAllWithProducts().then((storages) => storages[0]);
-      await core.commands.product.addNewProduct({
+      await core.commands.product.addNewProducts({
         storageId: storage.id,
         productName: 'productName',
         quantity: 0,
         expirationDate: null,
       });
-      const result = await core.queries.storage.getAllWithProducts().then((storages) => storages[0].products[0]);
+      const result = await core.queries.batch.getByStorage({ storageId: storage.id }).then((batches) => batches[0]);
 
       expect(result).toEqual(
         expect.objectContaining({
@@ -28,7 +28,7 @@ describe('Application', () => {
 
     it('throws an error when product name is empty', async () => {
       await expect(
-        core.commands.product.addNewProduct({
+        core.commands.product.addNewProducts({
           storageId: 'storageId',
           productName: '',
           quantity: 0,
@@ -39,7 +39,7 @@ describe('Application', () => {
 
     it('throws an error when quantity is negative', async () => {
       await expect(
-        core.commands.product.addNewProduct({
+        core.commands.product.addNewProducts({
           storageId: 'storageId',
           productName: 'productName',
           quantity: -1,

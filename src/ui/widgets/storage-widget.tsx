@@ -1,10 +1,10 @@
-import { FC } from 'react';
+import { FC, useContext, useLayoutEffect, useState } from 'react';
 import cn from 'classnames';
-import StorageWithProductsDto from '../../application/dto/storage-with-products-dto.ts';
-import ProductDto from '../../application/dto/product-dto.ts';
+import { BatchDto, StorageDto } from '../../application';
+import CoreContext from '../core-context.ts';
 
 type StorageItemWidgetProps = {
-  data: ProductDto;
+  data: BatchDto;
   onClickEdit: () => void;
   onClickShow: () => void;
 };
@@ -44,20 +44,43 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
 };
 
 type Props = {
-  data: StorageWithProductsDto;
+  data: StorageDto;
   onClickEditStorage: () => void;
   onClickAddProduct: () => void;
-  onClickEditProduct: (storageProductId: ProductDto['id']) => void;
-  onClickShowProduct: (storageProductId: ProductDto['id']) => void;
+  onClickEditProduct: (storageProductId: BatchDto['id']) => void;
+  onClickShowProduct: (storageProductId: BatchDto['id']) => void;
 };
 
 const StorageWidget: FC<Props> = (props) => {
+  const core = useContext(CoreContext);
+  const [products, setProducts] = useState<BatchDto[]>([]);
+
+  useLayoutEffect(() => {
+    const updateProsuctsState = () => {
+      core.queries.batch.getByStorage({ storageId: props.data.id }).then(setProducts);
+    };
+
+    core.events.product.on('productCreated', updateProsuctsState);
+    core.events.product.on('productUpdated', updateProsuctsState);
+    core.events.batch.on('batchCreated', updateProsuctsState);
+    core.events.batch.on('batchUpdated', updateProsuctsState);
+
+    updateProsuctsState();
+
+    return () => {
+      core.events.product.off('productCreated', updateProsuctsState);
+      core.events.product.off('productUpdated', updateProsuctsState);
+      core.events.batch.off('batchCreated', updateProsuctsState);
+      core.events.batch.off('batchUpdated', updateProsuctsState);
+    };
+  }, [core]);
+
   return (
     <div>
       <h3 className='text-xl font-semibold px-3'>{props.data.name}</h3>
 
       <div className='flex flex-col gap-3 mt-5 px-3'>
-        {props.data.products.map((product) => {
+        {products.map((product) => {
           return (
             <StorageProductWidget
               key={product.id}
