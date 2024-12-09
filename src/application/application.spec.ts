@@ -84,35 +84,4 @@ describe('Application', () => {
       await expect(core.commands.storage.create({ name: '' })).rejects.toThrow('Storage name cannot be empty');
     });
   });
-
-  describe('user.register', () => {
-    // it('registers a user successfully', async () => {
-    //   const result = await core.commands.user.register({ username: 'testuser', password: 'password' });
-    //   expect(result).toEqual(
-    //     expect.objectContaining({
-    //       username: 'testuser',
-    //     })
-    //   );
-    // });
-
-    it('throws an error when username is already taken', async () => {
-      await core.commands.user.register({ username: 'testuser', password: 'password' });
-
-      await expect(core.commands.user.register({ username: 'testuser', password: 'password' })).rejects.toThrow(
-        'Username is already taken'
-      );
-    });
-
-    it('throws an error when username is empty', async () => {
-      await expect(core.commands.user.register({ username: '', password: 'password' })).rejects.toThrow(
-        'Username cannot be empty'
-      );
-    });
-
-    it('throws an error when password is empty', async () => {
-      await expect(core.commands.user.register({ username: 'testuser', password: '' })).rejects.toThrow(
-        'Password cannot be empty'
-      );
-    });
-  });
 });

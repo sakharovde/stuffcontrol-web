@@ -1,23 +1,17 @@
-import {
-  User,
-  UserPasswordEmptySpecification,
-  UserRepository,
-  UserUniqueUsernameSpecification,
-  UserUsernameEmptySpecification,
-} from '../../../domain';
+import { User, UserRepository, UserUniqueUsernameSpecification, UserUsernameEmptySpecification } from '../../../domain';
 import { v4 as uuidv4 } from 'uuid';
+import { startRegistration } from '@simplewebauthn/browser';
+import type { RegistrationResponseJSON } from '@simplewebauthn/browser';
 
 export interface RegisterUserCommand {
   username: string;
-  password: string;
 }
 
 export default class RegisterUserCommandHandler {
   constructor(
     private userRepository: UserRepository,
     private uniqueUsernameSpec: UserUniqueUsernameSpecification,
-    private usernameEmptySpec: UserUsernameEmptySpecification,
-    private passwordEmptySpec: UserPasswordEmptySpecification
+    private usernameEmptySpec: UserUsernameEmptySpecification
   ) {}
 
   execute = async (command: RegisterUserCommand): Promise<void> => {
@@ -26,18 +20,49 @@ export default class RegisterUserCommandHandler {
       throw new Error('Username cannot be empty');
     }
 
-    const isPasswordEmpty = await this.passwordEmptySpec.isSatisfiedBy(command.password);
-    if (isPasswordEmpty) {
-      throw new Error('Password cannot be empty');
-    }
-
     const isUnique = await this.uniqueUsernameSpec.isSatisfiedBy(command.username);
     if (!isUnique) {
       throw new Error('Username is already taken');
     }
 
-    const passwordHash = await Buffer.from(command.password).toString('base64');
-    const user = new User(uuidv4(), command.username, passwordHash);
+    const resp = await fetch('/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: command.username }),
+    });
+    const optionsJSON = await resp.json();
+
+    let attResp: RegistrationResponseJSON | undefined;
+    try {
+      // Pass the options to the authenticator and wait for a response
+      attResp = await startRegistration({ optionsJSON });
+    } catch (error) {
+      console.log(error);
+
+      throw error;
+    }
+
+    const verificationResp = await fetch('/api/register/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: command.username, credential: attResp }),
+    });
+
+    // Wait for the results of verification
+    const verificationJSON = await verificationResp.json();
+
+    // Show UI appropriate for the `verified` status
+    if (verificationJSON && verificationJSON.verified) {
+      console.log('Success!');
+    } else {
+      console.log('Oh no, something went wrong! Response:', verificationJSON);
+    }
+
+    const user = new User(uuidv4(), command.username, attResp.id);
 
     await this.userRepository.save(user);
   };

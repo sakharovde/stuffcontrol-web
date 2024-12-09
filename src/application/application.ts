@@ -8,7 +8,6 @@ import {
 import {
   ProductNameEmptySpecification,
   StorageNameEmptySpecification,
-  UserPasswordEmptySpecification,
   UserUniqueUsernameSpecification,
   UserUsernameEmptySpecification,
 } from '../domain';
@@ -53,7 +52,6 @@ export default class Application {
     user: {
       usernameUnique: new UserUniqueUsernameSpecification(this.repositories.user),
       usernameEmpty: new UserUsernameEmptySpecification(),
-      passwordEmpty: new UserPasswordEmptySpecification(),
     },
   };
 
@@ -97,8 +95,7 @@ export default class Application {
     registerUser: new RegisterUserCommandHandler(
       this.repositories.user,
       this.specifications.user.usernameUnique,
-      this.specifications.user.usernameEmpty,
-      this.specifications.user.passwordEmpty
+      this.specifications.user.usernameEmpty
     ),
   };
 
