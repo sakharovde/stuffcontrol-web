@@ -6,8 +6,12 @@ module.exports = {
     },
     {
       name: 'TypesScript',
-      script:
-        'yarn tsc --noEmit --watch --preserveWatchOutput --skipLibCheck --project tsconfig.app.json',
+      script: 'yarn tsc --noEmit --watch --preserveWatchOutput --skipLibCheck --project tsconfig.app.json',
+    },
+    {
+      name: 'Server',
+      script: 'yarn build && yarn start',
+      cwd: '../stuff-control-server',
     },
   ],
 };
