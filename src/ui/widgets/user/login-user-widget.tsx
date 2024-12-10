@@ -34,6 +34,7 @@ const LoginUserWidget: FC<LoginUserWidgetProps> = (props) => {
               <input
                 type='text'
                 name='username'
+                autoComplete='webauthn'
                 value={values.username}
                 onChange={handleChange}
                 className='bg-gray-100'

@@ -39,7 +39,7 @@ const RegisterUserWidget: FC<RegisterUserWidgetProps> = (props) => {
                 className='bg-gray-100'
               />
               <button type='submit' className='border'>
-                Login
+                Register
               </button>
             </form>
           )}
