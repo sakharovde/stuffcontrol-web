@@ -8,6 +8,7 @@ import CoreContext from './core-context.ts';
 import ChangeBatchWidget from './widgets/change-batch-widget.tsx';
 import BatchWidget from './widgets/batch-widget.tsx';
 import { BatchDto, StorageDto } from '../application';
+import LoginUserWidget from './widgets/user/login-user-widget.tsx';
 
 const App: FC = () => {
   const navigate = useNavigate();
@@ -85,6 +86,25 @@ const App: FC = () => {
         }}
       >
         <ChangeStorageWidget
+          onSuccess={() => {
+            searchParams.delete('mode');
+            navigate({ search: searchParams.toString() });
+          }}
+        />
+      </LayoutWidget>
+    );
+  }
+
+  if (mode === 'login') {
+    return (
+      <LayoutWidget
+        backText='Storages'
+        onBack={() => {
+          searchParams.delete('mode');
+          navigate({ search: searchParams.toString() });
+        }}
+      >
+        <LoginUserWidget
           onSuccess={() => {
             searchParams.delete('mode');
             navigate({ search: searchParams.toString() });
@@ -191,7 +211,13 @@ const App: FC = () => {
   }
 
   return (
-    <LayoutWidget>
+    <LayoutWidget
+      actionText='Login'
+      onAction={() => {
+        searchParams.set('mode', 'login');
+        navigate({ search: searchParams.toString() });
+      }}
+    >
       <StoragesWidget
         data={storages}
         onClickAddStorage={() => {

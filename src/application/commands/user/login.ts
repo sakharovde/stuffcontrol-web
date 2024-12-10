@@ -15,14 +15,14 @@ export class LoginUserCommandHandler {
     });
     const optionsJSON = await resp.json();
 
-    const asseResp = await startAuthentication({ optionsJSON });
+    const credential = await startAuthentication({ optionsJSON });
 
     const verificationResp = await fetch('/api/authenticate/verify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username: command.username, asseResp }),
+      body: JSON.stringify({ username: command.username, credential }),
     });
     const verificationJSON = await verificationResp.json();
 

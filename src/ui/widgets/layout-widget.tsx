@@ -18,16 +18,20 @@ const LayoutWidget: FC<PropsWithChildren<Props>> = (props) => {
     <div className='max-w-lg mx-auto h-full relative bg-white' style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {needShowHeader && (
         <div className='p-3 flex justify-between'>
-          {needShowBack && (
+          {needShowBack ? (
             <button className='flex text-blue-600 gap-2 items-center' onClick={props.onBack}>
               <FontAwesomeIcon icon={faAngleLeft} />
               <span>{props.backText}</span>
             </button>
+          ) : (
+            <div />
           )}
-          {needShowAction && (
+          {needShowAction ? (
             <button className='flex text-blue-600 gap-2 items-center' onClick={props.onAction}>
               <span>{props.actionText}</span>
             </button>
+          ) : (
+            <div />
           )}
         </div>
       )}
