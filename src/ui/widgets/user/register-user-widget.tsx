@@ -2,21 +2,21 @@ import { FC, useContext } from 'react';
 import { Formik } from 'formik';
 import CoreContext from '../../core-context.ts';
 
-type LoginUserWidgetProps = {
+type RegisterUserWidgetProps = {
   onSuccess: () => void;
 };
 
-const LoginUserWidget: FC<LoginUserWidgetProps> = (props) => {
+const RegisterUserWidget: FC<RegisterUserWidgetProps> = (props) => {
   const core = useContext(CoreContext);
 
   const handleSubmit = async (values: { username: string }) => {
-    await core.commands.user.login({ username: values.username });
+    await core.commands.user.register({ username: values.username });
     props.onSuccess();
   };
 
   return (
     <div>
-      <h1>Login</h1>
+      <h1>Register</h1>
       <div>
         <Formik
           initialValues={{ username: '' }}
@@ -49,4 +49,4 @@ const LoginUserWidget: FC<LoginUserWidgetProps> = (props) => {
   );
 };
 
-export default LoginUserWidget;
+export default RegisterUserWidget;

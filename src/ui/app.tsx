@@ -9,6 +9,7 @@ import ChangeBatchWidget from './widgets/change-batch-widget.tsx';
 import BatchWidget from './widgets/batch-widget.tsx';
 import { BatchDto, StorageDto } from '../application';
 import LoginUserWidget from './widgets/user/login-user-widget.tsx';
+import RegisterUserWidget from './widgets/user/register-user-widget.tsx';
 
 const App: FC = () => {
   const navigate = useNavigate();
@@ -103,10 +104,34 @@ const App: FC = () => {
           searchParams.delete('mode');
           navigate({ search: searchParams.toString() });
         }}
+        actionText='Register'
+        onAction={() => {
+          searchParams.set('mode', 'register');
+          navigate({ search: searchParams.toString() });
+        }}
       >
         <LoginUserWidget
           onSuccess={() => {
             searchParams.delete('mode');
+            navigate({ search: searchParams.toString() });
+          }}
+        />
+      </LayoutWidget>
+    );
+  }
+
+  if (mode === 'register') {
+    return (
+      <LayoutWidget
+        backText='Login'
+        onBack={() => {
+          searchParams.set('mode', 'login');
+          navigate({ search: searchParams.toString() });
+        }}
+      >
+        <RegisterUserWidget
+          onSuccess={() => {
+            searchParams.set('mode', 'login');
             navigate({ search: searchParams.toString() });
           }}
         />
