@@ -25,6 +25,7 @@ import { GetBatchesByStorageQueryHandler } from './queries/batch/get-by-storage.
 import BatchEventEmitter from './events/batch-event-emitter.ts';
 import ProductEventEmitter from './events/product-event-emitter.ts';
 import { GetStorageByIdQueryHandler } from './queries/storage/get-by-id.ts';
+import { LoginUserCommandHandler } from './commands/user/login.ts';
 
 export default class Application {
   public readonly events = {
@@ -92,6 +93,7 @@ export default class Application {
     removeProduct: new RemoveProductCommandHandler(this.repositories.product, this.events.storage),
     updateStorage: new UpdateStorageCommandHandler(this.repositories.storage, this.events.storage),
     // user
+    loginUser: new LoginUserCommandHandler(),
     registerUser: new RegisterUserCommandHandler(
       this.repositories.user,
       this.specifications.user.usernameUnique,
@@ -123,6 +125,7 @@ export default class Application {
       update: this.commandHandlers.updateStorage.execute,
     },
     user: {
+      login: this.commandHandlers.loginUser.execute,
       register: this.commandHandlers.registerUser.execute,
     },
   };
