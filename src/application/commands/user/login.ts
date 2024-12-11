@@ -6,7 +6,7 @@ export default interface LoginUserCommand {
 
 export class LoginUserCommandHandler {
   execute = async (command: LoginUserCommand): Promise<void> => {
-    const resp = await fetch(import.meta.env.API_BASE_URL + '/api/authenticate', {
+    const resp = await fetch(import.meta.env.VITE_API_BASE_URL + '/api/authenticate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -17,7 +17,7 @@ export class LoginUserCommandHandler {
 
     const credential = await startAuthentication({ optionsJSON });
 
-    const verificationResp = await fetch(import.meta.env.API_BASE_URL + '/api/authenticate/verify', {
+    const verificationResp = await fetch(import.meta.env.VITE_API_BASE_URL + '/api/authenticate/verify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -25,7 +25,7 @@ export default class RegisterUserCommandHandler {
       throw new Error('Username is already taken');
     }
 
-    const resp = await fetch(import.meta.env.API_BASE_URL + '/api/register', {
+    const resp = await fetch(import.meta.env.VITE_API_BASE_URL + '/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export default class RegisterUserCommandHandler {
       throw error;
     }
 
-    const verificationResp = await fetch(import.meta.env.API_BASE_URL + '/api/register/verify', {
+    const verificationResp = await fetch(import.meta.env.VITE_API_BASE_URL + '/api/register/verify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
