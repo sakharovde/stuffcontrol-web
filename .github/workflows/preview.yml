@@ -68,7 +68,7 @@ jobs:
       - name: Deploy Postgres
         if: steps.ns-check.outputs.exists == 'false'
         run: |
-          cd infra
+          cd infra/stuffcontrol
           helmfile -e preview -l app=postgres \
             --state-values-set namespace=$NAMESPACE apply
 
