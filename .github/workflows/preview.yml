@@ -50,7 +50,6 @@ jobs:
         with:
           repository: ${{ vars.DOCKER_USERNAME }}/${{ vars.INFRA_REPO_NAME }}
           path: infra
-          token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
 
       - name: Check if namespace exists
         id: ns-check
