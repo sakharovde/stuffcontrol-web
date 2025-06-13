@@ -35,6 +35,11 @@ jobs:
           sudo mv helmfile /usr/local/bin/
           helmfile --version
 
+      - name: Init helmfile
+        run: |
+          cd infra/stuffcontrol
+          helmfile init --force
+
       - name: Deploy infrastructure on first deploy
         run: |
           cd infra/stuffcontrol
