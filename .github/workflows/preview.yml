@@ -78,10 +78,9 @@ jobs:
           cd infra/stuffcontrol
           helmfile init --force
           helmfile -e preview \
-            --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG apply
+            --state-values-set namespace=$NAMESPACE apply
 
       - name: Deploy Frontend (only)
-        if: steps.ns-check.outputs.exists == 'true'
         run: |
           cd infra/stuffcontrol
           helmfile init --force
