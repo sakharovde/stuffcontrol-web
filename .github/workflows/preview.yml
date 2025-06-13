@@ -72,17 +72,21 @@ jobs:
           sudo mv helmfile /usr/local/bin/
           helmfile --version
 
+      - name: Init helmfile
+        run: |
+          cd infra/stuffcontrol
+          helmfile init --force
+
       - name: Deploy infrastructure on first deploy
         if: steps.ns-check.outputs.exists == 'false'
         run: |
           cd infra/stuffcontrol
-          helmfile init --force
+          helm repo add postgres https://charts.bitnami.com/bitnami
           helmfile -e preview \
             --state-values-set namespace=$NAMESPACE apply
 
       - name: Deploy Frontend (only)
         run: |
           cd infra/stuffcontrol
-          helmfile init --force
           helmfile -e preview -l app=frontend \
             --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG apply
