@@ -1,9 +1,8 @@
-name: Build and Push Docker Image
+name: Build and Deploy Preview
 
 on:
-  push:
-    branches-ignore:
-      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
