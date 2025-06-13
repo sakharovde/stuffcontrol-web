@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NAMESPACE: preview-${{ github.head_ref || github.ref_name }}
+      NAMESPACE: preview-${{ github.event.number }}
       IMAGE_TAG: ${{ github.sha }}
       KUBECONFIG_PATH: /home/runner/.kube/config
 
