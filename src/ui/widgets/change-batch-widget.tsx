@@ -25,7 +25,7 @@ const ChangeBatchWidget: FC<Props> = (props) => {
 
   return (
     <div>
-      <h3 className='text-xl font-semibold px-3'>{props.data ? 'Edit product' : 'New product'}</h3>
+      <h3 className='text-xl font-semibold px-3'>{props.data ? 'Edit productt' : 'New product'}</h3>
 
       <Formik<FormValues>
         initialValues={{
