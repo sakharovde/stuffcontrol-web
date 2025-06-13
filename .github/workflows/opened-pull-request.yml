@@ -32,6 +32,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      PR_NUMBER: ${{ github.event.number }}
       NAMESPACE: preview-${{ github.event.number }}
       IMAGE_TAG: ${{ github.sha }}
       KUBECONFIG_PATH: /home/runner/.kube/config
@@ -82,10 +83,10 @@ jobs:
           cd infra/stuffcontrol
           helm repo add postgres https://charts.bitnami.com/bitnami
           helmfile -e preview \
-            --state-values-set namespace=$NAMESPACE apply
+            --state-values-set namespace=$NAMESPACE,number=$PR_NUMBER apply
 
       - name: Deploy Frontend (only)
         run: |
           cd infra/stuffcontrol
           helmfile -e preview -l app=frontend \
-            --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG apply
+            --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG,number=$PR_NUMBER apply

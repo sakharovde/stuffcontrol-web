@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      PR_NUMBER: ${{ github.event.number }}
       NAMESPACE: preview-${{ github.event.number }}
       KUBECONFIG_PATH: /home/runner/.kube/config
 
@@ -27,11 +28,18 @@ jobs:
           path: infra
           token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
 
+      - name: Install helmfile
+        run: |
+          wget -O helmfile.tar.gz https://github.com/helmfile/helmfile/releases/download/v1.1.2/helmfile_1.1.2_linux_amd64.tar.gz
+          tar -xzf helmfile.tar.gz
+          sudo mv helmfile /usr/local/bin/
+          helmfile --version
+
       - name: Deploy infrastructure on first deploy
         run: |
           cd infra/stuffcontrol
           helmfile -e preview \
-            --state-values-set namespace=$NAMESPACE destroy
+            --state-values-set namespace=$NAMESPACE,number=$PR_NUMBER destroy
 
       - name: Delete Kubernetes Namespace
         run: |
