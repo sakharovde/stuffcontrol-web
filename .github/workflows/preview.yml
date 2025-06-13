@@ -76,6 +76,7 @@ jobs:
         if: steps.ns-check.outputs.exists == 'false'
         run: |
           cd infra/stuffcontrol
+          helmfile init --force
           helmfile -e preview \
             --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG apply
 
@@ -83,5 +84,6 @@ jobs:
         if: steps.ns-check.outputs.exists == 'true'
         run: |
           cd infra/stuffcontrol
+          helmfile init --force
           helmfile -e preview -l app=frontend \
             --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG apply
