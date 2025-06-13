@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      PR_NUMBER: ${{ github.event.number }}
       NAMESPACE: preview-${{ github.event.number }}
       KUBECONFIG_PATH: /home/runner/.kube/config
 
@@ -38,7 +39,7 @@ jobs:
         run: |
           cd infra/stuffcontrol
           helmfile -e preview \
-            --state-values-set namespace=$NAMESPACE destroy
+            --state-values-set namespace=$NAMESPACE,number=$PR_NUMBER destroy
 
       - name: Delete Kubernetes Namespace
         run: |
