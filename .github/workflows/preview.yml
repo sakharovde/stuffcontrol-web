@@ -67,7 +67,7 @@ jobs:
 
       - name: Install helmfile
         run: |
-          wget -O helmfile.tar.gz https://github.com/helmfile/helmfile/releases/download/v0.155.0/helmfile_0.155.0_linux_amd64.tar.gz
+          wget -O helmfile.tar.gz https://github.com/helmfile/helmfile/releases/download/v1.1.2/helmfile_1.1.2_linux_amd64.tar.gz
           tar -xzf helmfile.tar.gz
           sudo mv helmfile /usr/local/bin/
           helmfile --version
@@ -76,7 +76,7 @@ jobs:
         if: steps.ns-check.outputs.exists == 'false'
         run: |
           cd infra
-          helmfile -e preview \
+          helmfile -f helmfile.yaml. -e preview \
             --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG apply
 
       - name: Deploy Frontend (only)
