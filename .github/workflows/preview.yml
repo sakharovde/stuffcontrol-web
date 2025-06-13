@@ -75,13 +75,13 @@ jobs:
       - name: Deploy infrastructure on first deploy
         if: steps.ns-check.outputs.exists == 'false'
         run: |
-          cd infra
-          helmfile -f helmfile.yaml. -e preview \
+          cd infra/stuffcontrol
+          helmfile -e preview \
             --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG apply
 
       - name: Deploy Frontend (only)
         if: steps.ns-check.outputs.exists == 'true'
         run: |
-          cd infra
+          cd infra/stuffcontrol
           helmfile -e preview -l app=frontend \
             --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG apply
