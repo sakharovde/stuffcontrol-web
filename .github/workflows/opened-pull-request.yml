@@ -1,0 +1,91 @@
+name: Build and Deploy Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_REPO_NAME }}:${{ github.sha }}
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    env:
+      NAMESPACE: preview-${{ github.event.number }}
+      IMAGE_TAG: ${{ github.sha }}
+      KUBECONFIG_PATH: /home/runner/.kube/config
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > $KUBECONFIG_PATH
+
+      - name: Checkout infra repo
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ vars.DOCKER_USERNAME }}/${{ vars.INFRA_REPO_NAME }}
+          path: infra
+          token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+
+      - name: Check if namespace exists
+        id: ns-check
+        run: |
+          if kubectl get ns $NAMESPACE > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create namespace if missing
+        if: steps.ns-check.outputs.exists == 'false'
+        run: kubectl create ns $NAMESPACE
+
+      - name: Install helmfile
+        run: |
+          wget -O helmfile.tar.gz https://github.com/helmfile/helmfile/releases/download/v1.1.2/helmfile_1.1.2_linux_amd64.tar.gz
+          tar -xzf helmfile.tar.gz
+          sudo mv helmfile /usr/local/bin/
+          helmfile --version
+
+      - name: Init helmfile
+        run: |
+          cd infra/stuffcontrol
+          helmfile init --force
+
+      - name: Deploy infrastructure on first deploy
+        if: steps.ns-check.outputs.exists == 'false'
+        run: |
+          cd infra/stuffcontrol
+          helm repo add postgres https://charts.bitnami.com/bitnami
+          helmfile -e preview \
+            --state-values-set namespace=$NAMESPACE apply
+
+      - name: Deploy Frontend (only)
+        run: |
+          cd infra/stuffcontrol
+          helmfile -e preview -l app=frontend \
+            --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG apply
