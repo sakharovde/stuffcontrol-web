@@ -65,21 +65,15 @@ jobs:
         if: steps.ns-check.outputs.exists == 'false'
         run: kubectl create ns $NAMESPACE
 
-      - name: Deploy Postgres
-        if: steps.ns-check.outputs.exists == 'false'
-        run: |
-          cd infra/stuffcontrol
-          helmfile -e preview -l app=postgres \
-            --state-values-set namespace=$NAMESPACE apply
-
-      - name: Deploy Backend (prod tag)
+      - name: Deploy infrastructure on first deploy
         if: steps.ns-check.outputs.exists == 'false'
         run: |
           cd infra
-          helmfile -e preview -l app=backend \
-            --state-values-set namespace=$NAMESPACE,image.tag=prod apply
+          helmfile -e preview \
+            --state-values-set namespace=$NAMESPACE,image.tag=$IMAGE_TAG apply
 
-      - name: Deploy Frontend
+      - name: Deploy Frontend (only)
+        if: steps.ns-check.outputs.exists == 'true'
         run: |
           cd infra
           helmfile -e preview -l app=frontend \
