@@ -39,6 +39,7 @@ jobs:
         run: |
           cd infra/stuffcontrol
           helmfile init --force
+          helm repo add postgres https://charts.bitnami.com/bitnami
 
       - name: Deploy infrastructure on first deploy
         run: |
