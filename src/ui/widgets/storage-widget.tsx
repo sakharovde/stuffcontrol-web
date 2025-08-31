@@ -44,7 +44,7 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
             className={cn('flex', 'items-center', 'gap-1', 'text-blue-600', 'font-medium', 'text-xs')}
             onClick={props.onClickShow}
           >
-            <span>Items</span>
+            <span style={{ pointerEvents: 'none' }}>Items</span>
           </button>
         </div>
       </div>

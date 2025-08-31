@@ -236,13 +236,7 @@ const App: FC = () => {
   }
 
   return (
-    <LayoutWidget
-      actionText='Login'
-      onAction={() => {
-        searchParams.set('mode', 'login');
-        navigate({ search: searchParams.toString() });
-      }}
-    >
+    <LayoutWidget>
       <StoragesWidget
         data={storages}
         onClickAddStorage={() => {
