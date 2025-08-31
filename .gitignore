@@ -37,3 +37,5 @@ dev-dist
 *.njsproj
 *.sln
 *.sw?
+
+.env
