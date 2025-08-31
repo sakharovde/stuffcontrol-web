@@ -2,6 +2,7 @@ import { FC, useContext, useLayoutEffect, useState } from 'react';
 import cn from 'classnames';
 import { BatchDto, StorageDto } from '../../application';
 import CoreContext from '../core-context.ts';
+import { SafeArea } from 'antd-mobile';
 
 type StorageItemWidgetProps = {
   data: BatchDto;
@@ -100,10 +101,7 @@ const StorageWidget: FC<Props> = (props) => {
         })}
       </div>
 
-      <div
-        className='absolute bottom-0 left-0 bg-gray-100 w-full'
-        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-      >
+      <div className='absolute bottom-0 left-0 bg-gray-100 w-full'>
         <div className='h-10 flex justify-between items-center px-3'>
           <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickEditStorage}>
             <span>Edit storage</span>
@@ -112,6 +110,7 @@ const StorageWidget: FC<Props> = (props) => {
             <span>Add products</span>
           </button>
         </div>
+        <SafeArea position='bottom' />
       </div>
     </div>
   );

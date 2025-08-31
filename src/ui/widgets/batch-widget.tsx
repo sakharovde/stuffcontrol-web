@@ -2,6 +2,7 @@ import { FC, useContext } from 'react';
 import { BatchDto } from '../../application';
 import { Formik } from 'formik';
 import CoreContext from '../core-context.ts';
+import { SafeArea } from 'antd-mobile';
 
 type Props = {
   batch: BatchDto;
@@ -42,11 +43,7 @@ const BatchWidget: FC<Props> = (props) => {
         onSubmit={handleSubmit}
       >
         {({ values, handleChange, handleSubmit, setFieldValue }) => (
-          <form
-            onSubmit={handleSubmit}
-            className='px-3 flex absolute left-0 bottom-0 w-full'
-            style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-          >
+          <form onSubmit={handleSubmit} className='px-3 flex absolute left-0 bottom-0 w-full'>
             <div className='w-full flex'>
               <div className='basis-1/6 flex-grow-0 flex-shrink-0 p-1'>
                 <button
@@ -82,6 +79,7 @@ const BatchWidget: FC<Props> = (props) => {
                 </button>
               </div>
             </div>
+            <SafeArea position='bottom' />
           </form>
         )}
       </Formik>

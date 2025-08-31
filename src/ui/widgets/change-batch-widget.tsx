@@ -3,6 +3,7 @@ import CoreContext from '../core-context.ts';
 import { Formik } from 'formik';
 import cn from 'classnames';
 import { StorageDto, BatchDto } from '../../application';
+import { SafeArea } from 'antd-mobile';
 
 type Props = {
   data?: BatchDto;
@@ -93,10 +94,7 @@ const ChangeBatchWidget: FC<Props> = (props) => {
                 />
               </div>
             )}
-            <div
-              className='absolute bottom-0 left-0 bg-gray-100 w-full'
-              style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-            >
+            <div className='absolute bottom-0 left-0 bg-gray-100 w-full'>
               <div className='h-10 flex items-center justify-between px-3'>
                 {props.data ? (
                   <button
@@ -117,6 +115,7 @@ const ChangeBatchWidget: FC<Props> = (props) => {
                   <div />
                 )}
               </div>
+              <SafeArea position='bottom' />
             </div>
           </form>
         )}

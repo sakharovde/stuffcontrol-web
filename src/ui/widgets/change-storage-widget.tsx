@@ -2,6 +2,7 @@ import { FC, useContext } from 'react';
 import { Formik } from 'formik';
 import CoreContext from '../core-context.ts';
 import { StorageDto } from '../../application';
+import { SafeArea } from 'antd-mobile';
 
 type Props = {
   data?: StorageDto;
@@ -39,10 +40,7 @@ const ChangeStorageWidget: FC<Props> = (props) => {
               className='mt-5 p-4 bg-gray-100 rounded-md'
             />
 
-            <div
-              className='absolute bottom-0 left-0 bg-gray-100 w-full'
-              style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-            >
+            <div className='absolute bottom-0 left-0 bg-gray-100 w-full'>
               <div className='h-10 flex items-center justify-between px-3'>
                 {props.data ? (
                   <button
@@ -58,6 +56,7 @@ const ChangeStorageWidget: FC<Props> = (props) => {
                   <span>Submit</span>
                 </button>
               </div>
+              <SafeArea position='bottom' />
             </div>
           </form>
         )}

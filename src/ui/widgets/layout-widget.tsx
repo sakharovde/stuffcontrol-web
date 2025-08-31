@@ -16,7 +16,7 @@ const LayoutWidget: FC<PropsWithChildren<Props>> = (props) => {
   const needShowHeader = needShowAction || needShowBack;
 
   return (
-    <div className='max-w-lg mx-auto h-full relative bg-white' style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className='max-w-lg mx-auto h-full relative bg-white'>
       <div style={{ background: '#ace0ff' }}>
         <SafeArea position='top' />
       </div>
@@ -40,7 +40,7 @@ const LayoutWidget: FC<PropsWithChildren<Props>> = (props) => {
         </div>
       )}
       <div>{props.children}</div>
-      <div style={{ background: '#ffcfac' }}>
+      <div>
         <SafeArea position='bottom' />
       </div>
     </div>
