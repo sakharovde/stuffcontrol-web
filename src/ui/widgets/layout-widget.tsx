@@ -1,6 +1,7 @@
 import { FC, PropsWithChildren } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { SafeArea } from 'antd-mobile';
 
 type Props = {
   onBack?: () => void;
@@ -16,6 +17,9 @@ const LayoutWidget: FC<PropsWithChildren<Props>> = (props) => {
 
   return (
     <div className='max-w-lg mx-auto h-full relative bg-white' style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div style={{ background: '#ace0ff' }}>
+        <SafeArea position='top' />
+      </div>
       {needShowHeader && (
         <div className='p-3 flex justify-between'>
           {needShowBack ? (
@@ -35,7 +39,10 @@ const LayoutWidget: FC<PropsWithChildren<Props>> = (props) => {
           )}
         </div>
       )}
-      {props.children}
+      <div>{props.children}</div>
+      <div style={{ background: '#ffcfac' }}>
+        <SafeArea position='bottom' />
+      </div>
     </div>
   );
 };
