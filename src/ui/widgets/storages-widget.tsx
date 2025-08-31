@@ -22,13 +22,11 @@ type StoragesWidgetProps = {
 const StoragesWidget: FC<StoragesWidgetProps> = (props) => {
   return (
     <>
-      <div className='p-3'>
-        <List className='flex gap-5 flex-col'>
-          {props.data?.map((storage) => (
-            <StorageCardWidget key={storage.id} data={storage} onClick={() => props.onClickStorageCard(storage.id)} />
-          ))}
-        </List>
-      </div>
+      <List>
+        {props.data?.map((storage) => (
+          <StorageCardWidget key={storage.id} data={storage} onClick={() => props.onClickStorageCard(storage.id)} />
+        ))}
+      </List>
       <div className='absolute bottom-0 left-0  bg-gray-100 w-full'>
         <div className='h-10 flex items-center px-3'>
           <button className='flex items-center gap-1 text-blue-600 font-medium' onClick={props.onClickAddStorage}>
