@@ -1,4 +1,4 @@
-import { FC, useContext, useLayoutEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import StoragesWidget from './widgets/storages-widget.tsx';
 import LayoutWidget from './widgets/layout-widget.tsx';
 import { useNavigate, useSearchParams } from 'react-router';
@@ -7,7 +7,7 @@ import StorageWidget from './widgets/storage-widget.tsx';
 import CoreContext from './core-context.ts';
 import ChangeBatchWidget from './widgets/change-batch-widget.tsx';
 import BatchWidget from './widgets/batch-widget.tsx';
-import { BatchDto, StorageDto } from '../application';
+import { BatchDto } from '../application';
 import LoginUserWidget from './widgets/user/login-user-widget.tsx';
 import RegisterUserWidget from './widgets/user/register-user-widget.tsx';
 
@@ -19,41 +19,20 @@ const App: FC = () => {
   const mode = searchParams.get('mode');
 
   const core = useContext(CoreContext);
-  const [storages, setStorages] = useState<StorageDto[]>([]);
-  const [activeStorageBatches, setActiveStorageBatches] = useState<BatchDto[]>([]);
+  const storageManager = core.getStorageManager();
+  const [storageManagerState, setStorageManagerState] = useState(storageManager.getState());
+  const [activeStorageBatches] = useState<BatchDto[]>([]);
 
-  useLayoutEffect(() => {
-    const updateStoragesState = () => {
-      core.queries.storage.getAllWithProducts().then((data) => {
-        setStorages(data);
-      });
-
-      if (storageId) {
-        core.queries.batch.getByStorage({ storageId }).then((data) => {
-          setActiveStorageBatches(data);
-        });
-      }
-    };
-
-    core.events.storage.on('storageCreated', updateStoragesState);
-    core.events.storage.on('storageUpdated', updateStoragesState);
-    core.events.storage.on('storageDeleted', updateStoragesState);
-    core.events.batch.on('batchCreated', updateStoragesState);
-    core.events.batch.on('batchUpdated', updateStoragesState);
-    core.events.batch.on('batchDeleted', updateStoragesState);
-
-    updateStoragesState();
+  useEffect(() => {
+    storageManager.subscribe(setStorageManagerState);
+    storageManager.loadStorages();
 
     return () => {
-      core.events.storage.off('storageCreated', updateStoragesState);
-      core.events.storage.off('storageUpdated', updateStoragesState);
-      core.events.storage.off('storageDeleted', updateStoragesState);
-      core.events.batch.off('batchCreated', updateStoragesState);
-      core.events.batch.off('batchUpdated', updateStoragesState);
-      core.events.batch.off('batchDeleted', updateStoragesState);
+      storageManager.unsubscribe(setStorageManagerState);
     };
-  }, [core]);
+  }, [storageManager]);
 
+  const storages = storageManagerState.storages;
   const activeStorage = storages.find((storage) => storage.id === storageId);
   const activeStorageBatch = activeStorageBatches?.find((batch) => batch.id === batchId);
 
@@ -236,13 +215,15 @@ const App: FC = () => {
   }
 
   return (
-    <LayoutWidget>
+    <LayoutWidget
+      actionText={'Add new'}
+      onAction={() => {
+        searchParams.set('mode', 'new');
+        navigate({ search: searchParams.toString() });
+      }}
+    >
       <StoragesWidget
         data={storages}
-        onClickAddStorage={() => {
-          searchParams.set('mode', 'new');
-          navigate({ search: searchParams.toString() });
-        }}
         onClickStorageCard={(storageId) => {
           searchParams.set('storageId', storageId);
           navigate({ search: searchParams.toString() });

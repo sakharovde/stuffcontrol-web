@@ -1,4 +1,4 @@
-import Storage from '../models/storage.ts';
+import Storage from '../entities/storage.ts';
 
 export default interface StorageRepository {
   findById(id: string): Promise<Storage | null>;

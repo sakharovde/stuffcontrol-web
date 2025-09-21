@@ -1,4 +1,4 @@
-import Product from '../models/product.ts';
+import Product from '../entities/product.ts';
 
 export default interface ProductRepository {
   findById(id: string): Promise<Product | null>;

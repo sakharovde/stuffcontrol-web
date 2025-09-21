@@ -4546,6 +4546,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"idb@npm:^8.0.3":
+  version: 8.0.3
+  resolution: "idb@npm:8.0.3"
+  checksum: 10c0/421cd9a3281b7564528857031cc33fd9e95753f8191e483054cb25d1ceea7303a0d1462f4f69f5b41606f0f066156999e067478abf2460dfcf9cab80dae2a2b2
+  languageName: node
+  linkType: hard
+
 "ignore@npm:^5.2.0, ignore@npm:^5.3.1":
   version: 5.3.2
   resolution: "ignore@npm:5.3.2"
@@ -6920,6 +6927,7 @@ __metadata:
     events: "npm:^3.3.0"
     formik: "npm:^2.4.6"
     globals: "npm:^15.11.0"
+    idb: "npm:^8.0.3"
     jsdom: "npm:^25.0.1"
     localforage: "npm:^1.10.0"
     postcss: "npm:^8.4.49"

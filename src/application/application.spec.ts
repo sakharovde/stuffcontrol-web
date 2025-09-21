@@ -9,8 +9,7 @@ describe('Application', () => {
 
   describe('product.addNewProduct', () => {
     it('adds a new product to storage successfully', async () => {
-      await core.commands.storage.create({ name: 'storageName' });
-      const storage = await core.queries.storage.getAllWithProducts().then((storages) => storages[0]);
+      const storage = await core.getStorageManager().createStorage({ name: 'storageName' });
       await core.commands.product.addNewProducts({
         storageId: storage.id,
         productName: 'productName',
@@ -71,8 +70,9 @@ describe('Application', () => {
 
   describe('storage.create', () => {
     it('creates storage successfully', async () => {
-      await core.commands.storage.create({ name: 'storageName' });
-      const result = await core.queries.storage.getAllWithProducts().then((storages) => storages[0]);
+      const storageManager = core.getStorageManager();
+      const result = await storageManager.createStorage({ name: 'storageName' });
+
       expect(result).toEqual(
         expect.objectContaining({
           name: 'storageName',
@@ -81,7 +81,9 @@ describe('Application', () => {
     });
 
     it('throws an error when storage name is empty', async () => {
-      await expect(core.commands.storage.create({ name: '' })).rejects.toThrow('Storage name cannot be empty');
+      await expect(core.getStorageManager().createStorage({ name: '' })).rejects.toThrow(
+        'Storage name cannot be empty'
+      );
     });
   });
 });

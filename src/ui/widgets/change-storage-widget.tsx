@@ -11,17 +11,18 @@ type Props = {
 
 const ChangeStorageWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
+  const storageManager = core.getStorageManager();
 
   const handleSubmitStorage = (values: { name: string }) => {
     if (props.data) {
-      core.commands.storage.update({ storage: { id: props.data.id, name: values.name } }).then(props.onSuccess);
+      storageManager.updateStorage({ storage: { id: props.data.id, name: values.name } }).then(props.onSuccess);
       return;
     }
-    core.commands.storage.create({ name: values.name }).then(props.onSuccess);
+    storageManager.createStorage({ name: values.name }).then(props.onSuccess);
   };
 
   const handleRemoveStorage = (id: string) => () => {
-    core.commands.storage.remove({ id }).then(props.onSuccess);
+    storageManager.removeStorage({ id }).then(props.onSuccess);
   };
 
   return (
