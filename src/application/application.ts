@@ -11,7 +11,7 @@ export default class Application {
   };
 
   private readonly services = {
-    transactionService: TransactionService,
+    transactionService: new TransactionService(),
   };
 
   private readonly repositories = {

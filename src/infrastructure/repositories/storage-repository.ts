@@ -1,7 +1,7 @@
 import { Storage, StorageRepository } from '../../domain';
 import StorageMapper from '../mappers/storage.ts';
 import IdbClient from '../clients/idb-client/idb-client.ts';
-import TransactionService from '../../domain/mappers/transaction-service.ts';
+import TransactionService from '../../domain/services/transaction-service.ts';
 import ChangeStorageNameTransaction from '../../domain/entities/transactions/change-storage-name-transaction.ts';
 import { v4 as uuidv4 } from 'uuid';
 import CreateStorageTransaction from '../../domain/entities/transactions/create-storage-transaction.ts';
