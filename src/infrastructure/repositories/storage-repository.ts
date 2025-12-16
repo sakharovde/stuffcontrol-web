@@ -3,7 +3,7 @@ import StorageMapper from '../mappers/storage.ts';
 import IdbClient from '../clients/idb-client/idb-client.ts';
 import TransactionService from '../../domain/services/transaction-service.ts';
 import ChangeStorageNameTransaction from '../../domain/entities/transactions/change-storage-name-transaction.ts';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 import CreateStorageTransaction from '../../domain/entities/transactions/create-storage-transaction.ts';
 import TransactionMapper from '../mappers/transaction-mapper.ts';
 import DeleteStorageTransaction from '../../domain/entities/transactions/delete-storage-transaction.ts';
@@ -36,13 +36,13 @@ export default class StorageRepositoryImpl implements StorageRepository {
     if (existing) {
       await this.idbClient.createTransaction(
         TransactionMapper.toPersistence(
-          this.transactionService.fromNamed(new ChangeStorageNameTransaction(uuidv4(), storage.id, storage.name))
+          this.transactionService.fromNamed(new ChangeStorageNameTransaction(uuidv7(), storage.id, storage.name))
         )
       );
     } else {
       await this.idbClient.createTransaction(
         TransactionMapper.toPersistence(
-          this.transactionService.fromNamed(new CreateStorageTransaction(uuidv4(), storage.id, storage.name))
+          this.transactionService.fromNamed(new CreateStorageTransaction(uuidv7(), storage.id, storage.name))
         )
       );
     }
@@ -86,7 +86,7 @@ export default class StorageRepositoryImpl implements StorageRepository {
 
   remove = async (id: Storage['id']): Promise<void> => {
     await this.idbClient.createTransaction(
-      TransactionMapper.toPersistence(this.transactionService.fromNamed(new DeleteStorageTransaction(uuidv4(), id)))
+      TransactionMapper.toPersistence(this.transactionService.fromNamed(new DeleteStorageTransaction(uuidv7(), id)))
     );
   };
 }

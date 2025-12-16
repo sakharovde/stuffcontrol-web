@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 import { Product, ProductRepository } from '../../domain';
 
 export type ProductListState = {
@@ -56,7 +56,7 @@ export default class ProductManager extends EventEmitter {
 
   // Создание продукта
   async createProduct(product: Omit<Product, 'id'>) {
-    const newProduct = await this.productRepository.save({ ...product, id: uuidv4() });
+    const newProduct = await this.productRepository.save({ ...product, id: uuidv7() });
     const productMap = { ...this.state.productMap, [newProduct.id]: newProduct };
     this.state = { ...this.state, productMap, products: [newProduct, ...this.state.products] };
     this.emitState();

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Batch, BatchRepository } from '../../domain';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 type BatchListState = {
   batchMap: Record<string, Batch>;
@@ -54,7 +54,7 @@ export default class BatchManager extends EventEmitter {
   }
 
   async createBatch(batch: Omit<Batch, 'id'>) {
-    const newBatch = await this.batchRepository.save({ ...batch, id: uuidv4() });
+    const newBatch = await this.batchRepository.save({ ...batch, id: uuidv7() });
     const batchMap = { ...this.state.batchMap, [newBatch.id]: newBatch };
     this.state = { ...this.state, batchMap, batches: [newBatch, ...this.state.batches] };
     this.emitState();

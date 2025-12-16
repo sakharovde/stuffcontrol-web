@@ -1,5 +1,5 @@
 import { Storage, StorageRepository } from '../../domain';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 import { EventEmitter } from 'events';
 import StorageInstance from './storage-instance.ts';
 
@@ -98,7 +98,7 @@ export default class StorageManager extends EventEmitter {
       throw new Error('Storage name cannot be empty');
     }
 
-    const storage = await this.storageRepository.save(new Storage(uuidv4(), args.name));
+    const storage = await this.storageRepository.save(new Storage(uuidv7(), args.name));
 
     this.state = {
       ...this.state,
