@@ -1,0 +1,25 @@
+# Build artifacts
+bin/
+cmd/**/bin/
+coverage.out
+*.coverprofile
+
+# Dependency / tooling caches
+vendor/
+.gocache/
+
+# Runtime artifacts
+*.log
+*.sqlite
+*.db
+*.pid
+
+# Local env / secrets
+.env
+.env.*
+*.local
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store

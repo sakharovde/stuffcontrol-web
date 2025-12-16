@@ -1,0 +1,33 @@
+run:
+  go: "1.23"
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gci
+    - gofmt
+    - goimports
+
+linters-settings:
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(stuffcontrol)
+    skip-generated: true
+  gofmt:
+    simplify: true
+  goimports:
+    local-prefixes: stuffcontrol
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0

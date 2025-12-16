@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 // import { VitePWA } from 'vite-plugin-pwa';
 
+const backendTarget = process.env.VITE_SERVER_ORIGIN ?? 'http://localhost:8080';
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -31,4 +33,16 @@ export default defineConfig({
     //   },
     // }),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: backendTarget,
+        changeOrigin: true,
+      },
+      '/ping': {
+        target: backendTarget,
+        changeOrigin: true,
+      },
+    },
+  },
 });
