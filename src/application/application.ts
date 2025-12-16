@@ -4,10 +4,12 @@ import BatchRepositoryImpl from '../infrastructure/repositories/batch-repository
 import StorageManager from './storage/storage-manager.ts';
 import IdbClient from '../infrastructure/clients/idb-client/idb-client.ts';
 import TransactionService from '../domain/services/transaction-service.ts';
+import HttpClient from '../infrastructure/clients/http-client/http-client.ts';
 
 export default class Application {
   private readonly clients = {
     idbClient: new IdbClient(),
+    httpClient: new HttpClient(),
   };
 
   private readonly services = {
