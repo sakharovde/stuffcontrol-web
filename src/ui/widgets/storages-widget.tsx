@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { StorageDto } from '../../application';
 import { List, SafeArea } from 'antd-mobile';
+import { Storage } from '../../domain';
 
 type StorageCardWidgetProps = {
   data: StorageDto;
@@ -24,7 +25,7 @@ const StorageCardWidget: FC<StorageCardWidgetProps> = (props) => {
 };
 
 type StoragesWidgetProps = {
-  data?: StorageDto[];
+  data?: Storage[];
   onClickStorageCard: (storageId: StorageDto['id']) => void;
 };
 

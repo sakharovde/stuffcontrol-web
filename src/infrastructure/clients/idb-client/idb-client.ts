@@ -97,4 +97,12 @@ export default class IdbClient {
     await store.delete(transactionId);
     await tx.done;
   };
+
+  saveSyncSession = async (session: IdbSyncSession): Promise<void> => {
+    const db = await this.dbPromise;
+    const tx = db.transaction('syncSessions', 'readwrite');
+    const store = tx.objectStore('syncSessions');
+    await store.put(session);
+    await tx.done;
+  };
 }

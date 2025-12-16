@@ -1,8 +1,9 @@
-import { FC, useContext, useLayoutEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import cn from 'classnames';
-import { BatchDto, StorageDto } from '../../application';
+import { BatchDto } from '../../application';
 import CoreContext from '../core-context.ts';
 import { SafeArea } from 'antd-mobile';
+import { Batch, Storage } from '../../domain';
 
 type StorageItemWidgetProps = {
   data: BatchDto;
@@ -53,43 +54,32 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
 };
 
 type Props = {
-  data: StorageDto;
+  data: Storage;
   onClickEditStorage: () => void;
   onClickAddProduct: () => void;
-  onClickEditProduct: (storageProductId: BatchDto['id']) => void;
-  onClickShowProduct: (storageProductId: BatchDto['id']) => void;
+  onClickEditProduct: (batchId: Batch['id']) => void;
+  onClickShowProduct: (batchId: Batch['id']) => void;
 };
 
 const StorageWidget: FC<Props> = (props) => {
+  const storageId = props.data.id;
   const core = useContext(CoreContext);
-  const [products, setProducts] = useState<BatchDto[]>([]);
+  const batchManager = core.getBatchManager();
+  const [batches, setBatches] = useState(batchManager.getBatches(storageId));
 
-  useLayoutEffect(() => {
-    const updateProsuctsState = () => {
-      core.queries.batch.getByStorage({ storageId: props.data.id }).then(setProducts);
-    };
-
-    core.events.product.on('productCreated', updateProsuctsState);
-    core.events.product.on('productUpdated', updateProsuctsState);
-    core.events.batch.on('batchCreated', updateProsuctsState);
-    core.events.batch.on('batchUpdated', updateProsuctsState);
-
-    updateProsuctsState();
-
-    return () => {
-      core.events.product.off('productCreated', updateProsuctsState);
-      core.events.product.off('productUpdated', updateProsuctsState);
-      core.events.batch.off('batchCreated', updateProsuctsState);
-      core.events.batch.off('batchUpdated', updateProsuctsState);
-    };
-  }, [core]);
+  useEffect(() => {
+    const onStateUpdate = () => setBatches(batchManager.getBatches(storageId));
+    batchManager.subscribe(onStateUpdate);
+    batchManager.loadBatches(storageId); // важно: storageId из роутера/пропсов
+    return () => batchManager.unsubscribe(onStateUpdate);
+  }, [batchManager, storageId]);
 
   return (
     <div>
       <h3 className='text-xl font-semibold px-3'>{props.data.name}</h3>
 
       <div className='flex flex-col gap-3 mt-5 px-3'>
-        {products.map((product) => {
+        {batches.map((product) => {
           return (
             <StorageProductWidget
               key={product.id}
