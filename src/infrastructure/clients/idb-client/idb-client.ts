@@ -40,6 +40,30 @@ export default class IdbClient {
     return allTransactions.filter((transaction) => !!transaction.data.storageName);
   };
 
+  getTransactionsByStorageId = async (storageId: string): Promise<IdbTransaction[]> => {
+    const db = await this.dbPromise;
+    const tx = db.transaction('transactions', 'readonly');
+    const store = tx.objectStore('transactions');
+    const index = store.index('by-storageId');
+    return index.getAll(storageId);
+  };
+
+  getTransactionsByBatchId = async (batchId: string): Promise<IdbTransaction[]> => {
+    const db = await this.dbPromise;
+    const tx = db.transaction('transactions', 'readonly');
+    const store = tx.objectStore('transactions');
+    const index = store.index('by-batchId');
+    return index.getAll(batchId);
+  };
+
+  getTransactionsByProductId = async (productId: string): Promise<IdbTransaction[]> => {
+    const db = await this.dbPromise;
+    const tx = db.transaction('transactions', 'readonly');
+    const store = tx.objectStore('transactions');
+    const index = store.index('by-productId');
+    return index.getAll(productId);
+  };
+
   getLastSyncSession = async (): Promise<IdbSyncSession | null> => {
     const db = await this.dbPromise;
     const tx = db.transaction('syncSessions', 'readonly');
