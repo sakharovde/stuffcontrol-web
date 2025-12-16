@@ -2,7 +2,11 @@ import { v7 as uuidv7 } from 'uuid';
 import IdbClient from '../../infrastructure/clients/idb-client/idb-client.ts';
 import { IdbSyncSession, IdbTransaction } from '../../infrastructure/clients/idb-client/idb-types.ts';
 import HttpClient from '../../infrastructure/clients/http-client/http-client.ts';
-import { HttpSyncEvent, HttpSyncRequest, HttpSyncSession } from '../../infrastructure/clients/http-client/http-types.ts';
+import {
+  HttpSyncEvent,
+  HttpSyncRequest,
+  HttpSyncSession,
+} from '../../infrastructure/clients/http-client/http-types.ts';
 
 type SyncStats = {
   storages: number;
@@ -15,14 +19,21 @@ export default class SyncManager {
     private readonly httpClient: HttpClient
   ) {}
 
-  public readonly syncPendingTransactions = async (): Promise<SyncStats> => {
-    const unsyncedTransactions = await this.idbClient.getEventsWithoutSyncSession();
+  public readonly syncPendingTransactions = async (storageId?: string): Promise<SyncStats> => {
+    const unsyncedTransactions = await this.idbClient
+      .getAllTransactions()
+      .then((result) => result.filter(({ syncSessionId }) => !syncSessionId));
+    const relevantTransactions = storageId
+      ? unsyncedTransactions.filter((transaction) => transaction.storageId === storageId)
+      : unsyncedTransactions;
 
-    if (!unsyncedTransactions.length) {
+    if (!relevantTransactions.length) {
       return { storages: 0, transactions: 0 };
     }
 
-    const groupedByStorage = this.groupTransactionsByStorage(unsyncedTransactions);
+    const groupedByStorage = storageId
+      ? new Map([[storageId, relevantTransactions]])
+      : this.groupTransactionsByStorage(relevantTransactions);
     let syncedTransactions = 0;
 
     for (const [storageId, transactions] of groupedByStorage.entries()) {

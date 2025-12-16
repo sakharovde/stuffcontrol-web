@@ -10,7 +10,7 @@ export default class IdbClient {
         eventStore.createIndex('by-storageId', 'storageId');
         eventStore.createIndex('by-productId', 'productId');
         eventStore.createIndex('by-batchId', 'batchId');
-        eventStore.createIndex('by-syncSession', 'syncSession');
+        eventStore.createIndex('by-syncSessionId', 'syncSessionId');
         eventStore.createIndex('by-createdAt', 'createdAt');
 
         const syncStore = db.createObjectStore('syncSessions', { keyPath: 'id' });
@@ -71,14 +71,6 @@ export default class IdbClient {
     const index = store.index('by-createdAt');
     const cursor = await index.openCursor(null, 'prev');
     return cursor?.value || null;
-  };
-
-  getEventsWithoutSyncSession = async (): Promise<IdbTransaction[]> => {
-    const db = await this.dbPromise;
-    const tx = db.transaction('transactions', 'readonly');
-    const store = tx.objectStore('transactions');
-    const index = store.index('by-syncSession');
-    return index.getAll(null);
   };
 
   getLastTransactionByStorageIdWithStorageName = async (storageId: string): Promise<IdbTransaction | null> => {

@@ -9,7 +9,7 @@ export interface StuffControlDBSchema1 extends DBSchema {
       'by-storageId': string;
       'by-productId': string;
       'by-batchId': string;
-      'by-syncSession': string;
+      'by-syncSessionId': string;
       'by-createdAt': string;
     };
   };

@@ -49,8 +49,4 @@ export default class Application {
 
     return this.syncManager;
   };
-
-  public readonly syncPendingTransactions = () => {
-    return this.getSyncManager().syncPendingTransactions();
-  };
 }

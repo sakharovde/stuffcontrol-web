@@ -9,7 +9,6 @@ import ChangeBatchWidget from './widgets/change-batch-widget.tsx';
 import BatchWidget from './widgets/batch-widget.tsx';
 import LoginUserWidget from './widgets/user/login-user-widget.tsx';
 import RegisterUserWidget from './widgets/user/register-user-widget.tsx';
-import { Batch } from '../domain';
 
 const App: FC = () => {
   const navigate = useNavigate();
@@ -21,6 +20,8 @@ const App: FC = () => {
   const core = useContext(CoreContext);
   const storageManager = core.getStorageManager();
   const batchManager = core.getBatchManager();
+  const syncManager = core.getSyncManager();
+
   const [storageManagerState, setStorageManagerState] = useState(storageManager.getState());
 
   useEffect(() => {
@@ -184,6 +185,12 @@ const App: FC = () => {
   if (activeStorage) {
     return (
       <LayoutWidget
+        actionText={'Sync now'}
+        onAction={() => {
+          syncManager
+            .syncPendingTransactions(activeStorage.id)
+            .catch((error) => console.error('Failed to sync storage', error));
+        }}
         backText='Storages'
         onBack={() => {
           searchParams.delete('storageId');
