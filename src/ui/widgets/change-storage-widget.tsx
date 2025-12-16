@@ -1,11 +1,11 @@
 import { FC, useContext } from 'react';
 import { Formik } from 'formik';
 import CoreContext from '../core-context.ts';
-import { StorageDto } from '../../application';
+import { Storage } from '../../domain';
 import { SafeArea } from 'antd-mobile';
 
 type Props = {
-  data?: StorageDto;
+  data?: Storage;
   onSuccess: () => void;
 };
 

@@ -2,12 +2,12 @@ import { FC, useContext } from 'react';
 import CoreContext from '../core-context.ts';
 import { Formik } from 'formik';
 import cn from 'classnames';
-import { StorageDto, BatchDto } from '../../application';
+import { Storage, Batch } from '../../domain';
 import { SafeArea } from 'antd-mobile';
 
 type Props = {
-  data?: BatchDto;
-  storage: StorageDto;
+  data?: Batch;
+  storage: Storage;
   onSuccess: () => void;
 };
 
@@ -19,9 +19,10 @@ interface FormValues {
 
 const ChangeBatchWidget: FC<Props> = (props) => {
   const core = useContext(CoreContext);
+  const batchManager = core.getBatchManager();
 
-  const handleRemoveStorage = (id: BatchDto['id']) => () => {
-    core.commands.product.removeProduct({ productId: id }).then(props.onSuccess);
+  const handleRemove = (id: Batch['id']) => () => {
+    batchManager.removeBatch(id).then(props.onSuccess);
   };
 
   return (
@@ -36,10 +37,10 @@ const ChangeBatchWidget: FC<Props> = (props) => {
         }}
         onSubmit={(values) => {
           if (!props.data) {
-            core.commands.product
-              .addNewProducts({
+            batchManager
+              .createBatch({
                 storageId: props.storage.id,
-                productName: values.name,
+                name: values.name,
                 quantity: Number(values.quantity || 0),
                 expirationDate: values.expirationDate ? new Date(values.expirationDate) : null,
               })
@@ -100,7 +101,7 @@ const ChangeBatchWidget: FC<Props> = (props) => {
                   <button
                     type='button'
                     className='flex items-center gap-1 text-red-600 font-normal'
-                    onClick={handleRemoveStorage(props.data.id)}
+                    onClick={handleRemove(props.data.id)}
                   >
                     <span>Remove</span>
                   </button>

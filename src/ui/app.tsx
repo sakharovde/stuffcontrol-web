@@ -7,9 +7,9 @@ import StorageWidget from './widgets/storage-widget.tsx';
 import CoreContext from './core-context.ts';
 import ChangeBatchWidget from './widgets/change-batch-widget.tsx';
 import BatchWidget from './widgets/batch-widget.tsx';
-import { BatchDto } from '../application';
 import LoginUserWidget from './widgets/user/login-user-widget.tsx';
 import RegisterUserWidget from './widgets/user/register-user-widget.tsx';
+import { Batch } from '../domain';
 
 const App: FC = () => {
   const navigate = useNavigate();
@@ -20,8 +20,8 @@ const App: FC = () => {
 
   const core = useContext(CoreContext);
   const storageManager = core.getStorageManager();
+  const batchManager = core.getBatchManager();
   const [storageManagerState, setStorageManagerState] = useState(storageManager.getState());
-  const [activeStorageBatches] = useState<BatchDto[]>([]);
 
   useEffect(() => {
     storageManager.subscribe(setStorageManagerState);
@@ -34,7 +34,7 @@ const App: FC = () => {
 
   const storages = storageManagerState.storages;
   const activeStorage = storages.find((storage) => storage.id === storageId);
-  const activeStorageBatch = activeStorageBatches?.find((batch) => batch.id === batchId);
+  const activeStorageBatch = batchId ? batchManager.getBatchById(batchId) : null;
 
   if (activeStorage && mode === 'new') {
     return (

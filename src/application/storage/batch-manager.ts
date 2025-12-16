@@ -43,6 +43,10 @@ export default class BatchManager extends EventEmitter {
     return ids.map((id) => this.state.batchMap[id]).filter(Boolean);
   }
 
+  getBatchById(id: Batch['id']): Batch | null {
+    return this.state.batchMap[id] ?? null;
+  }
+
   isLoading(storageId: string) {
     return this.state.loadingByStorage[storageId] ?? false;
   }
@@ -81,8 +85,8 @@ export default class BatchManager extends EventEmitter {
     return batches;
   }
 
-  async createBatch(args: Omit<Batch, 'id'>) {
-    const newBatch = await this.batchRepository.save({ ...args, id: uuidv7() });
+  async createBatch(args: Omit<Batch, 'id' | 'createdAt'>) {
+    const newBatch = await this.batchRepository.save({ ...args, id: uuidv7(), createdAt: new Date() });
 
     const batchMap = { ...this.state.batchMap, [newBatch.id]: newBatch };
     const existing = this.state.batchIdsByStorage[newBatch.storageId] ?? [];

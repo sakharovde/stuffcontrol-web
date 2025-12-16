@@ -1,38 +1,41 @@
 import { FC, useContext } from 'react';
-import { BatchDto } from '../../application';
 import { Formik } from 'formik';
 import CoreContext from '../core-context.ts';
 import { SafeArea } from 'antd-mobile';
+import { Batch } from '../../domain';
 
 type Props = {
-  batch: BatchDto;
+  batch: Batch;
   onSuccess: () => void;
 };
 
 const BatchWidget: FC<Props> = (props) => {
+  const batch = props.batch;
   const core = useContext(CoreContext);
+  const batchManager = core.getBatchManager();
 
   const handleSubmit = (values: { quantity: number }) => {
-    core.commands.batch.changeQuantity({ batchId: props.batch.id, quantity: values.quantity }).then(props.onSuccess);
+    batch.quantity = values.quantity;
+    batchManager.updateBatch(batch).then(props.onSuccess);
   };
 
   return (
     <div>
-      <h3 className='text-xl font-semibold px-3'>{props.batch.name}</h3>
+      <h3 className='text-xl font-semibold px-3'>{batch.name}</h3>
       <div className='px-3 py-5 flex flex-col gap-1'>
         <div className='flex justify-between'>
           <span>Quantity</span>
-          <span>{props.batch.quantity}</span>
+          <span>{batch.quantity}</span>
         </div>
-        {props.batch.expirationDate && (
+        {batch.expirationDate && (
           <div className='flex justify-between'>
             <span>Expiration date</span>
-            <span>{props.batch.expirationDate.toISOString().split('T')[0]}</span>
+            <span>{batch.expirationDate.toISOString().split('T')[0]}</span>
           </div>
         )}
       </div>
       <Formik
-        initialValues={{ quantity: props.batch.quantity }}
+        initialValues={{ quantity: batch.quantity }}
         validate={(values) => {
           const errors: { quantity?: string } = {};
           if (values.quantity < 0) {
