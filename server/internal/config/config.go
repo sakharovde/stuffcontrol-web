@@ -17,9 +17,10 @@ const (
 
 // Config holds all runtime configuration required by the server.
 type Config struct {
-	Env      Env
-	HTTPPort int
-	DB       DBConfig
+	Env       Env
+	HTTPPort  int
+	StaticDir string
+	DB        DBConfig
 }
 
 // DBConfig encapsulates Postgres connectivity settings.
@@ -49,6 +50,7 @@ func (c DBConfig) ConnString() string {
 func Load() Config {
 	env := detectEnv()
 	port := intFromEnv("PORT", 3000)
+	staticDir := fallback(os.Getenv("STATIC_DIR"), "../dist")
 
 	var db DBConfig
 
@@ -83,9 +85,10 @@ func Load() Config {
 	}
 
 	return Config{
-		Env:      env,
-		HTTPPort: port,
-		DB:       db,
+		Env:       env,
+		HTTPPort:  port,
+		StaticDir: staticDir,
+		DB:        db,
 	}
 }
 

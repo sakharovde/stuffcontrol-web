@@ -2,6 +2,8 @@ package http
 
 import (
 	"encoding/json"
+	"errors"
+	"io/fs"
 	"log"
 	"net/http"
 
@@ -17,14 +19,16 @@ type Server struct {
 	mux         *http.ServeMux
 	db          *gorm.DB
 	syncService *service.SyncService
+	static      http.Handler
 }
 
 // NewServer prepares all routes.
-func NewServer(db *gorm.DB, syncService *service.SyncService) *Server {
+func NewServer(db *gorm.DB, syncService *service.SyncService, staticDir string) *Server {
 	srv := &Server{
 		mux:         http.NewServeMux(),
 		db:          db,
 		syncService: syncService,
+		static:      newStaticHandler(staticDir),
 	}
 	srv.registerRoutes()
 	return srv
@@ -37,6 +41,9 @@ func (s *Server) registerRoutes() {
 	s.mux.HandleFunc("/api/batches", s.handleBatches)
 	s.mux.HandleFunc("/api/storages", s.handleStorages)
 	s.mux.HandleFunc("/api/sync-sessions", s.handleSyncSessions)
+	if s.static != nil {
+		s.mux.Handle("/", s.static)
+	}
 }
 
 // ServeHTTP adds CORS headers before dispatching to the mux.
@@ -184,4 +191,36 @@ func writeJSON(w http.ResponseWriter, status int, payload any) {
 		return
 	}
 	_ = json.NewEncoder(w).Encode(payload)
+}
+
+func newStaticHandler(root string) http.Handler {
+	if root == "" {
+		return nil
+	}
+
+	dir := http.Dir(root)
+	fileServer := http.FileServer(dir)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+		if path == "" || path == "/" {
+			fileServer.ServeHTTP(w, r)
+			return
+		}
+
+		f, err := dir.Open(path)
+		if err != nil {
+			if errors.Is(err, fs.ErrNotExist) {
+				r = r.Clone(r.Context())
+				r.URL.Path = "/index.html"
+			} else {
+				internalError(w, err)
+				return
+			}
+		} else {
+			_ = f.Close()
+		}
+
+		fileServer.ServeHTTP(w, r)
+	})
 }

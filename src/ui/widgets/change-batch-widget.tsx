@@ -14,7 +14,6 @@ import {
   Toast,
   Dialog,
 } from 'antd-mobile';
-import { RightOutline } from 'antd-mobile-icons';
 
 type Props = {
   data?: Batch;
@@ -131,8 +130,6 @@ const ChangeBatchWidget: FC<Props> = (props) => {
     }
   };
 
-  const existingBatches = useMemo(() => batches.filter((batch) => batch.storageId === props.storage.id), [batches, props.storage.id]);
-
   if (isEditing && props.data) {
     const adjustEditingQuantity = (delta: number) => {
       setEditingQuantity((prev) => Math.max(0, prev + delta));
@@ -204,7 +201,14 @@ const ChangeBatchWidget: FC<Props> = (props) => {
                 onClose={() => setPickerVisible(false)}
                 value={selectedProduct ? [selectedProduct] : undefined}
                 onConfirm={(values) => {
-                  setSelectedProduct(values[0] ?? null);
+                  const value = values[0];
+                  if (typeof value === 'string') {
+                    setSelectedProduct(value);
+                  } else if (value != null) {
+                    setSelectedProduct(String(value));
+                  } else {
+                    setSelectedProduct(null);
+                  }
                   setPickerVisible(false);
                 }}
               />

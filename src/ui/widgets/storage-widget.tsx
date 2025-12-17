@@ -23,11 +23,7 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
         <div>
           <div className='text-base font-semibold'>{props.data.name}</div>
           <div className='text-xs text-gray-500'>{`Batch #${props.data.id.slice(0, 6)}`}</div>
-          {expiryLabel && (
-            <div className='text-xs text-blue-500 mt-1'>
-              {`Expires on ${expiryLabel}`}
-            </div>
-          )}
+          {expiryLabel && <div className='text-xs text-blue-500 mt-1'>{`Expires on ${expiryLabel}`}</div>}
         </div>
         <div className='flex flex-col items-end gap-2'>
           <Tag color='primary' className='text-sm font-semibold px-3 py-1'>
@@ -56,11 +52,17 @@ const StorageProductWidget: FC<StorageItemWidgetProps> = (props) => {
         </div>
       </div>
       <Space className='mt-4' wrap>
-        <Button size='mini' color='primary' fill='outline' onClick={props.onClickEdit} icon={<EditSOutline />}>
-          Edit
+        <Button size='mini' color='primary' fill='outline' onClick={props.onClickEdit}>
+          <Space>
+            <EditSOutline fontSize={16} />
+            Edit
+          </Space>
         </Button>
-        <Button size='mini' color='primary' fill='none' onClick={props.onClickShow} icon={<EyeOutline />}>
-          Details
+        <Button size='mini' color='primary' fill='none' onClick={props.onClickShow}>
+          <Space>
+            <EyeOutline fontSize={16} />
+            Details
+          </Space>
         </Button>
       </Space>
     </Card>
@@ -86,7 +88,8 @@ const StorageWidget: FC<Props> = (props) => {
     const now = Date.now();
     const week = 1000 * 60 * 60 * 24 * 7;
     return batches.filter(
-      (batch) => batch.expirationDate && batch.expirationDate.getTime() - now <= week && batch.expirationDate.getTime() > now
+      (batch) =>
+        batch.expirationDate && batch.expirationDate.getTime() - now <= week && batch.expirationDate.getTime() > now
     ).length;
   }, [batches]);
 
@@ -107,11 +110,11 @@ const StorageWidget: FC<Props> = (props) => {
             <div className='text-xs text-gray-500 mt-1'>{`ID • ${props.data.id.slice(0, 6)}…${props.data.id.slice(-4)}`}</div>
           </div>
           {props.pendingChange?.pendingEvents ? (
-            <Tag color='warning' bordered={false}>
+            <Tag color='warning' fill='solid'>
               Pending sync
             </Tag>
           ) : (
-            <Tag color='primary' bordered={false}>
+            <Tag color='primary' fill='solid'>
               Synced
             </Tag>
           )}
@@ -158,11 +161,17 @@ const StorageWidget: FC<Props> = (props) => {
       <div className='absolute bottom-0 left-0 w-full bg-white border-t border-gray-100'>
         <div className='max-w-lg mx-auto w-full px-3 py-3'>
           <Space block justify='between'>
-            <Button color='primary' fill='outline' onClick={props.onClickEditStorage} icon={<EditSOutline />}>
-              Edit storage
+            <Button color='primary' fill='outline' onClick={props.onClickEditStorage}>
+              <Space>
+                <EditSOutline fontSize={18} />
+                Edit storage
+              </Space>
             </Button>
-            <Button color='primary' onClick={props.onClickAddProduct} icon={<AddOutline />}>
-              Add products
+            <Button color='primary' onClick={props.onClickAddProduct} className='flex items-center gap-1'>
+              <Space>
+                <AddOutline fontSize={18} />
+                Add products
+              </Space>
             </Button>
           </Space>
         </div>

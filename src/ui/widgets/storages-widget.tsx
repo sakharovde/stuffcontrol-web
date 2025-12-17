@@ -72,11 +72,11 @@ const StorageCardWidget: FC<StorageCardWidgetProps> = ({ data, pendingChange, on
           </div>
         </div>
         {hasPendingChanges ? (
-          <Tag color='warning' bordered={false}>
+          <Tag color='warning' fill='solid'>
             Pending sync
           </Tag>
         ) : (
-          <Tag color='primary' bordered={false}>
+          <Tag color='primary' fill='solid'>
             Synced
           </Tag>
         )}

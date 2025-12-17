@@ -7,65 +7,27 @@ describe('Application', () => {
     core = new Application();
   });
 
-  describe('product.addNewProduct', () => {
-    it('adds a new product to storage successfully', async () => {
+  describe('batch manager', () => {
+    it('creates a new batch for a storage via the batch manager', async () => {
       const storage = await core.getStorageManager().createStorage({ name: 'storageName' });
-      await core.commands.product.addNewProducts({
+      const batchManager = core.getBatchManager();
+
+      const created = await batchManager.createBatch({
         storageId: storage.id,
-        productName: 'productName',
-        quantity: 0,
+        name: 'Bananas',
+        quantity: 5,
         expirationDate: null,
       });
-      const result = await core.queries.batch.getByStorage({ storageId: storage.id }).then((batches) => batches[0]);
 
-      expect(result).toEqual(
+      expect(created).toEqual(
         expect.objectContaining({
-          quantity: 0,
+          storageId: storage.id,
+          name: 'Bananas',
+          quantity: 5,
         })
       );
+      expect(batchManager.getBatchById(created.id)).toEqual(created);
     });
-
-    it('throws an error when product name is empty', async () => {
-      await expect(
-        core.commands.product.addNewProducts({
-          storageId: 'storageId',
-          productName: '',
-          quantity: 0,
-          expirationDate: null,
-        })
-      ).rejects.toThrow('Product name cannot be empty');
-    });
-
-    it('throws an error when quantity is negative', async () => {
-      await expect(
-        core.commands.product.addNewProducts({
-          storageId: 'storageId',
-          productName: 'productName',
-          quantity: -1,
-          expirationDate: null,
-        })
-      ).rejects.toThrow('Quantity cannot be negative');
-    });
-
-    // it('adds a new product with expiration date successfully', async () => {
-    //   await core.commands.storage.create({ name: 'storageName' });
-    //   const storage = await core.queries.storage.getAllWithProducts().then((storages) => storages[0]);
-    //
-    //   const expirationDate = new Date();
-    //   await core.commands.product.addNewProduct({
-    //     storageId: storage.id,
-    //     productName: 'productName',
-    //     quantity: 10,
-    //     expirationDate,
-    //   });
-    //   const product = await core.queries.storage.getAllWithProducts().then((storages) => storages[0].products[0]);
-    //   const productItems = await core.queries.productItem.getByProduct({ productId: product.id });
-    //
-    //   expect(productItems).toHaveLength(10);
-    //   productItems.forEach((productItem) => {
-    //     expect(productItem.expiredAt).toEqual(expirationDate);
-    //   });
-    // });
   });
 
   describe('storage.create', () => {

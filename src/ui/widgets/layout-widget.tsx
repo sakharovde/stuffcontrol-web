@@ -24,7 +24,7 @@ const LayoutWidget: FC<PropsWithChildren<Props>> = (props) => {
         <div style={{ background: '#ace0ff' }}>
           <SafeArea position='top' />
         </div>
-        <div className='max-w-lg mx-auto w-full px-4'>
+        <div className='max-w-lg mx-auto w-full'>
           <NavBar onBack={props.onBack} backArrow={needShowBack} back={props.backText} right={right} />
         </div>
       </div>

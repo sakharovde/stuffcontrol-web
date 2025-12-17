@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import checker from 'vite-plugin-checker';
 // import { VitePWA } from 'vite-plugin-pwa';
 
 const backendTarget = process.env.VITE_SERVER_ORIGIN ?? 'http://localhost:3000';
@@ -8,6 +9,11 @@ const backendTarget = process.env.VITE_SERVER_ORIGIN ?? 'http://localhost:3000';
 export default defineConfig({
   plugins: [
     react(),
+    checker({
+      typescript: {
+        tsconfigPath: 'tsconfig.app.json',
+      },
+    }),
     // VitePWA({
     //   registerType: 'autoUpdate',
     //   // devOptions: {

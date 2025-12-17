@@ -1,52 +1,43 @@
-import { FC, useContext } from 'react';
-import { Formik } from 'formik';
-import CoreContext from '../../core-context.ts';
+import { FC } from 'react';
+import { Button, Card, Form, Input, Space, Toast } from 'antd-mobile';
 
-type LoginUserWidgetProps = {
+type Props = {
   onSuccess: () => void;
 };
 
-const LoginUserWidget: FC<LoginUserWidgetProps> = (props) => {
-  const core = useContext(CoreContext);
+type FormValues = {
+  email: string;
+  password: string;
+};
 
-  const handleSubmit = async (values: { username: string }) => {
-    await core.commands.user.login({ username: values.username });
-    props.onSuccess();
+const LoginUserWidget: FC<Props> = ({ onSuccess }) => {
+  const [form] = Form.useForm<FormValues>();
+
+  const handleSubmit = async (values: FormValues) => {
+    if (!values.email || !values.password) {
+      Toast.show({ icon: 'fail', content: 'Укажите email и пароль' });
+      return;
+    }
+    Toast.show({ icon: 'success', content: 'Заглушка входа' });
+    onSuccess();
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <div>
-        <Formik
-          initialValues={{ username: '' }}
-          validate={(values) => {
-            const errors: Record<string, string> = {};
-            if (!values.username) {
-              errors.username = 'Required';
-            }
-            return errors;
-          }}
-          onSubmit={handleSubmit}
-        >
-          {({ values, handleChange, handleSubmit: _handleSubmit }) => (
-            <form onSubmit={_handleSubmit}>
-              <input
-                type='text'
-                name='username'
-                autoComplete='webauthn'
-                value={values.username}
-                onChange={handleChange}
-                className='bg-gray-100'
-              />
-              <button type='submit' className='border'>
-                Login
-              </button>
-            </form>
-          )}
-        </Formik>
-      </div>
-    </div>
+    <Card className='mt-6 shadow-sm'>
+      <Form layout='vertical' form={form} onFinish={handleSubmit}>
+        <Form.Item name='email' label='Email' rules={[{ required: true, message: 'Введите email' }]}>
+          <Input placeholder='you@example.com' type='email' clearable />
+        </Form.Item>
+        <Form.Item name='password' label='Пароль' rules={[{ required: true, message: 'Введите пароль' }]}>
+          <Input placeholder='••••••••' type='password' clearable />
+        </Form.Item>
+        <Space block direction='vertical' className='mt-4'>
+          <Button block color='primary' onClick={() => form.submit()}>
+            Войти
+          </Button>
+        </Space>
+      </Form>
+    </Card>
   );
 };
 

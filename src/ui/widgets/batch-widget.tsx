@@ -41,7 +41,7 @@ const BatchWidget: FC<Props> = (props) => {
             <div className='text-xs uppercase text-gray-500'>Quantity</div>
             <div className='text-3xl font-semibold text-blue-600'>{batch.quantity}</div>
           </div>
-          <Tag color='primary' bordered={false}>
+          <Tag color='primary' fill='solid'>
             Batch ID {batch.id.slice(0, 6)}
           </Tag>
         </div>

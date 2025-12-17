@@ -37,7 +37,7 @@ func main() {
 	}
 
 	syncService := service.NewSyncService(database)
-	server := httpapi.NewServer(database, syncService)
+	server := httpapi.NewServer(database, syncService, cfg.StaticDir)
 
 	host := "localhost"
 	if os.Getenv("RENDER") != "" {
