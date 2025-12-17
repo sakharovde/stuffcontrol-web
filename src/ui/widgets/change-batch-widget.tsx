@@ -42,6 +42,7 @@ const ChangeBatchWidget: FC<Props> = (props) => {
   const [pickerVisible, setPickerVisible] = useState(false);
   const [editingQuantity, setEditingQuantity] = useState(props.data?.quantity ?? 0);
   const [updating, setUpdating] = useState(false);
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
 
   const isEditing = !!props.data;
 
@@ -170,6 +171,7 @@ const ChangeBatchWidget: FC<Props> = (props) => {
   }
 
   const quantity = Form.useWatch('quantity', form) ?? 0;
+  const expirationDateValue = Form.useWatch('expirationDate', form);
   const adjustQuantity = (delta: number) => {
     const next = Math.max(0, quantity + delta);
     form.setFieldsValue({ quantity: next });
@@ -234,17 +236,19 @@ const ChangeBatchWidget: FC<Props> = (props) => {
           </Form.Item>
         )}
 
-        <Form.Item
-          label='Срок годности'
-          name='expirationDate'
-          trigger='onConfirm'
-          onClick={(e, datePickerRef) => {
-            datePickerRef?.open();
-          }}
-        >
-          <DatePicker>
-            {(value) => (value ? value.toISOString().split('T')[0] : 'Выберите дату (необязательно)')}
-          </DatePicker>
+        <Form.Item label='Срок годности'>
+          <Button block onClick={() => setDatePickerVisible(true)}>
+            {expirationDateValue ? expirationDateValue.toISOString().split('T')[0] : 'Выберите дату (необязательно)'}
+          </Button>
+          <DatePicker
+            visible={datePickerVisible}
+            value={expirationDateValue}
+            onClose={() => setDatePickerVisible(false)}
+            onConfirm={(value) => {
+              form.setFieldsValue({ expirationDate: value });
+              setDatePickerVisible(false);
+            }}
+          />
         </Form.Item>
       </Form>
 
