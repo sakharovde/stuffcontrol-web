@@ -4,8 +4,6 @@ import (
 	"context"
 	"time"
 
-	"gorm.io/gorm"
-
 	"stuffcontrol/internal/model"
 )
 
@@ -23,7 +21,7 @@ type productInfoRow struct {
 }
 
 // Storages aggregates events to list distinct storages.
-func Storages(ctx context.Context, db *gorm.DB) ([]model.StorageInfo, error) {
+func (s *Store) Storages(ctx context.Context) ([]model.StorageInfo, error) {
 	query := `
         SELECT
             se.storage_id AS storage_id,
@@ -40,7 +38,7 @@ func Storages(ctx context.Context, db *gorm.DB) ([]model.StorageInfo, error) {
         ORDER BY created_at ASC`
 
 	var rows []storageInfoRow
-	if err := db.WithContext(ctx).Raw(query).Scan(&rows).Error; err != nil {
+	if err := s.db.WithContext(ctx).Raw(query).Scan(&rows).Error; err != nil {
 		return nil, err
 	}
 
@@ -57,7 +55,7 @@ func Storages(ctx context.Context, db *gorm.DB) ([]model.StorageInfo, error) {
 }
 
 // Products aggregates product details across storage events.
-func Products(ctx context.Context, db *gorm.DB) ([]model.ProductInfo, error) {
+func (s *Store) Products(ctx context.Context) ([]model.ProductInfo, error) {
 	query := `
         SELECT
             se.product_id AS product_id,
@@ -82,7 +80,7 @@ func Products(ctx context.Context, db *gorm.DB) ([]model.ProductInfo, error) {
         ORDER BY created_at ASC`
 
 	var rows []productInfoRow
-	if err := db.WithContext(ctx).Raw(query).Scan(&rows).Error; err != nil {
+	if err := s.db.WithContext(ctx).Raw(query).Scan(&rows).Error; err != nil {
 		return nil, err
 	}
 

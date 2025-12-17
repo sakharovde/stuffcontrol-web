@@ -7,28 +7,38 @@ import (
 	"path"
 	"strings"
 
-	"gorm.io/gorm"
-
+	"stuffcontrol/internal/app"
 	"stuffcontrol/internal/model"
-	"stuffcontrol/internal/repository"
-	"stuffcontrol/internal/service"
 )
 
 // Server wires HTTP routes to the underlying services.
 type Server struct {
-	mux         *http.ServeMux
-	db          *gorm.DB
-	syncService *service.SyncService
-	static      *staticHandler
+	mux           *http.ServeMux
+	storageEvents app.StorageEventQuery
+	products      app.ProductQuery
+	storages      app.StorageQuery
+	syncSessions  app.SyncSessionQuery
+	syncCommand   app.SyncCommand
+	static        *staticHandler
 }
 
 // NewServer prepares all routes.
-func NewServer(db *gorm.DB, syncService *service.SyncService, staticDir string) *Server {
+func NewServer(
+	storageEvents app.StorageEventQuery,
+	products app.ProductQuery,
+	storages app.StorageQuery,
+	syncSessions app.SyncSessionQuery,
+	syncCommand app.SyncCommand,
+	staticDir string,
+) *Server {
 	srv := &Server{
-		mux:         http.NewServeMux(),
-		db:          db,
-		syncService: syncService,
-		static:      newStaticHandler(staticDir),
+		mux:           http.NewServeMux(),
+		storageEvents: storageEvents,
+		products:      products,
+		storages:      storages,
+		syncSessions:  syncSessions,
+		syncCommand:   syncCommand,
+		static:        newStaticHandler(staticDir),
 	}
 	srv.registerRoutes()
 	return srv
@@ -78,7 +88,7 @@ func (s *Server) handleStorageEvents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	events, err := repository.ListStorageEvents(r.Context(), s.db)
+	events, err := s.storageEvents.ListStorageEvents(r.Context())
 	if err != nil {
 		internalError(w, err)
 		return
@@ -93,7 +103,7 @@ func (s *Server) handleProducts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	products, err := repository.Products(r.Context(), s.db)
+	products, err := s.products.Products(r.Context())
 	if err != nil {
 		internalError(w, err)
 		return
@@ -108,7 +118,7 @@ func (s *Server) handleStorages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	storages, err := repository.Storages(r.Context(), s.db)
+	storages, err := s.storages.Storages(r.Context())
 	if err != nil {
 		internalError(w, err)
 		return
@@ -120,7 +130,7 @@ func (s *Server) handleStorages(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleSyncSessions(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		sessions, err := repository.ListSyncSessions(r.Context(), s.db)
+		sessions, err := s.syncSessions.ListSyncSessions(r.Context())
 		if err != nil {
 			internalError(w, err)
 			return
@@ -139,7 +149,7 @@ func (s *Server) handleBatches(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	snapshot, err := repository.LatestSnapshot(r.Context(), s.db)
+	snapshot, err := s.syncSessions.LatestSnapshot(r.Context())
 	if err != nil {
 		internalError(w, err)
 		return
@@ -153,16 +163,16 @@ func (s *Server) handleBatches(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleCreateSyncSession(w http.ResponseWriter, r *http.Request) {
-	var payload service.SyncRequest
+	var payload app.SyncRequest
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		badRequest(w, "invalid JSON payload")
 		return
 	}
 
-	session, err := s.syncService.CreateSyncSession(r.Context(), payload)
+	session, err := s.syncCommand.CreateSyncSession(r.Context(), payload)
 	if err != nil {
 		switch err {
-		case service.ErrStorageIDRequired, service.ErrEventsEmpty:
+		case app.ErrStorageIDRequired, app.ErrEventsEmpty:
 			badRequest(w, err.Error())
 		default:
 			internalError(w, err)

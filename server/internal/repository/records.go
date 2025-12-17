@@ -33,9 +33,9 @@ type syncSessionRow struct {
 func (syncSessionRow) TableName() string { return "sync_session" }
 
 // ListStorageEvents returns every stored event.
-func ListStorageEvents(ctx context.Context, db *gorm.DB) ([]model.StorageEvent, error) {
+func (s *Store) ListStorageEvents(ctx context.Context) ([]model.StorageEvent, error) {
 	var rows []storageEventRow
-	if err := db.WithContext(ctx).
+	if err := s.db.WithContext(ctx).
 		Model(&storageEventRow{}).
 		Order("created_at ASC").
 		Find(&rows).Error; err != nil {
@@ -55,9 +55,9 @@ func ListStorageEvents(ctx context.Context, db *gorm.DB) ([]model.StorageEvent, 
 }
 
 // ListSyncSessions returns all sync sessions ordered by creation time.
-func ListSyncSessions(ctx context.Context, db *gorm.DB) ([]model.SyncSession, error) {
+func (s *Store) ListSyncSessions(ctx context.Context) ([]model.SyncSession, error) {
 	var rows []syncSessionRow
-	if err := db.WithContext(ctx).
+	if err := s.db.WithContext(ctx).
 		Model(&syncSessionRow{}).
 		Order("created_at ASC").
 		Find(&rows).Error; err != nil {
@@ -82,9 +82,9 @@ func ListSyncSessions(ctx context.Context, db *gorm.DB) ([]model.SyncSession, er
 }
 
 // LatestSnapshot returns the snapshot from the newest sync session overall.
-func LatestSnapshot(ctx context.Context, db *gorm.DB) ([]model.SnapshotItem, error) {
+func (s *Store) LatestSnapshot(ctx context.Context) ([]model.SnapshotItem, error) {
 	var row syncSessionRow
-	err := db.WithContext(ctx).
+	err := s.db.WithContext(ctx).
 		Model(&syncSessionRow{}).
 		Order("created_at DESC").
 		Limit(1).
@@ -100,9 +100,9 @@ func LatestSnapshot(ctx context.Context, db *gorm.DB) ([]model.SnapshotItem, err
 }
 
 // LatestSnapshotByStorage returns the most recent snapshot for a storage.
-func LatestSnapshotByStorage(ctx context.Context, db *gorm.DB, storageID string) ([]model.SnapshotItem, error) {
+func (s *Store) LatestSnapshotByStorage(ctx context.Context, storageID string) ([]model.SnapshotItem, error) {
 	var row syncSessionRow
-	err := db.WithContext(ctx).
+	err := s.db.WithContext(ctx).
 		Model(&syncSessionRow{}).
 		Where("storage_id = ?", storageID).
 		Order("created_at DESC").
@@ -118,40 +118,20 @@ func LatestSnapshotByStorage(ctx context.Context, db *gorm.DB, storageID string)
 	return model.SnapshotFromDB(row.Snapshot)
 }
 
-// CreateSyncSession inserts a new sync session row.
-func CreateSyncSession(ctx context.Context, db *gorm.DB, id, storageID string, snapshot []model.SnapshotItem, createdAt time.Time) error {
-	snapshotBytes, err := model.SnapshotToDB(snapshot)
-	if err != nil {
-		return err
-	}
-
-	row := syncSessionRow{
-		ID:        id,
-		StorageID: storageID,
-		Snapshot:  snapshotBytes,
-		CreatedAt: createdAt,
-	}
-	return db.WithContext(ctx).Create(&row).Error
-}
-
-// InsertStorageEvents persists multiple events.
-func InsertStorageEvents(ctx context.Context, db *gorm.DB, events []model.StorageEvent) error {
-	rows := make([]storageEventRow, 0, len(events))
-	for _, evt := range events {
-		row, err := mapEventToRow(evt)
-		if err != nil {
+// PersistSyncSession stores the snapshot and events in a single transaction.
+func (s *Store) PersistSyncSession(ctx context.Context, sessionID, storageID string, snapshot []model.SnapshotItem, events []model.StorageEvent, createdAt time.Time) error {
+	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := createSyncSession(ctx, tx, sessionID, storageID, snapshot, createdAt); err != nil {
 			return err
 		}
-		rows = append(rows, row)
-	}
-
-	return db.WithContext(ctx).Create(&rows).Error
+		return insertStorageEvents(ctx, tx, events)
+	})
 }
 
 // SyncSessionByID fetches a session by its identifier.
-func SyncSessionByID(ctx context.Context, db *gorm.DB, id string) (*model.SyncSession, error) {
+func (s *Store) SyncSessionByID(ctx context.Context, id string) (*model.SyncSession, error) {
 	var row syncSessionRow
-	if err := db.WithContext(ctx).
+	if err := s.db.WithContext(ctx).
 		First(&row, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
@@ -170,9 +150,9 @@ func SyncSessionByID(ctx context.Context, db *gorm.DB, id string) (*model.SyncSe
 }
 
 // StorageEventsBySession returns events associated with a sync session.
-func StorageEventsBySession(ctx context.Context, db *gorm.DB, syncSessionID string) ([]model.StorageEvent, error) {
+func (s *Store) StorageEventsBySession(ctx context.Context, syncSessionID string) ([]model.StorageEvent, error) {
 	var rows []storageEventRow
-	if err := db.WithContext(ctx).
+	if err := s.db.WithContext(ctx).
 		Where("sync_session_id = ?", syncSessionID).
 		Order("created_at ASC").
 		Find(&rows).Error; err != nil {
@@ -192,16 +172,44 @@ func StorageEventsBySession(ctx context.Context, db *gorm.DB, syncSessionID stri
 }
 
 // DeleteSyncData removes a storage's sync sessions and events.
-func DeleteSyncData(ctx context.Context, db *gorm.DB, storageID string) error {
-	if err := db.WithContext(ctx).
+func (s *Store) DeleteSyncData(ctx context.Context, storageID string) error {
+	if err := s.db.WithContext(ctx).
 		Where("storage_id = ?", storageID).
 		Delete(&storageEventRow{}).Error; err != nil {
 		return err
 	}
 
-	return db.WithContext(ctx).
+	return s.db.WithContext(ctx).
 		Where("storage_id = ?", storageID).
 		Delete(&syncSessionRow{}).Error
+}
+
+func createSyncSession(ctx context.Context, db *gorm.DB, id, storageID string, snapshot []model.SnapshotItem, createdAt time.Time) error {
+	snapshotBytes, err := model.SnapshotToDB(snapshot)
+	if err != nil {
+		return err
+	}
+
+	row := syncSessionRow{
+		ID:        id,
+		StorageID: storageID,
+		Snapshot:  snapshotBytes,
+		CreatedAt: createdAt,
+	}
+	return db.WithContext(ctx).Create(&row).Error
+}
+
+func insertStorageEvents(ctx context.Context, db *gorm.DB, events []model.StorageEvent) error {
+	rows := make([]storageEventRow, 0, len(events))
+	for _, evt := range events {
+		row, err := mapEventToRow(evt)
+		if err != nil {
+			return err
+		}
+		rows = append(rows, row)
+	}
+
+	return db.WithContext(ctx).Create(&rows).Error
 }
 
 func mapEventRow(row storageEventRow) (model.StorageEvent, error) {

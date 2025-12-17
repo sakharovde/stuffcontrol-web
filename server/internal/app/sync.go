@@ -1,4 +1,4 @@
-package service
+package app
 
 import (
 	"context"
@@ -7,10 +7,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 
 	"stuffcontrol/internal/model"
-	"stuffcontrol/internal/repository"
 )
 
 var (
@@ -20,12 +18,14 @@ var (
 
 // SyncService encapsulates the snapshotting logic.
 type SyncService struct {
-	DB *gorm.DB
+	persistence SyncPersistence
 }
 
+var _ SyncCommand = (*SyncService)(nil)
+
 // NewSyncService builds a new service instance.
-func NewSyncService(db *gorm.DB) *SyncService {
-	return &SyncService{DB: db}
+func NewSyncService(persistence SyncPersistence) *SyncService {
+	return &SyncService{persistence: persistence}
 }
 
 // SyncRequest mirrors the JSON payload consumed by the POST /api/sync-session endpoint.
@@ -56,7 +56,7 @@ func (s *SyncService) CreateSyncSession(ctx context.Context, req SyncRequest) (*
 		return nil, ErrEventsEmpty
 	}
 
-	latestSnapshot, err := repository.LatestSnapshotByStorage(ctx, s.DB, req.StorageID)
+	latestSnapshot, err := s.persistence.LatestSnapshotByStorage(ctx, req.StorageID)
 	if err != nil {
 		return nil, err
 	}
@@ -98,33 +98,23 @@ func (s *SyncService) CreateSyncSession(ctx context.Context, req SyncRequest) (*
 		snapshot = applyEvent(snapshot, evt)
 	}
 
-	if err := s.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := repository.CreateSyncSession(ctx, tx, sessionID, req.StorageID, snapshot, now); err != nil {
-			return err
-		}
-
-		if err := repository.InsertStorageEvents(ctx, tx, mappedEvents); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
+	if err := s.persistence.PersistSyncSession(ctx, sessionID, req.StorageID, snapshot, mappedEvents, now); err != nil {
 		return nil, err
 	}
 
 	if containsDeleteStorage(mappedEvents) {
-		if err := repository.DeleteSyncData(ctx, s.DB, req.StorageID); err != nil {
+		if err := s.persistence.DeleteSyncData(ctx, req.StorageID); err != nil {
 			return nil, err
 		}
 		return nil, nil
 	}
 
-	session, err := repository.SyncSessionByID(ctx, s.DB, sessionID)
+	session, err := s.persistence.SyncSessionByID(ctx, sessionID)
 	if err != nil {
 		return nil, err
 	}
 
-	eventsForSession, err := repository.StorageEventsBySession(ctx, s.DB, sessionID)
+	eventsForSession, err := s.persistence.StorageEventsBySession(ctx, sessionID)
 	if err != nil {
 		return nil, err
 	}

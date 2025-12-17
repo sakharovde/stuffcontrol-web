@@ -11,10 +11,11 @@ import (
 	"syscall"
 	"time"
 
+	"stuffcontrol/internal/app"
 	"stuffcontrol/internal/config"
 	"stuffcontrol/internal/db"
 	httpapi "stuffcontrol/internal/http"
-	"stuffcontrol/internal/service"
+	"stuffcontrol/internal/repository"
 	"stuffcontrol/migrations"
 )
 
@@ -36,8 +37,9 @@ func main() {
 		log.Fatalf("unable to run migrations: %v", err)
 	}
 
-	syncService := service.NewSyncService(database)
-	server := httpapi.NewServer(database, syncService, cfg.StaticDir)
+	repo := repository.NewStore(database)
+	syncService := app.NewSyncService(repo)
+	server := httpapi.NewServer(repo, repo, repo, repo, syncService, cfg.StaticDir)
 
 	host := "localhost"
 	if os.Getenv("RENDER") != "" {
