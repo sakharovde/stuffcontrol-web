@@ -2,10 +2,10 @@ package http
 
 import (
 	"encoding/json"
-	"errors"
-	"io/fs"
 	"log"
 	"net/http"
+	"path"
+	"strings"
 
 	"gorm.io/gorm"
 
@@ -19,7 +19,7 @@ type Server struct {
 	mux         *http.ServeMux
 	db          *gorm.DB
 	syncService *service.SyncService
-	static      http.Handler
+	static      *staticHandler
 }
 
 // NewServer prepares all routes.
@@ -41,8 +41,11 @@ func (s *Server) registerRoutes() {
 	s.mux.HandleFunc("/api/batches", s.handleBatches)
 	s.mux.HandleFunc("/api/storages", s.handleStorages)
 	s.mux.HandleFunc("/api/sync-sessions", s.handleSyncSessions)
+	s.mux.HandleFunc("/api/", s.handleAPINotFound)
 	if s.static != nil {
-		s.mux.Handle("/", s.static)
+		s.mux.HandleFunc("/assets", s.static.handleAssets)
+		s.mux.HandleFunc("/assets/", s.static.handleAssets)
+		s.mux.HandleFunc("/", s.static.handleSPA)
 	}
 }
 
@@ -170,6 +173,10 @@ func (s *Server) handleCreateSyncSession(w http.ResponseWriter, r *http.Request)
 	writeJSON(w, http.StatusOK, session)
 }
 
+func (s *Server) handleAPINotFound(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusNotFound, map[string]string{"message": "not found"})
+}
+
 func methodNotAllowed(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusMethodNotAllowed)
 }
@@ -193,34 +200,69 @@ func writeJSON(w http.ResponseWriter, status int, payload any) {
 	_ = json.NewEncoder(w).Encode(payload)
 }
 
-func newStaticHandler(root string) http.Handler {
+type staticHandler struct {
+	dir http.Dir
+}
+
+func newStaticHandler(root string) *staticHandler {
 	if root == "" {
 		return nil
 	}
+	return &staticHandler{dir: http.Dir(root)}
+}
 
-	dir := http.Dir(root)
-	fileServer := http.FileServer(dir)
+func (h *staticHandler) handleAssets(w http.ResponseWriter, r *http.Request) {
+	rel := strings.TrimPrefix(r.URL.Path, "/assets/")
+	if rel == "" {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	rel = path.Clean(rel)
+	if rel == "." || strings.HasPrefix(rel, "..") {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		path := r.URL.Path
-		if path == "" || path == "/" {
-			fileServer.ServeHTTP(w, r)
+	target := path.Join("assets", rel)
+	if !h.serveFile(w, r, target) {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func (h *staticHandler) handleSPA(w http.ResponseWriter, r *http.Request) {
+	requestPath := strings.TrimPrefix(r.URL.Path, "/")
+	requestPath = path.Clean("/" + requestPath)
+	requestPath = strings.TrimPrefix(requestPath, "/")
+
+	// Always try to serve the requested file first (e.g., favicon, manifest).
+	if requestPath != "" && requestPath != "." && !strings.HasPrefix(requestPath, "assets/") {
+		if h.serveFile(w, r, requestPath) {
 			return
 		}
+	}
 
-		f, err := dir.Open(path)
-		if err != nil {
-			if errors.Is(err, fs.ErrNotExist) {
-				r = r.Clone(r.Context())
-				r.URL.Path = "/index.html"
-			} else {
-				internalError(w, err)
-				return
-			}
-		} else {
-			_ = f.Close()
-		}
+	// Fallback to index.html for SPA routes.
+	h.serveIndex(w, r)
+}
 
-		fileServer.ServeHTTP(w, r)
-	})
+func (h *staticHandler) serveIndex(w http.ResponseWriter, r *http.Request) {
+	if !h.serveFile(w, r, "index.html") {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func (h *staticHandler) serveFile(w http.ResponseWriter, r *http.Request, filePath string) bool {
+	f, err := h.dir.Open(filePath)
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+
+	info, err := f.Stat()
+	if err != nil || info.IsDir() {
+		return false
+	}
+
+	http.ServeContent(w, r, info.Name(), info.ModTime(), f)
+	return true
 }
