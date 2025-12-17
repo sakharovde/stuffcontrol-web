@@ -40,6 +40,11 @@ export default class IdbClient {
     return allTransactions.filter((transaction) => !!transaction.data.storageName);
   };
 
+  getEventsWithoutSyncSession = async (): Promise<IdbTransaction[]> => {
+    const transactions = await this.getAllTransactions();
+    return transactions.filter((transaction) => !transaction.syncSessionId);
+  };
+
   getTransactionsByStorageId = async (storageId: string): Promise<IdbTransaction[]> => {
     const db = await this.dbPromise;
     const tx = db.transaction('transactions', 'readonly');

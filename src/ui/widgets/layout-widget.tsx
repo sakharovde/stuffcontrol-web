@@ -19,13 +19,17 @@ const LayoutWidget: FC<PropsWithChildren<Props>> = (props) => {
   );
 
   return (
-    <div className='max-w-lg mx-auto h-full relative bg-white'>
-      <div style={{ background: '#ace0ff' }}>
-        <SafeArea position='top' />
+    <div className='min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100'>
+      <div className='sticky top-0 z-10 backdrop-blur bg-white/80 shadow-sm w-full'>
+        <div style={{ background: '#ace0ff' }}>
+          <SafeArea position='top' />
+        </div>
+        <div className='max-w-lg mx-auto w-full px-4'>
+          <NavBar onBack={props.onBack} backArrow={needShowBack} back={props.backText} right={right} />
+        </div>
       </div>
-      <NavBar onBack={props.onBack} backIcon={needShowBack} back={props.backText} right={right}></NavBar>
-      <div>{props.children}</div>
-      <div>
+      <div className='max-w-lg mx-auto min-h-screen flex flex-col px-3 py-4'>
+        <div className='flex-1 w-full'>{props.children}</div>
         <SafeArea position='bottom' />
       </div>
     </div>

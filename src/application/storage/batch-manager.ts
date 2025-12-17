@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { Batch, BatchRepository } from '../../domain';
 import { v7 as uuidv7 } from 'uuid';
 
-type BatchListState = {
+export type BatchListState = {
   batchMap: Record<string, Batch>;
   // storageId -> ids батчей (кэш списков)
   batchIdsByStorage: Record<string, string[]>;

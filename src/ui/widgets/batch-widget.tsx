@@ -1,7 +1,6 @@
-import { FC, useContext } from 'react';
-import { Formik } from 'formik';
+import { FC, useContext, useEffect, useState } from 'react';
 import CoreContext from '../core-context.ts';
-import { SafeArea } from 'antd-mobile';
+import { Button, Card, SafeArea, Space, Stepper, Tag, Toast } from 'antd-mobile';
 import { Batch } from '../../domain';
 
 type Props = {
@@ -13,79 +12,60 @@ const BatchWidget: FC<Props> = (props) => {
   const batch = props.batch;
   const core = useContext(CoreContext);
   const batchManager = core.getBatchManager();
+  const [quantity, setQuantity] = useState(batch.quantity);
+  const [updating, setUpdating] = useState(false);
 
-  const handleSubmit = (values: { quantity: number }) => {
-    batch.quantity = values.quantity;
-    batchManager.updateBatch(batch).then(props.onSuccess);
+  useEffect(() => {
+    setQuantity(batch.quantity);
+  }, [batch]);
+
+  const handleSave = async () => {
+    setUpdating(true);
+    try {
+      await batchManager.updateBatch({ ...batch, quantity });
+      Toast.show({ icon: 'success', content: 'Quantity updated' });
+      props.onSuccess();
+    } finally {
+      setUpdating(false);
+    }
   };
 
+  const expiryLabel = batch.expirationDate ? batch.expirationDate.toISOString().split('T')[0] : null;
+
   return (
-    <div>
-      <h3 className='text-xl font-semibold px-3'>{batch.name}</h3>
-      <div className='px-3 py-5 flex flex-col gap-1'>
-        <div className='flex justify-between'>
-          <span>Quantity</span>
-          <span>{batch.quantity}</span>
+    <div className='px-4 pb-20'>
+      <h3 className='text-2xl font-semibold'>{batch.name}</h3>
+      <Card className='mt-4 shadow-sm'>
+        <div className='flex items-center justify-between'>
+          <div>
+            <div className='text-xs uppercase text-gray-500'>Quantity</div>
+            <div className='text-3xl font-semibold text-blue-600'>{batch.quantity}</div>
+          </div>
+          <Tag color='primary' bordered={false}>
+            Batch ID {batch.id.slice(0, 6)}
+          </Tag>
         </div>
-        {batch.expirationDate && (
-          <div className='flex justify-between'>
-            <span>Expiration date</span>
-            <span>{batch.expirationDate.toISOString().split('T')[0]}</span>
+        {expiryLabel && (
+          <div className='mt-4 text-sm text-gray-600'>
+            Expires on <span className='font-medium'>{expiryLabel}</span>
           </div>
         )}
+      </Card>
+
+      <Card className='mt-5'>
+        <div className='text-sm text-gray-500 mb-3'>Adjust quantity</div>
+        <Stepper min={0} value={quantity} onChange={(val) => setQuantity(val ?? 0)} />
+      </Card>
+
+      <Space block direction='vertical' className='mt-6'>
+        <Button block color='primary' loading={updating} onClick={handleSave}>
+          Save changes
+        </Button>
+      </Space>
+
+      <div className='absolute bottom-0 left-0 bg-white w-full'>
+        <SafeArea position='bottom' />
       </div>
-      <Formik
-        initialValues={{ quantity: batch.quantity }}
-        validate={(values) => {
-          const errors: { quantity?: string } = {};
-          if (values.quantity < 0) {
-            errors.quantity = 'Quantity should be positive';
-          }
-          return errors;
-        }}
-        onSubmit={handleSubmit}
-      >
-        {({ values, handleChange, handleSubmit, setFieldValue }) => (
-          <form onSubmit={handleSubmit} className='px-3 flex absolute left-0 bottom-0 w-full'>
-            <div className='w-full flex'>
-              <div className='basis-1/6 flex-grow-0 flex-shrink-0 p-1'>
-                <button
-                  type='button'
-                  className='w-full p-1 text-center border border-gray-300 rounded'
-                  onClick={() => setFieldValue('quantity', values.quantity - 1)}
-                  disabled={values.quantity <= 0}
-                >
-                  -
-                </button>
-              </div>
-              <div className='basis-1/6 flex-grow-0 flex-shrink-0 p-1'>
-                <input
-                  type='number'
-                  name='quantity'
-                  value={values.quantity}
-                  onChange={handleChange}
-                  className='w-full p-1 text-center border border-gray-300 rounded'
-                />
-              </div>
-              <div className='basis-1/6 flex-grow-0 flex-shrink-0 p-1'>
-                <button
-                  type='button'
-                  className='w-full p-1 text-center border border-gray-300 rounded'
-                  onClick={() => setFieldValue('quantity', values.quantity + 1)}
-                >
-                  +
-                </button>
-              </div>
-              <div className='basis-1/2 flex-grow-0 flex-shrink-0 p-1'>
-                <button type='submit' className='w-full p-1 text-center border border-gray-300 rounded'>
-                  <span>Submit</span>
-                </button>
-              </div>
-            </div>
-            <SafeArea position='bottom' />
-          </form>
-        )}
-      </Formik>
     </div>
   );
 };
