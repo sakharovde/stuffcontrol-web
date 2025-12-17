@@ -1,4 +1,4 @@
-package http
+package httpserver
 
 import (
 	"encoding/json"
@@ -7,28 +7,29 @@ import (
 	"path"
 	"strings"
 
-	"stuffcontrol/internal/app"
-	"stuffcontrol/internal/model"
+	"stuffcontrol/internal/application/ports"
+	"stuffcontrol/internal/application/syncsession"
+	"stuffcontrol/internal/domain/storage"
 )
 
 // Server wires HTTP routes to the underlying services.
 type Server struct {
 	mux           *http.ServeMux
-	storageEvents app.StorageEventQuery
-	products      app.ProductQuery
-	storages      app.StorageQuery
-	syncSessions  app.SyncSessionQuery
-	syncCommand   app.SyncCommand
+	storageEvents ports.StorageEventQuery
+	products      ports.ProductQuery
+	storages      ports.StorageQuery
+	syncSessions  ports.SyncSessionQuery
+	syncCommand   syncsession.Command
 	static        *staticHandler
 }
 
 // NewServer prepares all routes.
 func NewServer(
-	storageEvents app.StorageEventQuery,
-	products app.ProductQuery,
-	storages app.StorageQuery,
-	syncSessions app.SyncSessionQuery,
-	syncCommand app.SyncCommand,
+	storageEvents ports.StorageEventQuery,
+	products ports.ProductQuery,
+	storages ports.StorageQuery,
+	syncSessions ports.SyncSessionQuery,
+	syncCommand syncsession.Command,
 	staticDir string,
 ) *Server {
 	srv := &Server{
@@ -156,14 +157,14 @@ func (s *Server) handleBatches(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if snapshot == nil {
-		snapshot = []model.SnapshotItem{}
+		snapshot = []storage.SnapshotItem{}
 	}
 
 	writeJSON(w, http.StatusOK, snapshot)
 }
 
 func (s *Server) handleCreateSyncSession(w http.ResponseWriter, r *http.Request) {
-	var payload app.SyncRequest
+	var payload syncsession.SyncRequest
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		badRequest(w, "invalid JSON payload")
 		return
@@ -172,7 +173,7 @@ func (s *Server) handleCreateSyncSession(w http.ResponseWriter, r *http.Request)
 	session, err := s.syncCommand.CreateSyncSession(r.Context(), payload)
 	if err != nil {
 		switch err {
-		case app.ErrStorageIDRequired, app.ErrEventsEmpty:
+		case syncsession.ErrStorageIDRequired, syncsession.ErrEventsEmpty:
 			badRequest(w, err.Error())
 		default:
 			internalError(w, err)

@@ -1,4 +1,4 @@
-package model
+package storage
 
 import (
 	"encoding/json"
@@ -51,6 +51,15 @@ func EventTypeFromDB(raw string) (EventType, error) {
 		return val, nil
 	}
 	return "", fmt.Errorf("unknown event type from db: %s", raw)
+}
+
+// ParseEventType helps HTTP handlers validate payloads.
+func ParseEventType(value string) (EventType, error) {
+	e := EventType(value)
+	if _, ok := eventTypeToDB[e]; ok {
+		return e, nil
+	}
+	return "", errors.New("unknown eventType")
 }
 
 // StorageEventData describes the payload stored in storage_event.data.
@@ -234,13 +243,4 @@ type StorageInfo struct {
 	StorageID   string    `json:"storageId"`
 	StorageName *string   `json:"storageName"`
 	CreatedAt   time.Time `json:"createdAt"`
-}
-
-// ParseEventType helps HTTP handlers validate payloads.
-func ParseEventType(value string) (EventType, error) {
-	e := EventType(value)
-	if _, ok := eventTypeToDB[e]; ok {
-		return e, nil
-	}
-	return "", errors.New("unknown eventType")
 }

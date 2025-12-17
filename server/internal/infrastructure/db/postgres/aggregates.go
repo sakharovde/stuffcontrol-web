@@ -1,10 +1,10 @@
-package repository
+package postgres
 
 import (
 	"context"
 	"time"
 
-	"stuffcontrol/internal/model"
+	"stuffcontrol/internal/domain/storage"
 )
 
 type storageInfoRow struct {
@@ -21,7 +21,7 @@ type productInfoRow struct {
 }
 
 // Storages aggregates events to list distinct storages.
-func (s *Store) Storages(ctx context.Context) ([]model.StorageInfo, error) {
+func (s *Store) Storages(ctx context.Context) ([]storage.StorageInfo, error) {
 	query := `
         SELECT
             se.storage_id AS storage_id,
@@ -42,9 +42,9 @@ func (s *Store) Storages(ctx context.Context) ([]model.StorageInfo, error) {
 		return nil, err
 	}
 
-	result := make([]model.StorageInfo, 0, len(rows))
+	result := make([]storage.StorageInfo, 0, len(rows))
 	for _, row := range rows {
-		result = append(result, model.StorageInfo{
+		result = append(result, storage.StorageInfo{
 			StorageID:   row.StorageID,
 			StorageName: row.StorageName,
 			CreatedAt:   row.CreatedAt,
@@ -55,7 +55,7 @@ func (s *Store) Storages(ctx context.Context) ([]model.StorageInfo, error) {
 }
 
 // Products aggregates product details across storage events.
-func (s *Store) Products(ctx context.Context) ([]model.ProductInfo, error) {
+func (s *Store) Products(ctx context.Context) ([]storage.ProductInfo, error) {
 	query := `
         SELECT
             se.product_id AS product_id,
@@ -84,9 +84,9 @@ func (s *Store) Products(ctx context.Context) ([]model.ProductInfo, error) {
 		return nil, err
 	}
 
-	result := make([]model.ProductInfo, 0, len(rows))
+	result := make([]storage.ProductInfo, 0, len(rows))
 	for _, row := range rows {
-		result = append(result, model.ProductInfo{
+		result = append(result, storage.ProductInfo{
 			ProductID:     row.ProductID,
 			ProductName:   row.ProductName,
 			ShelfLifeDays: row.ShelfLifeDays,

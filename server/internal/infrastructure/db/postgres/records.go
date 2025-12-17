@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"stuffcontrol/internal/model"
+	"stuffcontrol/internal/domain/storage"
 )
 
 type storageEventRow struct {
@@ -33,7 +33,7 @@ type syncSessionRow struct {
 func (syncSessionRow) TableName() string { return "sync_session" }
 
 // ListStorageEvents returns every stored event.
-func (s *Store) ListStorageEvents(ctx context.Context) ([]model.StorageEvent, error) {
+func (s *Store) ListStorageEvents(ctx context.Context) ([]storage.StorageEvent, error) {
 	var rows []storageEventRow
 	if err := s.db.WithContext(ctx).
 		Model(&storageEventRow{}).
@@ -42,7 +42,7 @@ func (s *Store) ListStorageEvents(ctx context.Context) ([]model.StorageEvent, er
 		return nil, err
 	}
 
-	result := make([]model.StorageEvent, 0, len(rows))
+	result := make([]storage.StorageEvent, 0, len(rows))
 	for _, row := range rows {
 		evt, err := mapEventRow(row)
 		if err != nil {
@@ -55,7 +55,7 @@ func (s *Store) ListStorageEvents(ctx context.Context) ([]model.StorageEvent, er
 }
 
 // ListSyncSessions returns all sync sessions ordered by creation time.
-func (s *Store) ListSyncSessions(ctx context.Context) ([]model.SyncSession, error) {
+func (s *Store) ListSyncSessions(ctx context.Context) ([]storage.SyncSession, error) {
 	var rows []syncSessionRow
 	if err := s.db.WithContext(ctx).
 		Model(&syncSessionRow{}).
@@ -64,13 +64,13 @@ func (s *Store) ListSyncSessions(ctx context.Context) ([]model.SyncSession, erro
 		return nil, err
 	}
 
-	result := make([]model.SyncSession, 0, len(rows))
+	result := make([]storage.SyncSession, 0, len(rows))
 	for _, row := range rows {
-		snapshot, err := model.SnapshotFromDB(row.Snapshot)
+		snapshot, err := storage.SnapshotFromDB(row.Snapshot)
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, model.SyncSession{
+		result = append(result, storage.SyncSession{
 			ID:        row.ID,
 			StorageID: row.StorageID,
 			Snapshot:  snapshot,
@@ -82,7 +82,7 @@ func (s *Store) ListSyncSessions(ctx context.Context) ([]model.SyncSession, erro
 }
 
 // LatestSnapshot returns the snapshot from the newest sync session overall.
-func (s *Store) LatestSnapshot(ctx context.Context) ([]model.SnapshotItem, error) {
+func (s *Store) LatestSnapshot(ctx context.Context) ([]storage.SnapshotItem, error) {
 	var row syncSessionRow
 	err := s.db.WithContext(ctx).
 		Model(&syncSessionRow{}).
@@ -96,11 +96,11 @@ func (s *Store) LatestSnapshot(ctx context.Context) ([]model.SnapshotItem, error
 		return nil, err
 	}
 
-	return model.SnapshotFromDB(row.Snapshot)
+	return storage.SnapshotFromDB(row.Snapshot)
 }
 
 // LatestSnapshotByStorage returns the most recent snapshot for a storage.
-func (s *Store) LatestSnapshotByStorage(ctx context.Context, storageID string) ([]model.SnapshotItem, error) {
+func (s *Store) LatestSnapshotByStorage(ctx context.Context, storageID string) ([]storage.SnapshotItem, error) {
 	var row syncSessionRow
 	err := s.db.WithContext(ctx).
 		Model(&syncSessionRow{}).
@@ -115,11 +115,11 @@ func (s *Store) LatestSnapshotByStorage(ctx context.Context, storageID string) (
 		return nil, err
 	}
 
-	return model.SnapshotFromDB(row.Snapshot)
+	return storage.SnapshotFromDB(row.Snapshot)
 }
 
 // PersistSyncSession stores the snapshot and events in a single transaction.
-func (s *Store) PersistSyncSession(ctx context.Context, sessionID, storageID string, snapshot []model.SnapshotItem, events []model.StorageEvent, createdAt time.Time) error {
+func (s *Store) PersistSyncSession(ctx context.Context, sessionID, storageID string, snapshot []storage.SnapshotItem, events []storage.StorageEvent, createdAt time.Time) error {
 	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := createSyncSession(ctx, tx, sessionID, storageID, snapshot, createdAt); err != nil {
 			return err
@@ -129,19 +129,19 @@ func (s *Store) PersistSyncSession(ctx context.Context, sessionID, storageID str
 }
 
 // SyncSessionByID fetches a session by its identifier.
-func (s *Store) SyncSessionByID(ctx context.Context, id string) (*model.SyncSession, error) {
+func (s *Store) SyncSessionByID(ctx context.Context, id string) (*storage.SyncSession, error) {
 	var row syncSessionRow
 	if err := s.db.WithContext(ctx).
 		First(&row, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	snapshot, err := model.SnapshotFromDB(row.Snapshot)
+	snapshot, err := storage.SnapshotFromDB(row.Snapshot)
 	if err != nil {
 		return nil, err
 	}
 
-	return &model.SyncSession{
+	return &storage.SyncSession{
 		ID:        row.ID,
 		StorageID: row.StorageID,
 		Snapshot:  snapshot,
@@ -150,7 +150,7 @@ func (s *Store) SyncSessionByID(ctx context.Context, id string) (*model.SyncSess
 }
 
 // StorageEventsBySession returns events associated with a sync session.
-func (s *Store) StorageEventsBySession(ctx context.Context, syncSessionID string) ([]model.StorageEvent, error) {
+func (s *Store) StorageEventsBySession(ctx context.Context, syncSessionID string) ([]storage.StorageEvent, error) {
 	var rows []storageEventRow
 	if err := s.db.WithContext(ctx).
 		Where("sync_session_id = ?", syncSessionID).
@@ -159,7 +159,7 @@ func (s *Store) StorageEventsBySession(ctx context.Context, syncSessionID string
 		return nil, err
 	}
 
-	result := make([]model.StorageEvent, 0, len(rows))
+	result := make([]storage.StorageEvent, 0, len(rows))
 	for _, row := range rows {
 		evt, err := mapEventRow(row)
 		if err != nil {
@@ -184,8 +184,8 @@ func (s *Store) DeleteSyncData(ctx context.Context, storageID string) error {
 		Delete(&syncSessionRow{}).Error
 }
 
-func createSyncSession(ctx context.Context, db *gorm.DB, id, storageID string, snapshot []model.SnapshotItem, createdAt time.Time) error {
-	snapshotBytes, err := model.SnapshotToDB(snapshot)
+func createSyncSession(ctx context.Context, db *gorm.DB, id, storageID string, snapshot []storage.SnapshotItem, createdAt time.Time) error {
+	snapshotBytes, err := storage.SnapshotToDB(snapshot)
 	if err != nil {
 		return err
 	}
@@ -199,7 +199,7 @@ func createSyncSession(ctx context.Context, db *gorm.DB, id, storageID string, s
 	return db.WithContext(ctx).Create(&row).Error
 }
 
-func insertStorageEvents(ctx context.Context, db *gorm.DB, events []model.StorageEvent) error {
+func insertStorageEvents(ctx context.Context, db *gorm.DB, events []storage.StorageEvent) error {
 	rows := make([]storageEventRow, 0, len(events))
 	for _, evt := range events {
 		row, err := mapEventToRow(evt)
@@ -212,18 +212,18 @@ func insertStorageEvents(ctx context.Context, db *gorm.DB, events []model.Storag
 	return db.WithContext(ctx).Create(&rows).Error
 }
 
-func mapEventRow(row storageEventRow) (model.StorageEvent, error) {
-	evtType, err := model.EventTypeFromDB(row.EventType)
+func mapEventRow(row storageEventRow) (storage.StorageEvent, error) {
+	evtType, err := storage.EventTypeFromDB(row.EventType)
 	if err != nil {
-		return model.StorageEvent{}, err
+		return storage.StorageEvent{}, err
 	}
 
-	var data model.StorageEventData
+	var data storage.StorageEventData
 	if err := data.UnmarshalDB(row.Data); err != nil {
-		return model.StorageEvent{}, err
+		return storage.StorageEvent{}, err
 	}
 
-	return model.StorageEvent{
+	return storage.StorageEvent{
 		ID:            row.ID,
 		StorageID:     row.StorageID,
 		ProductID:     row.ProductID,
@@ -235,7 +235,7 @@ func mapEventRow(row storageEventRow) (model.StorageEvent, error) {
 	}, nil
 }
 
-func mapEventToRow(evt model.StorageEvent) (storageEventRow, error) {
+func mapEventToRow(evt storage.StorageEvent) (storageEventRow, error) {
 	payload, err := evt.Data.MarshalDB()
 	if err != nil {
 		return storageEventRow{}, err

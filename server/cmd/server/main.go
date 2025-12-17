@@ -11,11 +11,10 @@ import (
 	"syscall"
 	"time"
 
-	"stuffcontrol/internal/app"
+	"stuffcontrol/internal/application/syncsession"
 	"stuffcontrol/internal/config"
-	"stuffcontrol/internal/db"
-	httpapi "stuffcontrol/internal/http"
-	"stuffcontrol/internal/repository"
+	"stuffcontrol/internal/infrastructure/db/postgres"
+	httpserver "stuffcontrol/internal/interface/http"
 	"stuffcontrol/migrations"
 )
 
@@ -23,7 +22,7 @@ func main() {
 	cfg := config.Load()
 	ctx := context.Background()
 
-	database, err := db.Connect(ctx, cfg.DB)
+	database, err := postgres.Connect(ctx, cfg.DB)
 	if err != nil {
 		log.Fatalf("unable to connect to database: %v", err)
 	}
@@ -37,9 +36,9 @@ func main() {
 		log.Fatalf("unable to run migrations: %v", err)
 	}
 
-	repo := repository.NewStore(database)
-	syncService := app.NewSyncService(repo)
-	server := httpapi.NewServer(repo, repo, repo, repo, syncService, cfg.StaticDir)
+	repo := postgres.NewStore(database)
+	syncService := syncsession.NewService(repo)
+	server := httpserver.NewServer(repo, repo, repo, repo, syncService, cfg.StaticDir)
 
 	host := "localhost"
 	if os.Getenv("RENDER") != "" {
