@@ -1,12 +1,11 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import cn from 'classnames';
-import { BatchDto } from '../../application';
 import CoreContext from '../core-context.ts';
 import { SafeArea } from 'antd-mobile';
 import { Batch, Storage } from '../../domain';
 
 type StorageItemWidgetProps = {
-  data: BatchDto;
+  data: Batch;
   onClickEdit: () => void;
   onClickShow: () => void;
 };
