@@ -1,50 +1,93 @@
-# React + TypeScript + Vite
+# Stuff Control
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Full‑stack inventory tracker built with React/Vite on the client and Go + PostgreSQL on the server.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Tool | Version | Notes |
+| --- | --- | --- |
+| Node.js | 18+ | Vite and the dev server expect a modern runtime |
+| Yarn | 4.5.2 | Already configured via `packageManager`; run `corepack enable` if needed |
+| Go | 1.22+ | Required for the API server located in `server/` |
+| PostgreSQL | 14+ | The Go service applies migrations automatically on startup |
 
-## Expanding the ESLint configuration
+## Environment Variables
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Frontend (`.env` / `.env.local`)
 
-- Configure the top-level `parserOptions` property like this:
+| Variable | Description | Default |
+| --- | --- | --- |
+| `VITE_SERVER_ORIGIN` | Base URL the SPA uses when talking to the Go server. Set to the public HTTP endpoint if the API is remote. | `http://localhost:3000` (configured in `vite.config.ts`) |
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Backend (`server/.env` or shell)
+
+| Variable | Description | Default in development |
+| --- | --- | --- |
+| `NODE_ENV` | `development`, `test`, or `production`. Affects DB defaults. | `development` |
+| `PORT` | HTTP port for the Go server. | `3000` |
+| `DB_HOST` | PostgreSQL host. | `localhost` |
+| `DB_PORT` | PostgreSQL port. | `5432` |
+| `DB_USER` | Database user. | `stuffcontrol_user` |
+| `DB_PASSWORD` | Database password. | `stuffcontrol_password` |
+| `DB_NAME` | Database name. | `stuffcontrol_development` |
+| `DB_SSL_MODE` | Postgres SSL mode (`disable`, `require`, etc.). | `disable` |
+
+> The server also checks `RENDER`; when set, it binds to `0.0.0.0`.
+
+## Installation
+
+1. **Install dependencies**
+   ```bash
+   yarn install
+   ```
+2. **Prepare the database**
+   ```bash
+   createdb stuffcontrol_development
+   # or adjust according to the env vars you configured
+   ```
+3. (Optional) create `.env.local` and `.env` files for the frontend and backend respectively to override any defaults listed above.
+
+## Running the stack locally
+
+### Backend API
+
+```bash
+yarn server:start
+# or manually:
+# cd server && go run ./cmd/server
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+The server connects to PostgreSQL, runs migrations from `server/migrations`, and then listens on `http://localhost:3000` unless overridden by env variables.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### Frontend (Vite dev server)
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+yarn dev
 ```
+
+By default the SPA is served at `http://localhost:5173`. It proxies API calls to `VITE_SERVER_ORIGIN`, so ensure that variable points to the backend instance you started above.
+
+## Building & Previewing
+
+```bash
+yarn build   # type-check + bundle client
+yarn preview # serves the production build locally
+```
+
+## Useful Scripts
+
+| Command | Description |
+| --- | --- |
+| `yarn lint` | Run ESLint on the frontend |
+| `yarn server:deps` | Sync Go module dependencies (`go mod tidy`) |
+| `yarn server:start` | Start the Go API (as described earlier) |
+
+## Folder Layout
+
+```
+src/          – React application
+server/       – Go API, migrations, configuration
+public/       – Static assets served by Vite
+```
+
+Everything else (Go migrations, API handlers, etc.) lives inside `server/` and is documented inline.
