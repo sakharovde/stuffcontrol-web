@@ -1,29 +1,20 @@
-# Server module
+# stuff-control-server
 
-This directory hosts the Go backend for StuffControl. Common day‑to‑day tasks are wrapped in the `Makefile` so you can quickly build, test, lint, or format the code.
+TypeScript/Fastify backend for Stuff Control.
 
 ## Prerequisites
 
-- Go 1.23+
-- `golangci-lint` (optional, required for `make lint`)
+- Node.js 22+
+- Yarn 4.5.2
+- PostgreSQL 14+
 
 ## Useful commands
 
 ```bash
-# Format sources in cmd/ and internal/
-make fmt
-
-# Run unit tests
-make test
-
-# Run static analysis via golangci-lint
-make lint
-
-# Build a binary into bin/stuffcontrol
-make build
-
-# Launch the API locally
-make run
+yarn install
+yarn build
+yarn start
+yarn vitest run
 ```
 
-If you add new modules or generated code, update `.golangci.yml` and the `Makefile` targets accordingly.
+The server exposes the API routes from the original `../server` project and also serves the built SPA when `STATIC_DIR` points to a frontend build directory. By default it uses `../dist`.

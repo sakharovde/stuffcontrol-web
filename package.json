@@ -8,8 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server:deps": "cd server && go mod tidy",
-    "server:start": "cd server && go run ./cmd/server"
+    "server:deps": "cd server && corepack enable && yarn install --immutable",
+    "server:build": "cd server && yarn build",
+    "server:test": "cd server && yarn test",
+    "server:start": "cd server && yarn build && yarn start"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.24.0",

@@ -1,25 +1,19 @@
-# Build artifacts
-bin/
-cmd/**/bin/
-coverage.out
-*.coverprofile
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
-# Dependency / tooling caches
-vendor/
-.gocache/
+# Swap the comments on the following lines if you wish to use zero-installs
+# In that case, don't forget to run `yarn config set enableGlobalCache false`!
+# Documentation here: https://yarnpkg.com/features/caching#zero-installs
 
-# Runtime artifacts
-*.log
-*.sqlite
-*.db
-*.pid
+#!.yarn/cache
+.pnp.*
 
-# Local env / secrets
+.idea
+dist
+node_modules
 .env
-.env.*
-*.local
-
-# IDE / OS files
-.vscode/
-.idea/
-.DS_Store
+.db
