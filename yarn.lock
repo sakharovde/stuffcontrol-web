@@ -4433,6 +4433,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-router: "npm:^7.0.0"
+    shared: "workspace:*"
     tailwindcss: "npm:^3.4.15"
     typescript: "npm:~5.6.2"
     typescript-eslint: "npm:^8.11.0"
@@ -9592,6 +9593,7 @@ __metadata:
     pm2: "npm:^5.4.3"
     prettier: "npm:3.4.2"
     reflect-metadata: "npm:^0.2.2"
+    shared: "workspace:*"
     ts-node: "npm:^10.9.2"
     typeorm: "npm:^0.3.20"
     typeorm-naming-strategies: "npm:^4.1.0"
@@ -9659,6 +9661,14 @@ __metadata:
   checksum: 10c0/9d36bdd76202c8116abbe152a00055ccd8a0099cb28fc17c01fa7bb2c8cffb9ca60e2ab0fe5f274ed6c45dc2633d8c39cf7ab050306c231904512ba9da4d8ab1
   languageName: node
   linkType: hard
+
+"shared@workspace:*, shared@workspace:packages/shared":
+  version: 0.0.0-use.local
+  resolution: "shared@workspace:packages/shared"
+  dependencies:
+    typescript: "npm:~5.6.2"
+  languageName: unknown
+  linkType: soft
 
 "shebang-command@npm:^2.0.0":
   version: 2.0.0

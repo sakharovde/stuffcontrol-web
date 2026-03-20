@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "yarn vite",
+    "prebuild": "yarn workspace shared build",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "pretest": "yarn workspace shared build",
     "test": "vitest run"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router": "^7.0.0",
+    "shared": "workspace:*",
     "uuid": "^11.0.2"
   },
   "devDependencies": {

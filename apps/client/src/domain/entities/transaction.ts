@@ -1,16 +1,11 @@
 import SyncSession from './sync-session.ts';
 import { UUID } from './types/uuid.ts';
+import type { StorageEventType } from 'shared';
 
 export default class Transaction {
   constructor(
     public readonly id: UUID,
-    public readonly eventType:
-      | 'addProducts'
-      | 'removeProducts'
-      | 'changeProductName'
-      | 'createStorage'
-      | 'deleteStorage'
-      | 'changeStorageName',
+    public readonly eventType: StorageEventType,
     public readonly data: {
       expiryDate?: Date;
       manufactureDate?: Date;

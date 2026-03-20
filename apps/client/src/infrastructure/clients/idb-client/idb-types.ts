@@ -1,3 +1,5 @@
+import type { StorageEventType } from 'shared';
+
 type IdbUUID = string;
 type IdbTimestamp = number;
 
@@ -22,13 +24,7 @@ export interface IdbTransaction {
   storageId: IdbUUID;
   productId?: IdbUUID;
   batchId?: IdbUUID;
-  eventType:
-    | 'addProducts'
-    | 'removeProducts'
-    | 'changeProductName'
-    | 'createStorage'
-    | 'deleteStorage'
-    | 'changeStorageName';
+  eventType: StorageEventType;
   data: {
     expiryDate?: IdbTimestamp;
     manufactureDate?: IdbTimestamp;

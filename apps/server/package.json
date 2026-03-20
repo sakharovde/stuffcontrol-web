@@ -5,8 +5,10 @@
   },
   "scripts": {
     "dev": "FORCE_COLOR=1 pm2-runtime ecosystem.config.cjs",
+    "prebuild": "yarn workspace shared build",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
+    "pretest": "yarn workspace shared build",
     "test": "vitest",
     "typeorm": "typeorm-ts-node-commonjs"
   },
@@ -22,6 +24,7 @@
     "fastify": "^5.1.0",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.2",
+    "shared": "workspace:*",
     "typeorm": "^0.3.20",
     "typeorm-naming-strategies": "^4.1.0",
     "vitest": "^3.0.7"

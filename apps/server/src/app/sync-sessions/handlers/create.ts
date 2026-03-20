@@ -3,31 +3,10 @@ import DBDataSource from '../../../db/data-source';
 import SyncSession from '../../../db/entities/sync-session';
 import StorageEvent from '../../../db/entities/storage-event';
 import applyEventToSnapshot from '../helpers/applyEventToSnapshot';
-
-export type ProductHistoryItem = {
-  id?: string;
-  storageId: string;
-  productId: string;
-  batchId: string;
-  eventType: StorageEvent['eventType'];
-  eventDate: Date | string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-  syncSessionId?: string | null;
-
-  // data: JsonNullValueInput | InputJsonValue;
-  quantity?: number;
-  productName?: string;
-  expiryDate?: string;
-  manufactureDate?: string;
-  storageName?: string;
-};
+import type { HttpSyncEvent, HttpSyncRequest } from 'shared';
 
 interface SyncRoute extends RouteGenericInterface {
-  Body: {
-    storageId: string;
-    events: ProductHistoryItem[];
-  };
+  Body: HttpSyncRequest;
 }
 
 const handler: RouteHandler<SyncRoute> = async (req, reply) => {
@@ -39,12 +18,11 @@ const handler: RouteHandler<SyncRoute> = async (req, reply) => {
     });
   }
 
-  const mapBodyItemToData = (body: ProductHistoryItem) => ({
+  const mapBodyItemToData = (body: HttpSyncEvent) => ({
     storageId: storageId,
     productId: body.productId,
     batchId: body.batchId,
     eventType: body.eventType,
-    eventDate: body.eventDate,
     data: {
       ...(body.quantity ? { quantity: body.quantity } : {}),
       ...(body.productName ? { productName: body.productName } : {}),

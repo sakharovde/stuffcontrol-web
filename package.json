@@ -8,13 +8,13 @@
   ],
   "scripts": {
     "dev": "yarn workspace client dev",
-    "build": "yarn workspace client build",
+    "build": "yarn workspace shared build && yarn workspace client build",
     "lint": "yarn workspace client lint",
     "preview": "yarn workspace client preview",
-    "server:build": "yarn workspace server build",
-    "server:test": "yarn workspace server test",
-    "server:start": "yarn workspace server build && yarn workspace server start",
-    "test": "yarn workspace client test && yarn workspace server test"
+    "server:build": "yarn workspace shared build && yarn workspace server build",
+    "server:test": "yarn workspace shared build && yarn workspace server test",
+    "server:start": "yarn workspace shared build && yarn workspace server build && yarn workspace server start",
+    "test": "yarn workspace shared build && yarn workspace client test && yarn workspace server test"
   },
   "packageManager": "yarn@4.5.2"
 }

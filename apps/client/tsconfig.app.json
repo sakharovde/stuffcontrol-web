@@ -8,6 +8,10 @@
     "skipLibCheck": true,
 
     /* Bundler mode */
+    "baseUrl": ".",
+    "paths": {
+      "shared": ["../../packages/shared/dist/index.d.ts"]
+    },
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,

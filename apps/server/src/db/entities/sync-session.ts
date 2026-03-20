@@ -2,17 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import StorageEvent from './storage-event';
 import camelcaseKeys from 'camelcase-keys';
 import decamelizeKeys from 'decamelize-keys';
-
-type SnapshotItem = {
-  storageId: string;
-  productId: string;
-  batchId: string;
-  productName: string;
-  quantity: number;
-  expiryDate?: string;
-  manufactureDate?: string;
-  shelfLifeDays?: number;
-};
+import type { HttpSnapshotItem } from 'shared';
 
 @Entity()
 export default class SyncSession {
@@ -29,7 +19,7 @@ export default class SyncSession {
       to: (value) => (value ? decamelizeKeys(value, { deep: true }) : value),
     },
   })
-  snapshot: Array<SnapshotItem>;
+  snapshot: Array<HttpSnapshotItem>;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

@@ -4,6 +4,7 @@ import decamelize from 'decamelize';
 import camelcase from 'camelcase';
 import camelcaseKeys from 'camelcase-keys';
 import decamelizeKeys from 'decamelize-keys';
+import type { HttpStorageEventData, StorageEventType } from 'shared';
 
 @Entity()
 export default class StorageEvent {
@@ -25,13 +26,7 @@ export default class StorageEvent {
       to: (value: string) => (value ? decamelize(value) : value),
     },
   })
-  eventType:
-    | 'addProducts'
-    | 'removeProducts'
-    | 'changeProductName'
-    | 'createStorage'
-    | 'deleteStorage'
-    | 'changeStorageName';
+  eventType: StorageEventType;
 
   @Column({
     type: 'jsonb',
@@ -40,14 +35,7 @@ export default class StorageEvent {
       to: (value) => (value ? decamelizeKeys(value) : value),
     },
   })
-  data: {
-    expiryDate?: string;
-    manufactureDate?: string;
-    productName?: string;
-    quantity?: number;
-    shelfLifeDays?: number;
-    storageName?: string;
-  };
+  data: HttpStorageEventData;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
