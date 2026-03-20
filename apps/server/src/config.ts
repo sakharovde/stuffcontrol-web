@@ -39,7 +39,7 @@ const fullConfig: Record<NodeEnv, Config> = {
     server: {
       port: Number(process.env.PORT || 3000),
       host: 'RENDER' in process.env ? '0.0.0.0' : 'localhost',
-      staticDir: path.resolve(process.cwd(), process.env.STATIC_DIR || '../dist'),
+      staticDir: path.resolve(process.cwd(), process.env.STATIC_DIR || '../../dist'),
     },
     db: {
       host: 'localhost',
@@ -54,7 +54,7 @@ const fullConfig: Record<NodeEnv, Config> = {
     server: {
       port: Number(process.env.PORT || 3000),
       host: '127.0.0.1',
-      staticDir: path.resolve(process.cwd(), process.env.STATIC_DIR || '../dist'),
+      staticDir: path.resolve(process.cwd(), process.env.STATIC_DIR || '../../dist'),
     },
     db: {
       host: 'localhost',
@@ -69,7 +69,7 @@ const fullConfig: Record<NodeEnv, Config> = {
     server: {
       port: Number(process.env.PORT || 3000),
       host: 'RENDER' in process.env ? '0.0.0.0' : 'localhost',
-      staticDir: path.resolve(process.cwd(), process.env.STATIC_DIR || '../dist'),
+      staticDir: path.resolve(process.cwd(), process.env.STATIC_DIR || '../../dist'),
     },
     db: {
       host: process.env.DB_HOST,

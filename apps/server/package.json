@@ -1,6 +1,5 @@
 {
-  "name": "stuff-control-server",
-  "packageManager": "yarn@4.5.2",
+  "name": "server",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -8,12 +7,8 @@
     "dev": "FORCE_COLOR=1 pm2-runtime ecosystem.config.cjs",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
-    "prepare": "husky",
     "test": "vitest",
     "typeorm": "typeorm-ts-node-commonjs"
-  },
-  "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",

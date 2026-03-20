@@ -7,6 +7,10 @@ const backendTarget = process.env.VITE_SERVER_ORIGIN ?? 'http://localhost:3000';
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    outDir: '../../dist',
+    emptyOutDir: true,
+  },
   plugins: [
     react(),
     checker({
